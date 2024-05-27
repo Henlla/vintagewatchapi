@@ -38,7 +38,7 @@ builder.Services.ConfigureSwaggerGen(setup =>
     setup.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
         Title = "Weather Forecasts",
-        Version = "v1"
+        Version = "v2"
     });
 });
 
