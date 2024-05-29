@@ -1,4 +1,5 @@
-﻿using vintagewatchDAO;
+﻿using Microsoft.EntityFrameworkCore;
+using vintagewatchDAO;
 using vintagewatchModel;
 using vintagewatchResponsitory.IResponsitory;
 
@@ -6,14 +7,14 @@ namespace vintagewatchResponsitory.Responsitory
 {
     public class ProductResponsitory : IProductResponsitory
     {
-        private ProductDAO _dao;
-        public ProductResponsitory(ProductDAO dao)
+        private ApplicationDbContext _db;
+        public ProductResponsitory(ApplicationDbContext dao)
         {
-            this._dao = dao;
+            _db = dao;
         }
-        public Task<List<Products>> GetProducts()
+        public async Task<List<Products>> GetProducts()
         {
-            return _dao.GetProducts();
+            return await _db.Products.ToListAsync();
         }
     }
 }

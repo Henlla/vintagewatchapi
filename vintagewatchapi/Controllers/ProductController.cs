@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Mvc;
-using vintagewatchModel;
+﻿using Microsoft.AspNetCore.Mvc;
 using vintagewatchService.IService;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -8,14 +6,14 @@ using vintagewatchService.IService;
 namespace vintagewatchapi.Controllers
 {
     [ApiController]
-    [Route("/")]
+    [Route("/[controller]")]
     public class ProductController : ControllerBase
     {
-        private IProductService _service;
+        private readonly IProductService _service;
 
         public ProductController(IProductService service)
         {
-            this._service = service;
+            _service = service;
         }
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -24,13 +22,6 @@ namespace vintagewatchapi.Controllers
             if (result.Count > 0)
                 return Ok(result);
             return NotFound();
-        }
-
-        [HttpGet("{content}")]
-        public async Task<IActionResult> GetString(string content)
-        {
-            var result = content;
-            return Ok(result);
         }
     }
 }
