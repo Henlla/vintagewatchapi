@@ -5,13 +5,11 @@ VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vintagewatchapi", "vintagewatchapi\vintagewatchapi.csproj", "{56E40DCF-CFED-4B3D-845D-5B7A42F4B472}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vintagewatchDAO", "vintagewatchDAO\vintagewatchDAO.csproj", "{158475BB-398E-46D8-9B8F-0C0451D7034D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vintagewatchModel", "vintagewatchModel\vintagewatchModel.csproj", "{9C3C57ED-1BE9-4615-AA53-5F3B340A2BC7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vintagewatchService", "vintagewatchService\vintagewatchService.csproj", "{E0BECA45-DBB9-46B9-97C6-A153401AD3B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vintagewatchResponsitory", "vintagewatchResponsitory\vintagewatchResponsitory.csproj", "{3F07F2DA-1390-49EE-BB4F-CF22EFA38463}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vintagewatchResponsitory", "vintagewatchResponsitory\vintagewatchResponsitory.csproj", "{3F07F2DA-1390-49EE-BB4F-CF22EFA38463}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +21,6 @@ Global
 		{56E40DCF-CFED-4B3D-845D-5B7A42F4B472}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56E40DCF-CFED-4B3D-845D-5B7A42F4B472}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56E40DCF-CFED-4B3D-845D-5B7A42F4B472}.Release|Any CPU.Build.0 = Release|Any CPU
-		{158475BB-398E-46D8-9B8F-0C0451D7034D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{158475BB-398E-46D8-9B8F-0C0451D7034D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{158475BB-398E-46D8-9B8F-0C0451D7034D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{158475BB-398E-46D8-9B8F-0C0451D7034D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9C3C57ED-1BE9-4615-AA53-5F3B340A2BC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9C3C57ED-1BE9-4615-AA53-5F3B340A2BC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C3C57ED-1BE9-4615-AA53-5F3B340A2BC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
