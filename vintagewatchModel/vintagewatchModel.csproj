@@ -8,6 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.11.3" />
+    <PackageReference Include="EntityFramework" Version="6.4.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
 </Project>
