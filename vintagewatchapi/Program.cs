@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using vintagewatchDAO;
+using vintagewatchModel.Models;
 using vintagewatchResponsitory.IResponsitory;
 using vintagewatchResponsitory.Responsitory;
 using vintagewatchService.IService;
@@ -42,7 +42,7 @@ builder.Services.AddCors(options => {
     });
 });
 
-builder.Services.AddDbContext<ApplicationDbContext>(
+builder.Services.AddDbContext<vintagedbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("connectString")));
 
 

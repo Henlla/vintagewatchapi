@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using vintagewatchModel;
 
 namespace vintagewatchResponsitory.IResponsitory
 {
-    public interface IProductResponsitory
+    internal interface IUsers
     {
-        public Task<List<Products>> GetProducts();
     }
 }
