@@ -1,19 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
-namespace VintageTimepieceModel.Models
+namespace VintageTimepieceModel.Models;
+
+public partial class RefreshToken
 {
-    public class RefreshToken
-    {
-        public int Id { get; set; }
-        public string? Token { get; set; }
-        public DateTime Expires { get; set; }
-        public bool IsExpired => DateTime.UtcNow >= Expires;
-        public DateTime Created { get; set; }
-        public DateTime? Revoked { get; set; }
-        public bool IsActive => Revoked == null && !IsExpired;
-    }
+    public int Id { get; set; }
+
+    public int? UserId { get; set; }
+
+    public string? Token { get; set; }
+
+    public string? JwtId { get; set; }
+
+    public bool? IsUsed { get; set; }
+
+    public bool? IsRevoke { get; set; }
+
+    public DateTime? IssueAt { get; set; }
+
+    public DateTime? ExpiredAt { get; set; }
+    [JsonIgnore]
+    public virtual User?  User { get; set; }
 }

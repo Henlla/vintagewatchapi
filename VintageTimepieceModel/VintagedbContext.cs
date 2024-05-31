@@ -1,41 +1,46 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using VintageTimepieceModel.Models;
 
 namespace VintageTimepieceModel;
 
-public partial class VintagedbContext : DbContext
+public class VintagedbContext : DbContext
 {
-    public VintagedbContext(DbContextOptions options) : base(options)
+    public VintagedbContext(DbContextOptions<VintagedbContext> options)
+        : base(options)
     {
     }
 
-    public virtual DbSet<Category> Categories { get; set; }
+    public DbSet<Category> Categories { get; set; }
 
-    public virtual DbSet<Evaluation> Evaluations { get; set; }
+    public DbSet<Evaluation> Evaluations { get; set; }
 
-    public virtual DbSet<FeedbacksTimepiece> FeedbacksTimepieces { get; set; }
+    public DbSet<FeedbacksTimepiece> FeedbacksTimepieces { get; set; }
 
-    public virtual DbSet<FeedbacksUser> FeedbacksUsers { get; set; }
+    public DbSet<FeedbacksUser> FeedbacksUsers { get; set; }
 
-    public virtual DbSet<Order> Orders { get; set; }
+    public DbSet<Order> Orders { get; set; }
 
-    public virtual DbSet<OrdersDetail> OrdersDetails { get; set; }
+    public DbSet<OrdersDetail> OrdersDetails { get; set; }
 
-    public virtual DbSet<RatingsTimepiece> RatingsTimepieces { get; set; }
+    public DbSet<RatingsTimepiece> RatingsTimepieces { get; set; }
 
-    public virtual DbSet<Role> Roles { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
-    public virtual DbSet<SupportTicket> SupportTickets { get; set; }
+    public DbSet<Role> Roles { get; set; }
 
-    public virtual DbSet<Timepiece> Timepieces { get; set; }
+    public DbSet<SupportTicket> SupportTickets { get; set; }
 
-    public virtual DbSet<TimepieceCategory> TimepieceCategories { get; set; }
+    public DbSet<Timepiece> Timepieces { get; set; }
 
-    public virtual DbSet<TimepieceEvaluation> TimepieceEvaluations { get; set; }
+    public DbSet<TimepieceCategory> TimepieceCategories { get; set; }
 
-    public virtual DbSet<TimepieceImage> TimepieceImages { get; set; }
+    public DbSet<TimepieceEvaluation> TimepieceEvaluations { get; set; }
 
-    public virtual DbSet<User> Users { get; set; }
+    public DbSet<TimepieceImage> TimepieceImages { get; set; }
+
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -187,6 +192,34 @@ public partial class VintagedbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.RatingsTimepieces)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK_UserRatingTimepiece");
+        });
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__refresh___3213E83FBE6FC19D");
+
+            entity.ToTable("refresh_token");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ExpiredAt)
+                .HasColumnType("datetime")
+                .HasColumnName("expiredAt");
+            entity.Property(e => e.IsRevoke).HasColumnName("isRevoke");
+            entity.Property(e => e.IsUsed).HasColumnName("isUsed");
+            entity.Property(e => e.IssueAt)
+                .HasColumnType("datetime")
+                .HasColumnName("issueAt");
+            entity.Property(e => e.JwtId)
+                .IsUnicode(false)
+                .HasColumnName("jwtId");
+            entity.Property(e => e.Token)
+                .IsUnicode(false)
+                .HasColumnName("token");
+            entity.Property(e => e.UserId).HasColumnName("userId");
+
+            entity.HasOne(d => d.User).WithMany(p => p.RefreshTokens)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_UserRefreshToken");
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -383,8 +416,8 @@ public partial class VintagedbContext : DbContext
                 .HasConstraintName("FK_UserRole");
         });
 
-        OnModelCreatingPartial(modelBuilder);
+        //OnModelCreatingPartial(modelBuilder);
     }
 
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+    //partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
