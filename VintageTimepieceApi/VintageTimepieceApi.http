@@ -1,0 +1,6 @@
+@VintageTimepieceApi_HostAddress = http://localhost:5009
+
+GET {{VintageTimepieceApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
