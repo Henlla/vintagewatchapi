@@ -16,5 +16,7 @@ namespace VintageTimepieceService.IService
         public Task<string> GetRefreshToken();
         public Task SaveRefreshToken(RefreshToken refreshToken);
         public Task<APIResponse<string>> ReNewtoken(TokenModel model);
+
+        public Task<APIResponse<string>> RegisterAccount(RegisterModel registerAccount);
     }
 }

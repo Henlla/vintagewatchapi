@@ -37,5 +37,10 @@ namespace VintageTimepieceService.Service
         {
             return await _authenticateRepository.GenerateNewToken(model);
         }
+
+        public async Task<APIResponse<string>> RegisterAccount(RegisterModel registerAccount)
+        {
+            return await _authenticateRepository.CreateNewAccount(registerAccount);
+        }
     }
 }
