@@ -5,42 +5,42 @@ using VintageTimepieceModel.Models;
 
 namespace VintageTimepieceModel;
 
-public class VintagedbContext : DbContext
+public partial class VintagedbContext : DbContext
 {
     public VintagedbContext(DbContextOptions<VintagedbContext> options)
         : base(options)
     {
     }
 
-    public DbSet<Category> Categories { get; set; }
+    public virtual DbSet<Category> Categories { get; set; }
 
-    public DbSet<Evaluation> Evaluations { get; set; }
+    public virtual DbSet<Evaluation> Evaluations { get; set; }
 
-    public DbSet<FeedbacksTimepiece> FeedbacksTimepieces { get; set; }
+    public virtual DbSet<FeedbacksTimepiece> FeedbacksTimepieces { get; set; }
 
-    public DbSet<FeedbacksUser> FeedbacksUsers { get; set; }
+    public virtual DbSet<FeedbacksUser> FeedbacksUsers { get; set; }
 
-    public DbSet<Order> Orders { get; set; }
+    public virtual DbSet<Order> Orders { get; set; }
 
-    public DbSet<OrdersDetail> OrdersDetails { get; set; }
+    public virtual DbSet<OrdersDetail> OrdersDetails { get; set; }
 
-    public DbSet<RatingsTimepiece> RatingsTimepieces { get; set; }
+    public virtual DbSet<RatingsTimepiece> RatingsTimepieces { get; set; }
 
-    public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 
-    public DbSet<Role> Roles { get; set; }
+    public virtual DbSet<Role> Roles { get; set; }
 
-    public DbSet<SupportTicket> SupportTickets { get; set; }
+    public virtual DbSet<SupportTicket> SupportTickets { get; set; }
 
-    public DbSet<Timepiece> Timepieces { get; set; }
+    public virtual DbSet<Timepiece> Timepieces { get; set; }
 
-    public DbSet<TimepieceCategory> TimepieceCategories { get; set; }
+    public virtual DbSet<TimepieceCategory> TimepieceCategories { get; set; }
 
-    public DbSet<TimepieceEvaluation> TimepieceEvaluations { get; set; }
+    public virtual DbSet<TimepieceEvaluation> TimepieceEvaluations { get; set; }
 
-    public DbSet<TimepieceImage> TimepieceImages { get; set; }
+    public virtual DbSet<TimepieceImage> TimepieceImages { get; set; }
 
-    public DbSet<User> Users { get; set; }
+    public virtual DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -416,8 +416,8 @@ public class VintagedbContext : DbContext
                 .HasConstraintName("FK_UserRole");
         });
 
-        //OnModelCreatingPartial(modelBuilder);
+        OnModelCreatingPartial(modelBuilder);
     }
 
-    //partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

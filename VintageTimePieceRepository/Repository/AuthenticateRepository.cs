@@ -16,10 +16,16 @@ namespace VintageTimePieceRepository.Repository
     {
         private readonly IConfiguration _configuration;
         private readonly VintagedbContext _context;
-        public AuthenticateRepository(IConfiguration configuration, VintagedbContext context)
+        private readonly IHashPasswordRepository _passwordRepository;
+
+
+        public AuthenticateRepository(IConfiguration configuration,
+            VintagedbContext context,
+            IHashPasswordRepository hashPasswordRepository)
         {
             _configuration = configuration;
             _context = context;
+            _passwordRepository = hashPasswordRepository;
         }
         public async Task<User?> GetUserByUserNameAndPassword(LoginModel user)
         {
@@ -166,11 +172,39 @@ namespace VintageTimePieceRepository.Repository
             }
         }
 
+
         private DateTime ConvertUnixDateToDateTime(long utcDate)
         {
             var dateTimeInterval = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dateTimeInterval.AddSeconds(utcDate).ToUniversalTime();
             return dateTimeInterval;
+        }
+
+
+        public async Task<APIResponse<string>> CreateNewAccount(RegisterModel registerUser)
+        {
+            var existsUserEmail = await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(registerUser.Email));
+            var existsUsername = await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(registerUser.Username));
+            if (existsUserEmail != null || existsUsername != null)
+            {
+                return new APIResponse<string>
+                {
+                    Message = "User exists!",
+                    isSuccess = false,
+                };
+            }
+            var newUser = new User();
+            newUser.Username = registerUser.Username;
+            newUser.Password = _passwordRepository.Hash(registerUser.Password);
+            newUser.Email = registerUser.Email;
+            newUser.DateJoined = DateTime.Now;
+            await _context.Users.AddAsync(newUser);
+            await _context.SaveChangesAsync();
+            return new APIResponse<string>
+            {
+                Message = "Register success",
+                isSuccess = true,
+            };
         }
     }
 }

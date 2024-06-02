@@ -1,23 +1,27 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using VintageTimepieceModel.Models;
 using VintageTimepieceModel.Models.Shared;
 using VintageTimepieceService.IService;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace VintageTimepieceApi.Controllers
 {
-    [Route("api/auth")]
+    [Route("/auth")]
     [ApiController]
-    public class LoginController : ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly IAuthenticateService _service;
-        public LoginController(IAuthenticateService service)
+        public AuthController(IAuthenticateService service)
         {
             _service = service;
         }
 
-        [HttpPost, Route("login")]
+        [HttpPost, Route("signin")]
         public async Task<IActionResult> Login([FromBody] LoginModel user)
         {
             var loginUser = await _service.CheckLogin(user);
@@ -63,6 +67,8 @@ namespace VintageTimepieceApi.Controllers
             });
         }
 
+
+
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] TokenModel model)
         {
@@ -74,11 +80,32 @@ namespace VintageTimepieceApi.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> Get()
+
+        [HttpPost("signup")]
+        public async Task<IActionResult> RegisterAccount([FromBody] RegisterModel registerModel)
         {
-            return Ok("test");
+            var result = await _service.RegisterAccount(registerModel);
+            if (!result.isSuccess)
+                return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpGet("signinWithGoogle")]
+        [Authorize]
+        public async Task<IActionResult> SignInWithGoogle()
+        {
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new APIResponse<string>
+                {
+                    Message = "Sign in with google fail",
+                    isSuccess = false
+                });
+            }
+
+            var token = result.Principal.FindFirst(ClaimTypes.Email).Value;
+            return Ok(token);
         }
     }
 }

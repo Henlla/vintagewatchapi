@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,7 +20,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//Set up CORS
+// Set up CORS
 
 builder.Services.AddCors(options =>
 {
@@ -30,14 +32,30 @@ builder.Services.AddCors(options =>
     });
 });
 
-//Setup JWT
+// Setup JWT
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
+    // Set up jwt
+    //options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    //options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+    //Set up google cookie
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+
+}).AddCookie()
+.AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+{
+    options.ClientId = builder.Configuration["Google:clientId"];
+    options.ClientSecret = builder.Configuration["Google:clientSecret"];
+    //options.CallbackPath = new PathString(builder.Configuration["Google:clientCallBack"]);
+})
+.AddJwtBearer(options =>
 {
     options.SaveToken = true;
+    options.Authority = "https://accounts.google.com";
+    options.Audience = builder.Configuration["Google:clientId"];
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = false,
@@ -51,21 +69,36 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-//Setup DB
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.Lax;
+    options.Secure = CookieSecurePolicy.Always;
+});
+
+
+// Setup DB
 builder.Services.AddDbContext<VintagedbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("connectString"));
     options.UseLazyLoadingProxies();
 });
 
-//Setup DI
-//Authenticate
+
+// Setup DI
+builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+
+// Authenticate
 builder.Services.AddScoped<IAuthenticateRepository, AuthenticateRepository>();
 builder.Services.AddScoped<IAuthenticateService, AuthenticateService>();
+builder.Services.AddScoped<IHashPasswordRepository, HassPasswordRepository>();
 
 
 
 var app = builder.Build();
+
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -74,14 +107,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("EnableCors");
-
 app.UseHttpsRedirection();
+
+app.UseCookiePolicy();
 
 app.UseAuthentication();
 
 app.UseAuthorization();
 
+app.UseCors("EnableCors");
 
 app.MapControllers();
 
