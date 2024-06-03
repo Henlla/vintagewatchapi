@@ -25,15 +25,15 @@ namespace VintageTimepieceApi.Controllers
         public async Task<IActionResult> Login([FromBody] LoginModel user)
         {
             var loginUser = await _service.CheckLogin(user);
-            if (user == null)
-                return BadRequest(new APIResponse<string>
+            if (!ModelState.IsValid)
+                return Ok(new APIResponse<string>
                 {
                     Message = "Invalid client request",
                     isSuccess = false
                 });
             if (loginUser == null)
             {
-                return BadRequest(new APIResponse<string>
+                return Ok(new APIResponse<string>
                 {
                     Message = "Invalid username/password",
                     isSuccess = false
@@ -77,7 +77,7 @@ namespace VintageTimepieceApi.Controllers
             {
                 return Ok(result);
             }
-            return BadRequest(result);
+            return Ok(result);
         }
 
 
@@ -86,7 +86,7 @@ namespace VintageTimepieceApi.Controllers
         {
             var result = await _service.RegisterAccount(registerModel);
             if (!result.isSuccess)
-                return BadRequest(result);
+                return Ok(result);
             return Ok(result);
         }
 
@@ -97,7 +97,7 @@ namespace VintageTimepieceApi.Controllers
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             if (!result.Succeeded)
             {
-                return BadRequest(new APIResponse<string>
+                return Ok(new APIResponse<string>
                 {
                     Message = "Sign in with google fail",
                     isSuccess = false

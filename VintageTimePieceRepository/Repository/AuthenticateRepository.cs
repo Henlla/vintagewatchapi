@@ -27,10 +27,12 @@ namespace VintageTimePieceRepository.Repository
             _context = context;
             _passwordRepository = hashPasswordRepository;
         }
-        public async Task<User?> GetUserByUserNameAndPassword(LoginModel user)
+        public async Task<User?> GetUserByUserName(LoginModel user)
         {
-            var userLogin = await _context.Users.SingleOrDefaultAsync(u => u.Username.Equals(user.Username) && u.Password.Equals(user.Password));
-            if (userLogin == null)
+            var userLogin = await _context.Users.SingleOrDefaultAsync(u => u.Username.Equals(user.Username)
+            || u.Email.Equals(user.Username));
+
+            if (!_passwordRepository.VerifyPassword(userLogin.Password, user.Password))
             {
                 return null;
             }
