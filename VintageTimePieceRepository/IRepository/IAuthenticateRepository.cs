@@ -7,7 +7,7 @@ namespace VintageTimePieceRepository.IRepository
     public interface IAuthenticateRepository
     {
         public Task<APIResponse<string>> CreateNewAccount(RegisterModel registerUser);
-        public Task<User> GetUserByUserNameAndPassword(LoginModel user);
+        public Task<User> GetUserByUserName(LoginModel user);
         public Task<JwtSecurityToken> GenerateJwtToken(User user);
         public Task<string> GenerateRefreshToken();
         public Task SaveRefreshToken(RefreshToken refreshToken);

@@ -15,7 +15,7 @@ namespace VintageTimepieceService.Service
         }
         public async Task<User> CheckLogin(LoginModel user)
         {
-            return await _authenticateRepository.GetUserByUserNameAndPassword(user);
+            return await _authenticateRepository.GetUserByUserName(user);
         }
 
         public async Task<JwtSecurityToken> GetAccessToken(User user)
