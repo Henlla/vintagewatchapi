@@ -8,7 +8,7 @@ using VintageTimePieceRepository.IRepository;
 
 namespace VintageTimePieceRepository.Repository
 {
-    public class HassPasswordRepository : IHashPasswordRepository
+    public class HashPasswordRepository : IHashPasswordRepository
     {
         private const int SaltSize = 128 / 8;
         private const int KeySize = 256 / 8;
@@ -25,6 +25,10 @@ namespace VintageTimePieceRepository.Repository
 
         public bool VerifyPassword(string hashPassword, string intputPassword)
         {
+            if (hashPassword == null || intputPassword == null)
+            {
+                return false;
+            }
             var elements = hashPassword.Split(Delimiter);
             var salt = Convert.FromBase64String(elements[0]);
             var hash = Convert.FromBase64String(elements[1]);

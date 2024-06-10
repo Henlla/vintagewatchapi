@@ -11,7 +11,9 @@ public partial class TimepieceCategory
 
     public int? CategoryId { get; set; }
 
-    public virtual Category Category { get; set; }
+    public bool? IsDel { get; set; } = false;
 
-    public virtual Timepiece Timepiece { get; set; }
+    public virtual Category? Category { get; set; }
+
+    public virtual Timepiece? Timepiece { get; set; }
 }

@@ -2,9 +2,8 @@
 {
     public interface IBaseRepository<T> where T : class
     {
-        public Task Add(T t);
-        public Task Update(T t);
-        public Task Delete(T t);
-        public Task<IEnumerable<T>> Get();
+        public Task<T> Add(T entity);
+        public Task<T> Update(T entity);
+        public IQueryable<T> FindAll();
     }
 }

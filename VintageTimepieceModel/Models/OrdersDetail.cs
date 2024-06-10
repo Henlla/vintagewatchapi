@@ -15,7 +15,9 @@ public partial class OrdersDetail
 
     public decimal? UnitPrice { get; set; }
 
-    public virtual Order Order { get; set; }
+    public bool? IsDel { get; set; } = false;
 
-    public virtual Timepiece Timepiece { get; set; }
+    public virtual Order? Order { get; set; }
+
+    public virtual Timepiece? Timepiece { get; set; }
 }

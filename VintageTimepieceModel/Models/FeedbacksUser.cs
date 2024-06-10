@@ -11,13 +11,15 @@ public partial class FeedbacksUser
 
     public int? FeedbackTargetId { get; set; }
 
-    public string Comment { get; set; }
+    public string? Comment { get; set; }
 
     public int? RatingStar { get; set; }
 
     public DateTime? CreatedDate { get; set; }
 
-    public virtual User FeedbackTarget { get; set; }
+    public bool? IsDel { get; set; } = false;
 
-    public virtual User User { get; set; }
+    public virtual User? FeedbackTarget { get; set; }
+
+    public virtual User? User { get; set; }
 }

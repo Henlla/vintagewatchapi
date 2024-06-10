@@ -11,12 +11,8 @@ namespace VintageTimepieceService.IService
 {
     public interface IAuthenticateService
     {
-        public Task<User> CheckLogin(LoginModel user);
-        public Task<JwtSecurityToken> GetAccessToken(User user);
-        public Task<string> GetRefreshToken();
-        public Task SaveRefreshToken(RefreshToken refreshToken);
-        public Task<APIResponse<string>> ReNewtoken(TokenModel model);
-
-        public Task<APIResponse<string>> RegisterAccount(RegisterModel registerAccount);
+        public Task<APIResponse<User>> CheckLogin(LoginModel user);
+        public Task<APIResponse<User>> GetUsersByEmail(string value);
+        public Task<APIResponse<User>> RegisterAccount(RegisterModel registerAccount);
     }
 }

@@ -13,34 +13,56 @@ namespace VintageTimepieceService.Service
         {
             _authenticateRepository = authenticateRepository;
         }
-        public async Task<User> CheckLogin(LoginModel user)
+        public async Task<APIResponse<User>> CheckLogin(LoginModel user)
         {
-            return await _authenticateRepository.GetUserByUserName(user);
+            var result = await Task.FromResult(await _authenticateRepository.GetUserByEmail(user.Username));
+            if (result == null)
+                return new APIResponse<User>
+                {
+                    Message = "Login fail",
+                    isSuccess = false,
+                };
+            return new APIResponse<User>
+            {
+                Message = "Login success",
+                isSuccess = true,
+                Data = result
+            };
         }
 
-        public async Task<JwtSecurityToken> GetAccessToken(User user)
+        public async Task<APIResponse<User>> GetUsersByEmail(string value)
         {
-            return await _authenticateRepository.GenerateJwtToken(user);
+            var result = await Task.FromResult(await _authenticateRepository.GetUserByEmail(value));
+            if (result == null)
+                return new APIResponse<User>
+                {
+                    Message = "Get user fail",
+                    isSuccess = false,
+                };
+            return new APIResponse<User>
+            {
+                Message = "Get user success",
+                isSuccess = true,
+                Data = result
+            };
         }
 
-        public async Task<string> GetRefreshToken()
+        public async Task<APIResponse<User>> RegisterAccount(RegisterModel registerAccount)
         {
-            return await _authenticateRepository.GenerateRefreshToken();
-        }
-
-
-        public async Task SaveRefreshToken(RefreshToken refreshToken)
-        {
-            await _authenticateRepository.SaveRefreshToken(refreshToken);
-        }
-        public async Task<APIResponse<string>> ReNewtoken(TokenModel model)
-        {
-            return await _authenticateRepository.GenerateNewToken(model);
-        }
-
-        public async Task<APIResponse<string>> RegisterAccount(RegisterModel registerAccount)
-        {
-            return await _authenticateRepository.CreateNewAccount(registerAccount);
+            var result = await Task.FromResult(await _authenticateRepository.CreateNewAccount(registerAccount));
+            if (result == null)
+                return new APIResponse<User>
+                {
+                    Message = "Register user fail",
+                    isSuccess = false,
+                    Data = result
+                };
+            return new APIResponse<User>
+            {
+                Message = "Register success",
+                isSuccess = true,
+                Data = result
+            };
         }
     }
 }
