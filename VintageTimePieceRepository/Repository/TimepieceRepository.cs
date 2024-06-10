@@ -12,7 +12,12 @@ namespace VintageTimePieceRepository.Repository
         {
         }
 
-        public async Task<PageList<Timepiece>> GetAllTimepiece(PagingModel pagingModel)
+        public async Task<List<Timepiece>> GetAllTimepiece()
+        {
+            return await Task.FromResult(FindAll().Where(t=>t.IsDel == false).ToList());
+        }
+
+        public async Task<PageList<Timepiece>> GetAllTimepieceWithPaging(PagingModel pagingModel)
         {
             return await Task.FromResult(PageList<Timepiece>.GetPagedList(FindAll().Where(t => t.IsDel == false).OrderBy(s => s.TimepieceId), pagingModel.PageNumber, pagingModel.PageSize));
         }

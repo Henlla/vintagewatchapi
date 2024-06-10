@@ -43,9 +43,20 @@ namespace VintageTimepieceService.Service
             };
         }
 
-        public async Task<APIResponse<PageList<Timepiece>>> GetAllTimepiece(PagingModel pageModel)
+        public async Task<APIResponse<List<Timepiece>>> GetAllTimepiece()
         {
-            var result = await _timepieceRepository.GetAllTimepiece(pageModel);
+            var result = await _timepieceRepository.GetAllTimepiece();
+            return new APIResponse<List<Timepiece>>
+            {
+                Message = "Get all product success",
+                isSuccess = true,
+                Data = result
+            };
+        }
+
+        public async Task<APIResponse<PageList<Timepiece>>> GetAllTimepieceWithPaging(PagingModel pageModel)
+        {
+            var result = await _timepieceRepository.GetAllTimepieceWithPaging(pageModel);
             if (result != null)
                 return new APIResponse<PageList<Timepiece>>
                 {

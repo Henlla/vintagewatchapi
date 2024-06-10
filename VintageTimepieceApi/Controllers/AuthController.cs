@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authentication.Google;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.Json.Nodes;
+using System.Text.Json;
 
 
 namespace VintageTimepieceApi.Controllers
@@ -81,9 +83,11 @@ namespace VintageTimepieceApi.Controllers
         }
 
         [HttpPost, Route("getUserFromToken")]
-        public IActionResult GetUserFromToken(string token)
+        public IActionResult GetUserFromToken([FromBody] JsonElement token)
         {
-            var result = _jwtConfigService.GetUserFromAccessToken(token);
+            token.TryGetProperty("token", out JsonElement tokenElement);
+            var tokenString = tokenElement.GetString();
+            var result = _jwtConfigService.GetUserFromAccessToken(tokenString);
             if (result.isSuccess)
                 return Ok(result);
             return BadRequest(result);

@@ -7,6 +7,7 @@ namespace VintageTimePieceRepository.IRepository
     {
         public Task<Timepiece> GetTimepieceById(int id);
         public Task<List<Timepiece>> GetTimepieceByName(string name);
-        public Task<PageList<Timepiece>> GetAllTimepiece(PagingModel paginModel);
+        public Task<PageList<Timepiece>> GetAllTimepieceWithPaging(PagingModel paginModel);
+        public Task<List<Timepiece>> GetAllTimepiece();
     }
 }

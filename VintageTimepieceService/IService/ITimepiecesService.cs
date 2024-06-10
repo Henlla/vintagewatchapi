@@ -10,7 +10,8 @@ namespace VintageTimepieceService.IService
 {
     public interface ITimepiecesService
     {
-        public Task<APIResponse<PageList<Timepiece>>> GetAllTimepiece(PagingModel pageModel);
+        public Task<APIResponse<PageList<Timepiece>>> GetAllTimepieceWithPaging(PagingModel pageModel);
+        public Task<APIResponse<List<Timepiece>>> GetAllTimepiece();
         public Task<APIResponse<Timepiece>> CreateNewTimepiece(Timepiece timepiece);
         public Task<APIResponse<Timepiece>> DeleteTimepiece(int id);
         public Task<APIResponse<Timepiece>> GetOneTimepiece(int id);
