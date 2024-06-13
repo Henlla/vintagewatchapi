@@ -90,6 +90,7 @@ namespace VintageTimepieceApi.Controllers
         [HttpPost, Route("uploadTimepiece")]
         public async Task<IActionResult> Post([FromQuery]string token)
         {
+
             return Ok(token);
         }
 
