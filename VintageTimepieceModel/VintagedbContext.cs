@@ -356,16 +356,17 @@ public partial class VintagedbContext : DbContext
             entity.ToTable("timepiece_image");
 
             entity.Property(e => e.TimepieceImageId).HasColumnName("timepieceImageId");
+            entity.Property(e => e.ImageName).HasColumnName("imageName");
             entity.Property(e => e.ImageUrl)
                 .IsUnicode(false)
                 .HasColumnName("imageUrl");
             entity.Property(e => e.IsDel)
                 .HasDefaultValue(false)
                 .HasColumnName("isDel");
-            entity.Property(e => e.TimpieceId).HasColumnName("timpieceId");
+            entity.Property(e => e.TimepieceId).HasColumnName("timepieceId");
 
-            entity.HasOne(d => d.Timpiece).WithMany(p => p.TimepieceImages)
-                .HasForeignKey(d => d.TimpieceId)
+            entity.HasOne(d => d.Timepiece).WithMany(p => p.TimepieceImages)
+                .HasForeignKey(d => d.TimepieceId)
                 .HasConstraintName("FK_timepiece_image_timepieces");
         });
 

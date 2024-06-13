@@ -17,6 +17,12 @@ namespace VintageTimePieceRepository.Repository
             await _context.SaveChangesAsync();
             return entity;
         }
+        public async Task<List<T>> AddRange(List<T> entity)
+        {
+            await _context.Set<T>().AddRangeAsync(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
 
         public IQueryable<T> FindAll()
         {
@@ -29,5 +35,6 @@ namespace VintageTimePieceRepository.Repository
             await _context.SaveChangesAsync();
             return entity;
         }
+
     }
 }
