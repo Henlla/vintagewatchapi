@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VintageTimepieceModel.Models;
 using VintageTimepieceModel.Models.Shared;
+using VintageTimePieceRepository.IRepository;
 using VintageTimepieceService.IService;
 
 namespace VintageTimepieceApi.Controllers
@@ -13,10 +14,12 @@ namespace VintageTimepieceApi.Controllers
     {
         private readonly ITimepiecesService _timepieceService;
         private readonly IJwtConfigService _jwtConfigService;
-        public TimepiecesController(ITimepiecesService timepiecesService, IJwtConfigService jwtConfigService)
+        private readonly ITimepieceRepository _timepieceRepository;
+        public TimepiecesController(ITimepiecesService timepiecesService, IJwtConfigService jwtConfigService, ITimepieceRepository timepieceRepository)
         {
             _timepieceService = timepiecesService;
             _jwtConfigService = jwtConfigService;
+            _timepieceRepository = timepieceRepository;
         }
 
         [HttpGet, Route("GetAllProductExeptUser")]
@@ -42,10 +45,9 @@ namespace VintageTimepieceApi.Controllers
         public async Task<IActionResult> Get([FromQuery] string token, [FromQuery] PagingModel pagingModel)
         {
             var user = _jwtConfigService.GetUserFromAccessToken(token);
-            var result = new APIResponse<PageList<Timepiece>>();
             if (user.isSuccess)
             {
-                result = await _timepieceService.GetAllTimepieceWithPagingExceptUser(user.Data, pagingModel);
+                var result = await _timepieceService.GetAllTimepieceWithPagingExceptUser(user.Data, pagingModel);
                 if (result.isSuccess)
                     return Ok(result);
                 return BadRequest(result);
@@ -83,21 +85,19 @@ namespace VintageTimepieceApi.Controllers
             return Ok(result);
         }
 
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
-        [HttpPost]
-        public async Task<IActionResult> Post(string token, [FromBody] TimepieceImageModel timepiece)
+        [HttpPost, Route("uploadTimepiece")]
+        public async Task<IActionResult> Post([FromQuery]string token)
         {
-            var result = await _timepieceService.UploadNewTimepiece(timepiece.timepiece);
-            if (!result.isSuccess)
-                return BadRequest(result);
-            return Ok(result);
+            return Ok(token);
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
         [HttpPut, Route("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Timepiece value)
+        public async Task<IActionResult> Put(int id, [FromBody] TimepieceModel timepiece)
         {
-            var result = await _timepieceService.UpdateTimepiece(id, value);
+            var result = await _timepieceService.UpdateTimepiece(id, timepiece);
             if (!result.isSuccess)
                 return BadRequest(result);
             return Ok(result);

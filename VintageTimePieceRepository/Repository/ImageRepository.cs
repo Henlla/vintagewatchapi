@@ -15,19 +15,5 @@ namespace VintageTimePieceRepository.Repository
         {
         }
 
-        public async Task<List<TimepieceImage>> GetAllImageWithoutFirstImage(int imageId)
-        {
-            return await Task.FromResult(FindAll().Where(tm => tm.IsDel == false && tm.TimepieceImageId != imageId).ToList());
-        }
-
-        public async Task<List<TimepieceImage>> GetAllProductImage()
-        {
-            return await Task.FromResult(FindAll().Where(tm => tm.IsDel == false).ToList());
-        }
-
-        public Task<TimepieceImage> GetFirstImageOfProduct(int productId)
-        {
-            return Task.FromResult(FindAll().Where(tm => tm.TimpieceId == productId).First());
-        }
     }
 }

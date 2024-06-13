@@ -10,8 +10,6 @@ namespace VintageTimepieceService.IService
 {
     public interface IImageService
     {
-        public Task<APIResponse<TimepieceImage>> GetFirstImage(int timepieceId);
-        public Task<APIResponse<List<TimepieceImage>>> GetAllImage();
-        public Task<APIResponse<List<TimepieceImage>>> GetAllImageExceptFirst(int imageId);
+
     }
 }
