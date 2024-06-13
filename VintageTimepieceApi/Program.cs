@@ -7,11 +7,23 @@ using System.Text;
 using VintageTimepieceModel;
 using VintageTimePieceRepository.IRepository;
 using VintageTimePieceRepository.Repository;
+using VintageTimePieceRepository.Util;
 using VintageTimepieceService.IService;
 using VintageTimepieceService.Service;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Set up CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Cors",
+        builder => builder.WithOrigins("http://localhost:5173")
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod());
+});
+
 
 // Add services to the container.
 
@@ -20,41 +32,37 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Set up CORS
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("EnableCors", builder =>
-    {
-        builder.AllowAnyOrigin()
-        .AllowAnyHeader()
-        .AllowAnyMethod();
-    });
-});
+
 
 // Setup JWT
 builder.Services.AddAuthentication(options =>
 {
     // Set up jwt
-    //options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    //options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     //Set up google cookie
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    //options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    //options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    //options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
 
-}).AddCookie()
+})
 .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
 {
+    options.AuthorizationEndpoint = GoogleDefaults.AuthorizationEndpoint;
     options.ClientId = builder.Configuration["Google:clientId"];
     options.ClientSecret = builder.Configuration["Google:clientSecret"];
-    //options.CallbackPath = new PathString(builder.Configuration["Google:clientCallBack"]);
+    //options.CallbackPath = builder.Configuration["Google:RedirectUri"];
+    //options.SaveTokens = true;
+    options.Scope.Add("profile");
+    options.Scope.Add("email");
 })
 .AddJwtBearer(options =>
 {
-    options.SaveToken = true;
     options.Authority = "https://accounts.google.com";
     options.Audience = builder.Configuration["Google:clientId"];
+    options.SaveToken = true;
 
     options.TokenValidationParameters = new TokenValidationParameters
     {
@@ -67,7 +75,8 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = builder.Configuration["Jwt:JwtIssuer"],
         ValidAudience = builder.Configuration["Jwt:JwtAudience"],
     };
-});
+})
+.AddCookie();
 
 
 builder.Services.Configure<CookiePolicyOptions>(options =>
@@ -87,17 +96,39 @@ builder.Services.AddDbContext<VintagedbContext>(options =>
 
 // Setup DI
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+builder.Services.AddScoped<IHelper, Helper>();
+
+// Jwt
+builder.Services.AddScoped<IJwtConfigRepository, JwtConfigRepository>();
+builder.Services.AddScoped<IJwtConfigService, JwtConfigService>();
+
 
 // Authenticate
 builder.Services.AddScoped<IAuthenticateRepository, AuthenticateRepository>();
 builder.Services.AddScoped<IAuthenticateService, AuthenticateService>();
-builder.Services.AddScoped<IHashPasswordRepository, HassPasswordRepository>();
+builder.Services.AddScoped<IHashPasswordRepository, HashPasswordRepository>();
 
+
+// Role
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+
+
+// Category
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+
+// Timepiece
+builder.Services.AddScoped<ITimepieceRepository, TimepieceRepository>();
+builder.Services.AddScoped<ITimepiecesService, TimepiecesService>();
+
+// TimepieceImage
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 
 var app = builder.Build();
-
-
 
 
 // Configure the HTTP request pipeline.
@@ -107,15 +138,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseHttpsRedirection();
+
+app.UseCors("Cors");
 
 app.UseCookiePolicy();
 
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-app.UseCors("EnableCors");
 
 app.MapControllers();
 

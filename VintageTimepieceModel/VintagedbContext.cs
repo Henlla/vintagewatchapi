@@ -7,40 +7,37 @@ namespace VintageTimepieceModel;
 
 public partial class VintagedbContext : DbContext
 {
-    public VintagedbContext(DbContextOptions<VintagedbContext> options)
-        : base(options)
+    public VintagedbContext(DbContextOptions<VintagedbContext> options) : base(options)
     {
     }
 
-    public virtual DbSet<Category> Categories { get; set; }
+    public DbSet<Category> Categories { get; set; }
 
-    public virtual DbSet<Evaluation> Evaluations { get; set; }
+    public DbSet<Evaluation> Evaluations { get; set; }
 
-    public virtual DbSet<FeedbacksTimepiece> FeedbacksTimepieces { get; set; }
+    public DbSet<FeedbacksTimepiece> FeedbacksTimepieces { get; set; }
 
-    public virtual DbSet<FeedbacksUser> FeedbacksUsers { get; set; }
+    public DbSet<FeedbacksUser> FeedbacksUsers { get; set; }
 
-    public virtual DbSet<Order> Orders { get; set; }
+    public DbSet<Order> Orders { get; set; }
 
-    public virtual DbSet<OrdersDetail> OrdersDetails { get; set; }
+    public DbSet<OrdersDetail> OrdersDetails { get; set; }
 
-    public virtual DbSet<RatingsTimepiece> RatingsTimepieces { get; set; }
+    public DbSet<RatingsTimepiece> RatingsTimepieces { get; set; }
 
-    public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<Role> Roles { get; set; }
 
-    public virtual DbSet<Role> Roles { get; set; }
+    public DbSet<SupportTicket> SupportTickets { get; set; }
 
-    public virtual DbSet<SupportTicket> SupportTickets { get; set; }
+    public DbSet<Timepiece> Timepieces { get; set; }
 
-    public virtual DbSet<Timepiece> Timepieces { get; set; }
+    public DbSet<TimepieceCategory> TimepieceCategories { get; set; }
 
-    public virtual DbSet<TimepieceCategory> TimepieceCategories { get; set; }
+    public DbSet<TimepieceEvaluation> TimepieceEvaluations { get; set; }
 
-    public virtual DbSet<TimepieceEvaluation> TimepieceEvaluations { get; set; }
+    public DbSet<TimepieceImage> TimepieceImages { get; set; }
 
-    public virtual DbSet<TimepieceImage> TimepieceImages { get; set; }
-
-    public virtual DbSet<User> Users { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -55,6 +52,9 @@ public partial class VintagedbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("categoryName");
+            entity.Property(e => e.IsDel)
+                .HasDefaultValue(false)
+                .HasColumnName("isDel");
         });
 
         modelBuilder.Entity<Evaluation>(entity =>
@@ -68,6 +68,9 @@ public partial class VintagedbContext : DbContext
                 .HasColumnType("text")
                 .HasColumnName("comments");
             entity.Property(e => e.EvaluatorId).HasColumnName("evaluatorId");
+            entity.Property(e => e.IsDel)
+                .HasDefaultValue(false)
+                .HasColumnName("isDel");
             entity.Property(e => e.ValueExtimated)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("valueExtimated");
@@ -85,11 +88,14 @@ public partial class VintagedbContext : DbContext
 
             entity.Property(e => e.FeedbackId).HasColumnName("feedbackId");
             entity.Property(e => e.Comment)
-                .HasColumnType("text")
+                .HasMaxLength(300)
                 .HasColumnName("comment");
             entity.Property(e => e.FeedbackDate)
                 .HasColumnType("datetime")
                 .HasColumnName("feedbackDate");
+            entity.Property(e => e.IsDel)
+                .HasDefaultValue(false)
+                .HasColumnName("isDel");
             entity.Property(e => e.TimepieceId).HasColumnName("timepieceId");
             entity.Property(e => e.UserId).HasColumnName("userId");
 
@@ -110,12 +116,15 @@ public partial class VintagedbContext : DbContext
 
             entity.Property(e => e.FeedbackUsersId).HasColumnName("feedbackUsersId");
             entity.Property(e => e.Comment)
-                .HasColumnType("text")
+                .HasMaxLength(300)
                 .HasColumnName("comment");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("createdDate");
             entity.Property(e => e.FeedbackTargetId).HasColumnName("feedbackTargetId");
+            entity.Property(e => e.IsDel)
+                .HasDefaultValue(false)
+                .HasColumnName("isDel");
             entity.Property(e => e.RatingStar).HasColumnName("ratingStar");
             entity.Property(e => e.UserId).HasColumnName("userId");
 
@@ -135,6 +144,9 @@ public partial class VintagedbContext : DbContext
             entity.ToTable("orders");
 
             entity.Property(e => e.OrderId).HasColumnName("orderId");
+            entity.Property(e => e.IsDel)
+                .HasDefaultValue(false)
+                .HasColumnName("isDel");
             entity.Property(e => e.OrderDate)
                 .HasColumnType("datetime")
                 .HasColumnName("orderDate");
@@ -155,6 +167,9 @@ public partial class VintagedbContext : DbContext
             entity.ToTable("orders_detail");
 
             entity.Property(e => e.OrderDetailId).HasColumnName("orderDetailId");
+            entity.Property(e => e.IsDel)
+                .HasDefaultValue(false)
+                .HasColumnName("isDel");
             entity.Property(e => e.OrderId).HasColumnName("orderId");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
             entity.Property(e => e.TimepieceId).HasColumnName("timepieceId");
@@ -178,6 +193,9 @@ public partial class VintagedbContext : DbContext
             entity.ToTable("ratings_timepiece");
 
             entity.Property(e => e.RatingId).HasColumnName("ratingId");
+            entity.Property(e => e.IsDel)
+                .HasDefaultValue(false)
+                .HasColumnName("isDel");
             entity.Property(e => e.RatingDate)
                 .HasColumnType("datetime")
                 .HasColumnName("ratingDate");
@@ -194,34 +212,6 @@ public partial class VintagedbContext : DbContext
                 .HasConstraintName("FK_UserRatingTimepiece");
         });
 
-        modelBuilder.Entity<RefreshToken>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__refresh___3213E83FBE6FC19D");
-
-            entity.ToTable("refresh_token");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.ExpiredAt)
-                .HasColumnType("datetime")
-                .HasColumnName("expiredAt");
-            entity.Property(e => e.IsRevoke).HasColumnName("isRevoke");
-            entity.Property(e => e.IsUsed).HasColumnName("isUsed");
-            entity.Property(e => e.IssueAt)
-                .HasColumnType("datetime")
-                .HasColumnName("issueAt");
-            entity.Property(e => e.JwtId)
-                .IsUnicode(false)
-                .HasColumnName("jwtId");
-            entity.Property(e => e.Token)
-                .IsUnicode(false)
-                .HasColumnName("token");
-            entity.Property(e => e.UserId).HasColumnName("userId");
-
-            entity.HasOne(d => d.User).WithMany(p => p.RefreshTokens)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK_UserRefreshToken");
-        });
-
         modelBuilder.Entity<Role>(entity =>
         {
             entity.HasKey(e => e.RoleId).HasName("PK__roles__CD98462A6C4A3C26");
@@ -229,6 +219,9 @@ public partial class VintagedbContext : DbContext
             entity.ToTable("roles");
 
             entity.Property(e => e.RoleId).HasColumnName("roleId");
+            entity.Property(e => e.IsDel)
+                .HasDefaultValue(false)
+                .HasColumnName("isDel");
             entity.Property(e => e.RoleName)
                 .HasMaxLength(20)
                 .IsUnicode(false)
@@ -246,8 +239,11 @@ public partial class VintagedbContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("createdDate");
             entity.Property(e => e.Desciption)
-                .HasColumnType("text")
+                .HasMaxLength(300)
                 .HasColumnName("desciption");
+            entity.Property(e => e.IsDel)
+                .HasDefaultValue(false)
+                .HasColumnName("isDel");
             entity.Property(e => e.IsResovle).HasColumnName("isResovle");
             entity.Property(e => e.ResovleDate)
                 .HasColumnType("datetime")
@@ -276,33 +272,27 @@ public partial class VintagedbContext : DbContext
 
             entity.Property(e => e.TimepieceId).HasColumnName("timepieceId");
             entity.Property(e => e.Brand)
-                .HasMaxLength(50)
-                .IsUnicode(false)
+                .HasMaxLength(100)
                 .HasColumnName("brand");
             entity.Property(e => e.DatePost)
                 .HasColumnType("datetime")
                 .HasColumnName("datePost");
             entity.Property(e => e.Description)
-                .HasColumnType("text")
+                .HasMaxLength(300)
                 .HasColumnName("description");
-            entity.Property(e => e.ImageId).HasColumnName("imageId");
-            entity.Property(e => e.IsDel).HasColumnName("isDel");
+            entity.Property(e => e.IsDel)
+                .HasDefaultValue(false)
+                .HasColumnName("isDel");
             entity.Property(e => e.Model)
-                .HasMaxLength(50)
-                .IsUnicode(false)
+                .HasMaxLength(100)
                 .HasColumnName("model");
             entity.Property(e => e.Price)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("price");
             entity.Property(e => e.TimepieceName)
-                .HasMaxLength(50)
-                .IsUnicode(false)
+                .HasMaxLength(100)
                 .HasColumnName("timepieceName");
             entity.Property(e => e.UserId).HasColumnName("userId");
-
-            entity.HasOne(d => d.Image).WithMany(p => p.Timepieces)
-                .HasForeignKey(d => d.ImageId)
-                .HasConstraintName("FK_ImageTimepiece");
 
             entity.HasOne(d => d.User).WithMany(p => p.Timepieces)
                 .HasForeignKey(d => d.UserId)
@@ -317,6 +307,9 @@ public partial class VintagedbContext : DbContext
 
             entity.Property(e => e.TimepieceCategoryId).HasColumnName("timepieceCategoryId");
             entity.Property(e => e.CategoryId).HasColumnName("categoryId");
+            entity.Property(e => e.IsDel)
+                .HasDefaultValue(false)
+                .HasColumnName("isDel");
             entity.Property(e => e.TimepieceId).HasColumnName("timepieceId");
 
             entity.HasOne(d => d.Category).WithMany(p => p.TimepieceCategories)
@@ -337,12 +330,14 @@ public partial class VintagedbContext : DbContext
             entity.Property(e => e.TimepieceEvaluationId).HasColumnName("timepieceEvaluationId");
             entity.Property(e => e.Condition)
                 .HasMaxLength(200)
-                .IsUnicode(false)
                 .HasColumnName("condition");
             entity.Property(e => e.EvaluationDate)
                 .HasColumnType("datetime")
                 .HasColumnName("evaluationDate");
             entity.Property(e => e.EvaluationId).HasColumnName("evaluationId");
+            entity.Property(e => e.IsDel)
+                .HasDefaultValue(false)
+                .HasColumnName("isDel");
             entity.Property(e => e.TimepieceId).HasColumnName("timepieceId");
 
             entity.HasOne(d => d.Evaluation).WithMany(p => p.TimepieceEvaluations)
@@ -362,9 +357,16 @@ public partial class VintagedbContext : DbContext
 
             entity.Property(e => e.TimepieceImageId).HasColumnName("timepieceImageId");
             entity.Property(e => e.ImageUrl)
-                .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("imageUrl");
+            entity.Property(e => e.IsDel)
+                .HasDefaultValue(false)
+                .HasColumnName("isDel");
+            entity.Property(e => e.TimpieceId).HasColumnName("timpieceId");
+
+            entity.HasOne(d => d.Timpiece).WithMany(p => p.TimepieceImages)
+                .HasForeignKey(d => d.TimpieceId)
+                .HasConstraintName("FK_timepiece_image_timepieces");
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -375,28 +377,24 @@ public partial class VintagedbContext : DbContext
 
             entity.Property(e => e.UserId).HasColumnName("userId");
             entity.Property(e => e.Address)
-                .HasMaxLength(50)
-                .IsUnicode(false)
+                .HasMaxLength(100)
                 .HasColumnName("address");
             entity.Property(e => e.DateJoined)
                 .HasColumnType("datetime")
                 .HasColumnName("dateJoined");
             entity.Property(e => e.Email)
-                .HasMaxLength(20)
+                .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("email");
             entity.Property(e => e.FirstName)
-                .HasMaxLength(50)
-                .IsUnicode(false)
+                .HasMaxLength(100)
                 .HasColumnName("firstName");
+            entity.Property(e => e.IsDel)
+                .HasDefaultValue(false)
+                .HasColumnName("isDel");
             entity.Property(e => e.LastName)
-                .HasMaxLength(50)
-                .IsUnicode(false)
+                .HasMaxLength(100)
                 .HasColumnName("lastName");
-            entity.Property(e => e.MiddleName)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("middleName");
             entity.Property(e => e.Password)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -406,10 +404,6 @@ public partial class VintagedbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("phoneNumber");
             entity.Property(e => e.RoleId).HasColumnName("roleId");
-            entity.Property(e => e.Username)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("username");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)

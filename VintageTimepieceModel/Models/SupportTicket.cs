@@ -11,9 +11,9 @@ public partial class SupportTicket
 
     public int? SupportAgentId { get; set; }
 
-    public string Desciption { get; set; }
+    public string? Desciption { get; set; }
 
-    public string Status { get; set; }
+    public string? Status { get; set; }
 
     public DateTime? CreatedDate { get; set; }
 
@@ -21,7 +21,9 @@ public partial class SupportTicket
 
     public bool? IsResovle { get; set; }
 
-    public virtual User SupportAgent { get; set; }
+    public bool? IsDel { get; set; }
 
-    public virtual User User { get; set; }
+    public virtual User? SupportAgent { get; set; }
+
+    public virtual User? User { get; set; }
 }

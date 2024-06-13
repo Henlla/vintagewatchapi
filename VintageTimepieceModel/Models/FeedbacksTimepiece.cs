@@ -11,11 +11,13 @@ public partial class FeedbacksTimepiece
 
     public int? TimepieceId { get; set; }
 
-    public string Comment { get; set; }
+    public string? Comment { get; set; }
 
     public DateTime? FeedbackDate { get; set; }
 
-    public virtual Timepiece Timepiece { get; set; }
+    public bool? IsDel { get; set; }
 
-    public virtual User User { get; set; }
+    public virtual Timepiece? Timepiece { get; set; }
+
+    public virtual User? User { get; set; }
 }

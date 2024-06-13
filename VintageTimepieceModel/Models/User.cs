@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace VintageTimepieceModel.Models;
 
 public partial class User
 {
-    public int UserId { get; set; }
-
-    public string? Username { get; set; }
-
-    public string? Password { get; set; }
+    public int? UserId { get; set; }
 
     public string? Email { get; set; }
 
-    public string? FirstName { get; set; }
+    public string? Password { get; set; }
 
-    public string? MiddleName { get; set; }
+    public string? FirstName { get; set; }
 
     public string? LastName { get; set; }
 
@@ -27,25 +24,34 @@ public partial class User
 
     public int? RoleId { get; set; }
 
+    public bool? IsDel { get; set; }
+    [JsonIgnore]
+
     public virtual ICollection<Evaluation> Evaluations { get; set; } = new List<Evaluation>();
+    [JsonIgnore]
 
     public virtual ICollection<FeedbacksTimepiece> FeedbacksTimepieces { get; set; } = new List<FeedbacksTimepiece>();
+    [JsonIgnore]
 
     public virtual ICollection<FeedbacksUser> FeedbacksUserFeedbackTargets { get; set; } = new List<FeedbacksUser>();
+    [JsonIgnore]
 
     public virtual ICollection<FeedbacksUser> FeedbacksUserUsers { get; set; } = new List<FeedbacksUser>();
+    [JsonIgnore]
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    [JsonIgnore]
 
     public virtual ICollection<RatingsTimepiece> RatingsTimepieces { get; set; } = new List<RatingsTimepiece>();
 
-    public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
-
     public virtual Role? Role { get; set; }
+    [JsonIgnore]
 
     public virtual ICollection<SupportTicket> SupportTicketSupportAgents { get; set; } = new List<SupportTicket>();
+    [JsonIgnore]
 
     public virtual ICollection<SupportTicket> SupportTicketUsers { get; set; } = new List<SupportTicket>();
+    [JsonIgnore]
 
     public virtual ICollection<Timepiece> Timepieces { get; set; } = new List<Timepiece>();
 }
