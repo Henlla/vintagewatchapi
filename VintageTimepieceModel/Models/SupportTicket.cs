@@ -21,7 +21,7 @@ public partial class SupportTicket
 
     public bool? IsResovle { get; set; }
 
-    public bool? IsDel { get; set; } = false;
+    public bool? IsDel { get; set; }
 
     public virtual User? SupportAgent { get; set; }
 

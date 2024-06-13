@@ -36,9 +36,10 @@ namespace VintageTimePieceRepository.Repository
             return null;
         }
 
-        public async Task<User> GetUserByEmail(string value)
+        public async Task<User> GetUserByEmail(string email)
         {
-            var result = await Task.FromResult(await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(value) && u.IsDel == false));
+            var testUser = await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(email));
+            var result = await Task.FromResult(await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(email) && u.IsDel == false));
             if (result == null)
                 return null;
             return result;

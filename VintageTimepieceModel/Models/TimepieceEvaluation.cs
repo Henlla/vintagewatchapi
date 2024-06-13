@@ -15,7 +15,7 @@ public partial class TimepieceEvaluation
 
     public DateTime? EvaluationDate { get; set; }
 
-    public bool? IsDel { get; set; } = false;
+    public bool? IsDel { get; set; }
 
     public virtual Evaluation? Evaluation { get; set; }
 

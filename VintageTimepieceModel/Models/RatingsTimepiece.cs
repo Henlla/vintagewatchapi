@@ -15,7 +15,7 @@ public partial class RatingsTimepiece
 
     public DateTime? RatingDate { get; set; }
 
-    public bool? IsDel { get; set; } = false;
+    public bool? IsDel { get; set; }
 
     public virtual Timepiece? Timepiece { get; set; }
 

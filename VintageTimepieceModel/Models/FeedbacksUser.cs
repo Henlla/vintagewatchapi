@@ -17,7 +17,7 @@ public partial class FeedbacksUser
 
     public DateTime? CreatedDate { get; set; }
 
-    public bool? IsDel { get; set; } = false;
+    public bool? IsDel { get; set; }
 
     public virtual User? FeedbackTarget { get; set; }
 

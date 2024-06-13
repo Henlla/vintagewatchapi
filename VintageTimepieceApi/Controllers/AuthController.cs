@@ -45,14 +45,14 @@ namespace VintageTimepieceApi.Controllers
             var result = await _authService.CheckLogin(user);
             if (result.isSuccess == false)
             {
-                return Ok(result);
+                return BadRequest(result);
             }
             var token = _jwtConfigService.GetAccessTokenFromUser(result.Data);
             var accessToken = new JwtSecurityTokenHandler().WriteToken(token.Data);
 
             return Ok(new APIResponse<User>
             {
-                Message = "Authorize success",
+                Message = "Login success",
                 isSuccess = true,
                 AccessToken = accessToken,
                 Data = result.Data,
@@ -82,12 +82,11 @@ namespace VintageTimepieceApi.Controllers
             return Ok(result);
         }
 
-        [HttpPost, Route("getUserFromToken")]
-        public IActionResult GetUserFromToken([FromBody] JsonElement token)
+
+        [HttpGet, Route("getUserFromToken")]
+        public IActionResult GetUserFromToken([FromQuery] string token)
         {
-            token.TryGetProperty("token", out JsonElement tokenElement);
-            var tokenString = tokenElement.GetString();
-            var result = _jwtConfigService.GetUserFromAccessToken(tokenString);
+            var result = _jwtConfigService.GetUserFromAccessToken(token);
             if (result.isSuccess)
                 return Ok(result);
             return BadRequest(result);

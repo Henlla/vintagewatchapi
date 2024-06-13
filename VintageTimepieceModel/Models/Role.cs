@@ -10,8 +10,7 @@ public partial class Role
 
     public string? RoleName { get; set; }
 
-    public bool? IsDel { get; set; } = false;
+    public bool? IsDel { get; set; }
     [JsonIgnore]
-
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

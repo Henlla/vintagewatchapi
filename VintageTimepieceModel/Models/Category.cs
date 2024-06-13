@@ -10,7 +10,7 @@ public partial class Category
 
     public string? CategoryName { get; set; }
 
-    public bool? IsDel { get; set; } = false;
+    public bool? IsDel { get; set; }
     [JsonIgnore]
     public virtual ICollection<TimepieceCategory> TimepieceCategories { get; set; } = new List<TimepieceCategory>();
 }

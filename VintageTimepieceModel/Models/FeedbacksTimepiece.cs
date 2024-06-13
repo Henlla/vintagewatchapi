@@ -15,7 +15,7 @@ public partial class FeedbacksTimepiece
 
     public DateTime? FeedbackDate { get; set; }
 
-    public bool? IsDel { get; set; } = false;
+    public bool? IsDel { get; set; }
 
     public virtual Timepiece? Timepiece { get; set; }
 

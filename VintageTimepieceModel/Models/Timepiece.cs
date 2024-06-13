@@ -10,8 +10,6 @@ public partial class Timepiece
 
     public int? UserId { get; set; }
 
-    public int? ImageId { get; set; }
-
     public string? TimepieceName { get; set; }
 
     public string? Brand { get; set; }
@@ -24,10 +22,9 @@ public partial class Timepiece
 
     public decimal? Price { get; set; }
 
-    public bool? IsDel { get; set; } = false;
+    public bool? IsDel { get; set; }
     [JsonIgnore]
     public virtual ICollection<FeedbacksTimepiece> FeedbacksTimepieces { get; set; } = new List<FeedbacksTimepiece>();
-    public virtual TimepieceImage? Image { get; set; }
     [JsonIgnore]
     public virtual ICollection<OrdersDetail> OrdersDetails { get; set; } = new List<OrdersDetail>();
     [JsonIgnore]
@@ -36,6 +33,8 @@ public partial class Timepiece
     public virtual ICollection<TimepieceCategory> TimepieceCategories { get; set; } = new List<TimepieceCategory>();
     [JsonIgnore]
     public virtual ICollection<TimepieceEvaluation> TimepieceEvaluations { get; set; } = new List<TimepieceEvaluation>();
+    [JsonIgnore]
+    public virtual ICollection<TimepieceImage> TimepieceImages { get; set; } = new List<TimepieceImage>();
 
     public virtual User? User { get; set; }
 }

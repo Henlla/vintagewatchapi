@@ -7,6 +7,7 @@ using System.Text;
 using VintageTimepieceModel;
 using VintageTimePieceRepository.IRepository;
 using VintageTimePieceRepository.Repository;
+using VintageTimePieceRepository.Util;
 using VintageTimepieceService.IService;
 using VintageTimepieceService.Service;
 
@@ -95,6 +96,7 @@ builder.Services.AddDbContext<VintagedbContext>(options =>
 
 // Setup DI
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+builder.Services.AddScoped<IHelper, Helper>();
 
 // Jwt
 builder.Services.AddScoped<IJwtConfigRepository, JwtConfigRepository>();
@@ -121,6 +123,9 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ITimepieceRepository, TimepieceRepository>();
 builder.Services.AddScoped<ITimepiecesService, TimepiecesService>();
 
+// TimepieceImage
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 
 var app = builder.Build();

@@ -12,10 +12,13 @@ namespace VintageTimepieceService.IService
     {
         public Task<APIResponse<PageList<Timepiece>>> GetAllTimepieceWithPaging(PagingModel pageModel);
         public Task<APIResponse<List<Timepiece>>> GetAllTimepiece();
-        public Task<APIResponse<Timepiece>> CreateNewTimepiece(Timepiece timepiece);
         public Task<APIResponse<Timepiece>> DeleteTimepiece(int id);
         public Task<APIResponse<Timepiece>> GetOneTimepiece(int id);
         public Task<APIResponse<Timepiece>> UpdateTimepiece(int id, Timepiece timepiece);
+        public Task<APIResponse<List<Timepiece>>> GetAllTimepieceExceptUser(User user);
+        public Task<APIResponse<PageList<Timepiece>>> GetAllTimepieceWithPagingExceptUser(User user, PagingModel pagingModel);
+
+        public Task<APIResponse<Timepiece>> UploadNewTimepiece(Timepiece timepiece);
 
     }
 }
