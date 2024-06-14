@@ -16,6 +16,21 @@ namespace VintageTimePieceRepository.Repository
             _passwordRepository = hashPasswordRepository;
         }
 
+        public async Task<User?> checkLogin(LoginModel loginModel)
+        {
+            var getUsers = await _context.Users.Where(us => us.Email.Equals(loginModel.Username) && us.IsDel == false).SingleOrDefaultAsync();
+            if (getUsers == null)
+            {
+                return null;
+            }
+            var hashPassword = _passwordRepository.VerifyPassword(getUsers.Password, loginModel.Password);
+            if (!hashPassword)
+            {
+                return null;
+            }
+            return getUsers;
+        }
+
         public async Task<User> CreateNewAccount(RegisterModel registerUser)
         {
             var existsUser = await Task.FromResult(await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(registerUser.Email) && u.IsDel == false));
@@ -38,7 +53,6 @@ namespace VintageTimePieceRepository.Repository
 
         public async Task<User> GetUserByEmail(string email)
         {
-            var testUser = await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(email));
             var result = await Task.FromResult(await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(email) && u.IsDel == false));
             if (result == null)
                 return null;

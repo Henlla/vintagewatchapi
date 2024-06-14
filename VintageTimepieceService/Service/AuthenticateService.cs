@@ -15,7 +15,7 @@ namespace VintageTimepieceService.Service
         }
         public async Task<APIResponse<User>> CheckLogin(LoginModel user)
         {
-            var result = await Task.FromResult(await _authenticateRepository.GetUserByEmail(user.Username));
+            var result = await _authenticateRepository.checkLogin(user);
             if (result == null)
                 return new APIResponse<User>
                 {

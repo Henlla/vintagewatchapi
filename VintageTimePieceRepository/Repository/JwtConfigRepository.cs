@@ -38,7 +38,7 @@ namespace VintageTimePieceRepository.Repository
                 new Claim("UserId", user.UserId.ToString()),
                 new Claim("DisplayName",fullName),
                 new Claim("Username",fullName),
-                new Claim("RoleName", user.Role.RoleName)
+                //new Claim("RoleName", user.Role.RoleName)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:JwtSecret"]));

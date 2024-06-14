@@ -13,6 +13,8 @@ namespace VintageTimePieceRepository.IRepository
         public Task<PageList<TimepieceModel>> GetAllTimepieceWithPagingExceptUser(User user, PagingModel pagingModel);
         public Task<TimepieceModel?> GetTimepieceById(int id);
         public Task<List<TimepieceModel>> GetTimepieceByName(string name);
+        public Task<List<TimepieceModel>> GetTimepieceByNameExceptUser(string name, User user);
+        public Task<List<TimepieceModel>> GetTimepieceByCategory(string categoryName);
 
         public Task<string>? UploadImage(IFormFile files);
     }

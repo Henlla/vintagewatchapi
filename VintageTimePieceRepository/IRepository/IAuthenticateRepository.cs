@@ -8,5 +8,6 @@ namespace VintageTimePieceRepository.IRepository
     {
         public Task<User> CreateNewAccount(RegisterModel registerUser);
         public Task<User> GetUserByEmail(string email);
+        public Task<User> checkLogin(LoginModel loginModel);
     }
 }
