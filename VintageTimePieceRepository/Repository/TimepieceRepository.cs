@@ -78,7 +78,6 @@ namespace VintageTimePieceRepository.Repository
                                });
             return await Task.FromResult(PageList<TimepieceModel>.GetPagedList(listProduct, pagingModel.PageNumber, pagingModel.PageSize));
         }
-
         public async Task<TimepieceModel?> GetTimepieceById(int id)
         {
             var timePiece = await (from tp in _context.Timepieces
@@ -92,7 +91,6 @@ namespace VintageTimePieceRepository.Repository
                                    }).SingleOrDefaultAsync();
             return await Task.FromResult(timePiece);
         }
-
         public async Task<List<TimepieceModel>> GetTimepieceByName(string name)
         {
             var listProduct = await (from tp in _context.Timepieces
@@ -105,6 +103,40 @@ namespace VintageTimePieceRepository.Repository
                                          images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
                                      }).ToListAsync();
             return await Task.FromResult(listProduct);
+        }
+        public async Task<List<TimepieceModel>> GetTimepieceByNameExceptUser(string name, User user)
+        {
+            List<TimepieceModel> listProduct = new List<TimepieceModel>();
+            if (user == null)
+            {
+                listProduct = await (from tp in _context.Timepieces
+                                     where tp.IsDel == false && tp.TimepieceName.Contains(name)
+                                     join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
+                                     select new TimepieceModel
+                                     {
+                                         timepiece = tp,
+                                         mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
+                                         images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                                     }).ToListAsync();
+            }
+            else
+            {
+                listProduct = await (from tp in _context.Timepieces
+                                     where tp.IsDel == false && tp.TimepieceName.Contains(name) && tp.UserId != user.UserId
+                                     join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
+                                     select new TimepieceModel
+                                     {
+                                         timepiece = tp,
+                                         mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
+                                         images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                                     }).ToListAsync();
+            }
+
+            return await Task.FromResult(listProduct);
+        }
+        public Task<List<TimepieceModel>> GetTimepieceByCategory(string categoryName)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<string>? UploadImage(IFormFile files)
@@ -124,9 +156,13 @@ namespace VintageTimePieceRepository.Repository
                     return accessToken;
                 }
             });
-            var task = storage.Child("images").PutAsync(stream);
+            var task = storage
+                .Child("images")
+                .Child(files.FileName)
+                .PutAsync(stream);
             var url = await task;
             return url;
         }
+
     }
 }

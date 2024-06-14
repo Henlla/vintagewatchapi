@@ -9,5 +9,10 @@ namespace VintageTimePieceRepository.Repository
         public CategoryRepository(VintagedbContext context) : base(context)
         {
         }
+
+        public async Task<List<Category>> FindAllCategory()
+        {
+            return await Task.FromResult(_context.Categories.ToList());
+        }
     }
 }

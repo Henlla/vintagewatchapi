@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VintageTimepieceModel.Models;
 using VintageTimepieceModel.Models.Shared;
 using VintageTimePieceRepository.IRepository;
 using VintageTimepieceService.IService;
@@ -88,10 +87,10 @@ namespace VintageTimepieceApi.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
         [HttpPost, Route("uploadTimepiece")]
-        public async Task<IActionResult> Post([FromQuery]string token)
+        public async Task<IActionResult> Post([FromForm] IFormFile files)
         {
-
-            return Ok(token);
+            var result = _timepieceRepository.UploadImage(files);
+            return Ok(result);
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]

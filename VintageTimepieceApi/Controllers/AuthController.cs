@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.Json.Nodes;
 using System.Text.Json;
+using System.Data.SqlClient;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace VintageTimepieceApi.Controllers
