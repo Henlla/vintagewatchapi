@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VintageTimepieceModel.Models.Shared
 {
-    public class TimepieceModel
+    public class TimepieceViewModel
     {
         public Timepiece? timepiece { get; set; }
         public TimepieceImage? mainImage { get; set; }

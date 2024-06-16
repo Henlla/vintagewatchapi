@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VintageTimepieceModel.Models;
 using VintageTimepieceModel.Models.Shared;
 using VintageTimePieceRepository.IRepository;
 using VintageTimepieceService.IService;
@@ -87,15 +88,19 @@ namespace VintageTimepieceApi.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
         [HttpPost, Route("uploadTimepiece")]
-        public async Task<IActionResult> Post([FromForm] IFormFile files)
+        public async Task<IActionResult> Post([FromForm] List<IFormFile> files, [FromForm] Timepiece timepiece)
         {
-            var result = _timepieceRepository.UploadImage(files);
-            return Ok(result);
+
+            foreach (var file in files)
+            {
+                var result = await Task.FromResult(_timepieceRepository.UploadImage(file));
+            }
+            return Ok("");
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
         [HttpPut, Route("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] TimepieceModel timepiece)
+        public async Task<IActionResult> Put(int id, [FromBody] TimepieceViewModel timepiece)
         {
             var result = await _timepieceService.UpdateTimepiece(id, timepiece);
             if (!result.isSuccess)

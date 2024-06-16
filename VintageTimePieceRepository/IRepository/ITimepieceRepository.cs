@@ -7,15 +7,15 @@ namespace VintageTimePieceRepository.IRepository
     public interface ITimepieceRepository : IBaseRepository<Timepiece>
     {
         // R
-        public Task<List<TimepieceModel>> GetAllTimepiece();
-        public Task<List<TimepieceModel>> GetAllTimepieceExceptUser(User user);
-        public Task<PageList<TimepieceModel>> GetAllTimepieceWithPaging(PagingModel paginModel);
-        public Task<PageList<TimepieceModel>> GetAllTimepieceWithPagingExceptUser(User user, PagingModel pagingModel);
-        public Task<TimepieceModel?> GetTimepieceById(int id);
-        public Task<List<TimepieceModel>> GetTimepieceByName(string name);
-        public Task<List<TimepieceModel>> GetTimepieceByNameExceptUser(string name, User user);
-        public Task<List<TimepieceModel>> GetTimepieceByCategory(string categoryName);
+        public List<TimepieceViewModel> GetAllTimepiece();
+        public List<TimepieceViewModel> GetAllTimepieceExceptUser(User user);
+        public PageList<TimepieceViewModel> GetAllTimepieceWithPaging(PagingModel paginModel);
+        public PageList<TimepieceViewModel> GetAllTimepieceWithPagingExceptUser(User user, PagingModel pagingModel);
+        public TimepieceViewModel? GetTimepieceById(int id);
+        public List<TimepieceViewModel> GetTimepieceByName(string name);
+        public List<TimepieceViewModel> GetTimepieceByNameExceptUser(string name, User user);
+        public List<TimepieceViewModel> GetTimepieceByCategory(int categoryId);
 
-        public Task<string>? UploadImage(IFormFile files);
+        public string UploadImage(IFormFile files);
     }
 }

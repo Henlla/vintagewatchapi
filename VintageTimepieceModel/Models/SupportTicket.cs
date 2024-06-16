@@ -14,7 +14,7 @@ public partial class SupportTicket
     public string? Desciption { get; set; }
 
     public string? Status { get; set; }
-
+    
     public DateTime? CreatedDate { get; set; }
 
     public DateTime? ResovleDate { get; set; }

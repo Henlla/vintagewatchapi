@@ -15,7 +15,14 @@ namespace VintageTimepieceService.Service
 
         public async Task<APIResponse<Category>> CreateNewCategory(Category cate)
         {
-            var result = await _categoryRepository.Add(cate);
+            var result = await Task.FromResult(_categoryRepository.Add(cate));
+            if (result == null)
+                return new APIResponse<Category>
+                {
+                    Message = "Create category fail",
+                    isSuccess = false,
+                    Data = result
+                };
             return new APIResponse<Category>
             {
                 Message = "Create category success",
@@ -26,8 +33,8 @@ namespace VintageTimepieceService.Service
 
         public async Task<APIResponse<Category>> DeleteCategory(int id)
         {
-            var result = await Task.FromResult(_categoryRepository.FindAll().Where(c => c.CategoryId == id && c.IsDel == false).FirstOrDefault());
-            if (result == null)
+            var category = _categoryRepository.GetCategoryById(id);
+            if (category == null)
             {
                 return new APIResponse<Category>
                 {
@@ -35,18 +42,25 @@ namespace VintageTimepieceService.Service
                     isSuccess = false,
                 };
             }
-            result.IsDel = true;
-            await _categoryRepository.Update(result);
+            category.IsDel = true;
+            var result = await Task.FromResult(_categoryRepository.Update(category));
+            if (result == null)
+                return new APIResponse<Category>
+                {
+                    Message = "Delete category fail",
+                    isSuccess = false,
+                };
             return new APIResponse<Category>
             {
                 Message = "Delete category success",
                 isSuccess = true,
+                Data = result
             };
         }
 
         public async Task<APIResponse<List<Category>>> GetAllCategory()
         {
-            var result = await Task.FromResult(_categoryRepository.FindAll().Where(c => c.IsDel == false).ToList());
+            var result = await Task.FromResult(_categoryRepository.GetAllCategory());
             return new APIResponse<List<Category>>
             {
                 Message = "Get all category success",
@@ -57,7 +71,7 @@ namespace VintageTimepieceService.Service
 
         public async Task<APIResponse<Category>> GetCategoryById(int id)
         {
-            var result = await Task.FromResult(_categoryRepository.FindAll().Where(c => c.CategoryId == id && c.IsDel == false).FirstOrDefault());
+            var result = await Task.FromResult(_categoryRepository.GetCategoryById(id));
             if (result != null)
             {
                 return new APIResponse<Category>
@@ -76,8 +90,8 @@ namespace VintageTimepieceService.Service
 
         public async Task<APIResponse<Category>> UpdateCategory(int id, Category cate)
         {
-            var result = await Task.FromResult(_categoryRepository.FindAll().Where(c => c.CategoryId == id && c.IsDel == false).FirstOrDefault());
-            if (result == null)
+            var category = await Task.FromResult(_categoryRepository.GetCategoryById(id));
+            if (category == null)
             {
                 return new APIResponse<Category>
                 {
@@ -85,8 +99,15 @@ namespace VintageTimepieceService.Service
                     isSuccess = false,
                 };
             }
-            result.CategoryName = cate.CategoryName;
-            await _categoryRepository.Update(result);
+            category.CategoryName = cate.CategoryName;
+            var result = await Task.FromResult(_categoryRepository.Update(category));
+            if (result == null)
+                return new APIResponse<Category>
+                {
+                    Message = "Update category fail",
+                    isSuccess = false,
+                    Data = result
+                };
             return new APIResponse<Category>
             {
                 Message = "Update category success",

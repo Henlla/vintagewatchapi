@@ -1,166 +1,162 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using VintageTimepieceModel;
 using VintageTimepieceModel.Models;
 using VintageTimepieceModel.Models.Shared;
 using VintageTimePieceRepository.IRepository;
-using System.Linq;
 using Microsoft.AspNetCore.Http;
-using Firebase.Storage;
 using Microsoft.Extensions.Configuration;
-using Google.Apis.Auth.OAuth2;
+using VintageTimePieceRepository.Util;
 
 namespace VintageTimePieceRepository.Repository
 {
     public class TimepieceRepository : BaseRepository<Timepiece>, ITimepieceRepository
     {
         private readonly IConfiguration _configuration;
-        public TimepieceRepository(VintagedbContext context, IConfiguration configuration) : base(context)
+        private IHelper _helper { get; }
+        public TimepieceRepository(VintagedbContext context,
+            IConfiguration configuration,
+            IHelper helper) : base(context)
         {
             _configuration = configuration;
+            _helper = helper;
         }
         // R
-        public async Task<List<TimepieceModel>> GetAllTimepiece()
+        public List<TimepieceViewModel> GetAllTimepiece()
         {
-            var listProduct = await (from tp in _context.Timepieces
-                                     where tp.IsDel == false
-                                     join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-                                     select new TimepieceModel
-                                     {
-                                         timepiece = tp,
-                                         mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-                                         images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
-                                     }).ToListAsync();
-            return await Task.FromResult(listProduct);
+            var listProduct = (from tp in _context.Timepieces
+                               where tp.IsDel == false
+                               join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
+                               select new TimepieceViewModel
+                               {
+                                   timepiece = tp,
+                                   mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
+                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                               }).ToList();
+            return listProduct;
         }
 
-        public async Task<List<TimepieceModel>> GetAllTimepieceExceptUser(User user)
+        public List<TimepieceViewModel> GetAllTimepieceExceptUser(User user)
         {
-            var listProduct = await (from tp in _context.Timepieces
-                                     where tp.IsDel == false && tp.UserId != user.UserId
-                                     join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-                                     select new TimepieceModel
-                                     {
-                                         timepiece = tp,
-                                         mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-                                         images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
-                                     }).ToListAsync();
-            return await Task.FromResult(listProduct);
+            var listProduct = (from tp in _context.Timepieces
+                               where tp.IsDel == false && tp.UserId != user.UserId
+                               join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
+                               select new TimepieceViewModel
+                               {
+                                   timepiece = tp,
+                                   mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
+                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                               }).ToList();
+            return listProduct;
         }
 
-        public async Task<PageList<TimepieceModel>> GetAllTimepieceWithPaging(PagingModel pagingModel)
+        public PageList<TimepieceViewModel> GetAllTimepieceWithPaging(PagingModel pagingModel)
         {
             var listProduct = (from tp in _context.Timepieces
                                where tp.IsDel == false
                                orderby tp.TimepieceId
                                join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-                               select new TimepieceModel
+                               select new TimepieceViewModel
                                {
                                    timepiece = tp,
                                    mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
                                    images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
                                });
-            return await Task.FromResult(PageList<TimepieceModel>.GetPagedList(listProduct, pagingModel.PageNumber, pagingModel.PageSize));
+            return PageList<TimepieceViewModel>.GetPagedList(listProduct, pagingModel.PageNumber, pagingModel.PageSize);
         }
 
-        public async Task<PageList<TimepieceModel>> GetAllTimepieceWithPagingExceptUser(User user, PagingModel pagingModel)
+        public PageList<TimepieceViewModel> GetAllTimepieceWithPagingExceptUser(User user, PagingModel pagingModel)
         {
             var listProduct = (from tp in _context.Timepieces
                                where tp.IsDel == false && tp.UserId != user.UserId
                                orderby tp.TimepieceId
                                join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-                               select new TimepieceModel
+                               select new TimepieceViewModel
                                {
                                    timepiece = tp,
                                    mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
                                    images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
                                });
-            return await Task.FromResult(PageList<TimepieceModel>.GetPagedList(listProduct, pagingModel.PageNumber, pagingModel.PageSize));
+            return PageList<TimepieceViewModel>.GetPagedList(listProduct, pagingModel.PageNumber, pagingModel.PageSize);
         }
-        public async Task<TimepieceModel?> GetTimepieceById(int id)
+        public TimepieceViewModel? GetTimepieceById(int id)
         {
-            var timePiece = await (from tp in _context.Timepieces
-                                   where tp.TimepieceId == id && tp.IsDel == false
-                                   join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-                                   select new TimepieceModel
-                                   {
-                                       timepiece = tp,
-                                       mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-                                       images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
-                                   }).SingleOrDefaultAsync();
-            return await Task.FromResult(timePiece);
+            var timePiece = (from tp in _context.Timepieces
+                             where tp.TimepieceId == id && tp.IsDel == false
+                             join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
+                             select new TimepieceViewModel
+                             {
+                                 timepiece = tp,
+                                 mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
+                                 images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                             }).SingleOrDefault();
+            return timePiece;
         }
-        public async Task<List<TimepieceModel>> GetTimepieceByName(string name)
+        public List<TimepieceViewModel> GetTimepieceByName(string name)
         {
-            var listProduct = await (from tp in _context.Timepieces
-                                     where tp.IsDel == false && tp.TimepieceName.Contains(name)
-                                     join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-                                     select new TimepieceModel
-                                     {
-                                         timepiece = tp,
-                                         mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-                                         images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
-                                     }).ToListAsync();
-            return await Task.FromResult(listProduct);
+            var listProduct = (from tp in _context.Timepieces
+                               where tp.IsDel == false && tp.TimepieceName.Contains(name)
+                               join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
+                               select new TimepieceViewModel
+                               {
+                                   timepiece = tp,
+                                   mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
+                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                               }).ToList();
+            return listProduct;
         }
-        public async Task<List<TimepieceModel>> GetTimepieceByNameExceptUser(string name, User user)
+        public List<TimepieceViewModel> GetTimepieceByNameExceptUser(string name, User user)
         {
-            List<TimepieceModel> listProduct = new List<TimepieceModel>();
+            List<TimepieceViewModel> listProduct = new List<TimepieceViewModel>();
             if (user == null)
             {
-                listProduct = await (from tp in _context.Timepieces
-                                     where tp.IsDel == false && tp.TimepieceName.Contains(name)
-                                     join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-                                     select new TimepieceModel
-                                     {
-                                         timepiece = tp,
-                                         mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-                                         images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
-                                     }).ToListAsync();
+                listProduct = (from tp in _context.Timepieces
+                               where tp.IsDel == false && tp.TimepieceName.Contains(name)
+                               join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
+                               select new TimepieceViewModel
+                               {
+                                   timepiece = tp,
+                                   mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
+                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                               }).ToList();
             }
             else
             {
-                listProduct = await (from tp in _context.Timepieces
-                                     where tp.IsDel == false && tp.TimepieceName.Contains(name) && tp.UserId != user.UserId
-                                     join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-                                     select new TimepieceModel
-                                     {
-                                         timepiece = tp,
-                                         mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-                                         images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
-                                     }).ToListAsync();
+                listProduct = (from tp in _context.Timepieces
+                               where tp.IsDel == false && tp.TimepieceName.Contains(name) && tp.UserId != user.UserId
+                               join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
+                               select new TimepieceViewModel
+                               {
+                                   timepiece = tp,
+                                   mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
+                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                               }).ToList();
             }
 
-            return await Task.FromResult(listProduct);
+            return listProduct;
         }
-        public Task<List<TimepieceModel>> GetTimepieceByCategory(string categoryName)
+        public List<TimepieceViewModel> GetTimepieceByCategory(int categoryId)
         {
-            throw new NotImplementedException();
+            var listTimePiece = (from tc in _context.TimepieceCategories
+                                 join tp in _context.Timepieces on tc.TimepieceId equals tp.TimepieceId
+                                 join ca in _context.Categories on tc.CategoryId equals ca.CategoryId
+                                 join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
+                                 where ca.CategoryId == categoryId
+                                 select new TimepieceViewModel
+                                 {
+                                     timepiece = tp,
+                                     mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).First(),
+                                     images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                                 }).ToList();
+            return listTimePiece;
         }
 
-        public async Task<string>? UploadImage(IFormFile files)
+        public string UploadImage(IFormFile files)
         {
-            var bucket = _configuration["Firebase:bucket"];
-            if (files == null || files.Length == 0)
+            string base64String = _helper.ConvertFileToBase64(files).Result;
+            if (base64String == string.Empty)
             {
-                return null;
+                return base64String;
             }
-            var stream = files.OpenReadStream();
-            var storage = new FirebaseStorage(bucket, new FirebaseStorageOptions
-            {
-                AuthTokenAsyncFactory = async () =>
-                {
-                    var googleCredential = GoogleCredential.FromFile(_configuration["Firebase:jsonPath"]);
-                    var accessToken = await googleCredential.UnderlyingCredential.GetAccessTokenForRequestAsync();
-                    return accessToken;
-                }
-            });
-            var task = storage
-                .Child("images")
-                .Child(files.FileName)
-                .PutAsync(stream);
-            var url = await task;
+            var url = _helper.UploadImageToFirebase(base64String).Result;
             return url;
         }
 

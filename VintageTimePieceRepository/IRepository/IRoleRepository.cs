@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VintageTimepieceModel.Models;
-using VintageTimepieceModel.Models.Shared;
+﻿using VintageTimepieceModel.Models;
 
 namespace VintageTimePieceRepository.IRepository
 {
     public interface IRoleRepository : IBaseRepository<Role>
     {
-        public Task<Role> DeleteRole(int roleId);
+        public Role? DeleteRole(Role role);
+        public List<Role> GetAllRole();
+        public Role? GetRoleByName(string roleName);
+        public Role? CreateNewRole(Role role);
+        public Role? GetRoleById(int id);
+
     }
 }

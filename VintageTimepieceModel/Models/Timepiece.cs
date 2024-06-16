@@ -12,9 +12,7 @@ public partial class Timepiece
 
     public string? TimepieceName { get; set; }
 
-    public string? Brand { get; set; }
-
-    public string? Model { get; set; }
+    public int? BrandId { get; set; }
 
     public string? Description { get; set; }
 
@@ -23,6 +21,8 @@ public partial class Timepiece
     public decimal? Price { get; set; }
 
     public bool? IsDel { get; set; }
+
+    public virtual Brand? Brand { get; set; }
     [JsonIgnore]
     public virtual ICollection<FeedbacksTimepiece> FeedbacksTimepieces { get; set; } = new List<FeedbacksTimepiece>();
     [JsonIgnore]

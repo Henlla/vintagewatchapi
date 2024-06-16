@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,5 +10,6 @@ namespace VintageTimePieceRepository.Util
     public interface IHelper
     {
         public Task<string> UploadImageToFirebase(string imageBase64);
+        public Task<string> ConvertFileToBase64(IFormFile files);
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using VintageTimepieceModel;
+using VintageTimepieceModel.Models;
 using VintageTimePieceRepository.IRepository;
 
 namespace VintageTimePieceRepository.Repository
@@ -11,16 +11,16 @@ namespace VintageTimePieceRepository.Repository
         {
             _context = context;
         }
-        public async Task<T> Add(T entity)
+        public T Add(T entity)
         {
-            await _context.Set<T>().AddAsync(entity);
-            await _context.SaveChangesAsync();
+            _context.Set<T>().Add(entity);
+            _context.SaveChanges();
             return entity;
         }
-        public async Task<List<T>> AddRange(List<T> entity)
+        public List<T> AddRange(List<T> entity)
         {
-            await _context.Set<T>().AddRangeAsync(entity);
-            await _context.SaveChangesAsync();
+            _context.Set<T>().AddRange(entity);
+            _context.SaveChanges();
             return entity;
         }
 
@@ -29,10 +29,10 @@ namespace VintageTimePieceRepository.Repository
             return _context.Set<T>().AsNoTracking();
         }
 
-        public async Task<T> Update(T entity)
+        public T Update(T entity)
         {
             _context.Set<T>().Update(entity);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return entity;
         }
 

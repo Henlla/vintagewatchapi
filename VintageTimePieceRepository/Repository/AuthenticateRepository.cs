@@ -16,7 +16,7 @@ namespace VintageTimePieceRepository.Repository
             _passwordRepository = hashPasswordRepository;
         }
 
-        public async Task<User?> checkLogin(LoginModel loginModel)
+        public async Task<User>? checkLogin(LoginModel loginModel)
         {
             var getUsers = await _context.Users.Where(us => us.Email.Equals(loginModel.Username) && us.IsDel == false).SingleOrDefaultAsync();
             if (getUsers == null)
@@ -31,9 +31,9 @@ namespace VintageTimePieceRepository.Repository
             return getUsers;
         }
 
-        public async Task<User> CreateNewAccount(RegisterModel registerUser)
+        public async Task<User>? CreateNewAccount(RegisterModel registerUser)
         {
-            var existsUser = await Task.FromResult(await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(registerUser.Email) && u.IsDel == false));
+            var existsUser = await GetUserByEmail(registerUser.Email);
             if (existsUser == null)
             {
                 var newUser = new User();
@@ -46,14 +46,14 @@ namespace VintageTimePieceRepository.Repository
                 newUser.RoleId = role.RoleId;
                 await _context.Users.AddAsync(newUser);
                 await _context.SaveChangesAsync();
-                return newUser;
+                return null;
             }
-            return null;
+            return existsUser;
         }
 
-        public async Task<User> GetUserByEmail(string email)
+        public async Task<User>? GetUserByEmail(string email)
         {
-            var result = await Task.FromResult(await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(email) && u.IsDel == false));
+            var result = await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(email) && u.IsDel == false);
             if (result == null)
                 return null;
             return result;
