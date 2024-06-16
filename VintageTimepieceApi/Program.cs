@@ -1,12 +1,9 @@
-using FirebaseAdmin;
-using Google.Apis.Auth.OAuth2;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using VintageTimepieceModel;
+using VintageTimepieceModel.Models;
 using VintageTimePieceRepository.IRepository;
 using VintageTimePieceRepository.Repository;
 using VintageTimePieceRepository.Util;
@@ -25,13 +22,6 @@ builder.Services.AddCors(options =>
         .AllowAnyHeader()
         .AllowAnyMethod());
 });
-
-// Config Firebase
-FirebaseApp.Create(new AppOptions()
-{
-    Credential = GoogleCredential.FromFile(builder.Configuration["Firebase:jsonPath"])
-});
-
 
 // Add services to the container.
 builder.Services.AddControllers();

@@ -32,7 +32,7 @@ namespace VintageTimepieceService.Service
 
         public async Task<APIResponse<User>> GetUsersByEmail(string value)
         {
-            var result = await Task.FromResult(await _authenticateRepository.GetUserByEmail(value));
+            var result = await _authenticateRepository.GetUserByEmail(value);
             if (result == null)
                 return new APIResponse<User>
                 {
@@ -49,11 +49,11 @@ namespace VintageTimepieceService.Service
 
         public async Task<APIResponse<User>> RegisterAccount(RegisterModel registerAccount)
         {
-            var result = await Task.FromResult(await _authenticateRepository.CreateNewAccount(registerAccount));
-            if (result == null)
+            var result = await _authenticateRepository.CreateNewAccount(registerAccount);
+            if (result != null)
                 return new APIResponse<User>
                 {
-                    Message = "Register user fail",
+                    Message = "Register user fail, User exists",
                     isSuccess = false,
                     Data = result
                 };

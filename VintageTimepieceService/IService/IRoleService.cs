@@ -14,5 +14,6 @@ namespace VintageTimepieceService.IService
         public Task<APIResponse<Role>> CreateNewRole(Role role);
         public Task<APIResponse<Role>> GetRoleByName(string name);
         public Task<APIResponse<Role>> DeleteRole(int id);
+        public Task<APIResponse<Role>> GetRoleById(int id);
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System.Data.Entity;
-using VintageTimepieceModel;
 using VintageTimepieceModel.Models;
-using VintageTimepieceModel.Models.Shared;
 using VintageTimePieceRepository.IRepository;
 
 namespace VintageTimePieceRepository.Repository
@@ -12,16 +10,30 @@ namespace VintageTimePieceRepository.Repository
         {
         }
 
-        public async Task<Role> DeleteRole(int roleId)
+        public Role? CreateNewRole(Role role)
         {
-            var role = await Task.FromResult(await _context.Roles.FirstOrDefaultAsync(r => r.RoleId == roleId && r.IsDel == false));
-            var existsUserHaveRole = await Task.FromResult(await _context.Users.FirstOrDefaultAsync(u => u.RoleId == roleId && u.IsDel == false));
-            if (existsUserHaveRole != null)
-            {
-                return null;
-            }
-            role.IsDel = true;
-            return await Update(role);
+            return Add(role);
+        }
+
+        public Role? DeleteRole(Role role)
+        {
+            return Update(role);
+        }
+
+        public List<Role> GetAllRole()
+        {
+            return FindAll().Where(role => role.IsDel == false).ToList();
+        }
+
+        public Role? GetRoleById(int id)
+        {
+            return FindAll().Where(r => r.RoleId == id).SingleOrDefault();
+        }
+
+        public Role? GetRoleByName(string roleName)
+        {
+            var role = FindAll().Where(r => r.IsDel == false && r.RoleName.Equals(roleName)).SingleOrDefault();
+            return role;
         }
     }
 }

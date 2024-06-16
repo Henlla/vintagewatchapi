@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace VintageTimepieceModel.Models;
 
@@ -16,6 +17,6 @@ public partial class Evaluation
     public bool? IsDel { get; set; }
 
     public virtual User? Evaluator { get; set; }
-
+    [JsonIgnore]
     public virtual ICollection<TimepieceEvaluation> TimepieceEvaluations { get; set; } = new List<TimepieceEvaluation>();
 }

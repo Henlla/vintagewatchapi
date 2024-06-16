@@ -16,89 +16,89 @@ namespace VintageTimepieceService.Service
             _imageRepository = imageRepository;
         }
         // R
-        public async Task<APIResponse<List<TimepieceModel>>> GetAllTimepiece()
+        public async Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepiece()
         {
-            var result = await _timepieceRepository.GetAllTimepiece();
-            return new APIResponse<List<TimepieceModel>>
+            var result = await Task.FromResult(_timepieceRepository.GetAllTimepiece());
+            return new APIResponse<List<TimepieceViewModel>>
             {
                 Message = "Get all product success",
                 isSuccess = true,
                 Data = result
             };
         }
-        public async Task<APIResponse<List<TimepieceModel>>> GetAllTimepieceExceptUser(User user)
+        public async Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepieceExceptUser(User user)
         {
-            var result = await _timepieceRepository.GetAllTimepieceExceptUser(user);
-            return new APIResponse<List<TimepieceModel>>
+            var result = await Task.FromResult(_timepieceRepository.GetAllTimepieceExceptUser(user));
+            return new APIResponse<List<TimepieceViewModel>>
             {
                 Message = "Get all result success",
                 isSuccess = true,
                 Data = result
             };
         }
-        public async Task<APIResponse<PageList<TimepieceModel>>> GetAllTimepieceWithPaging(PagingModel pageModel)
+        public async Task<APIResponse<PageList<TimepieceViewModel>>> GetAllTimepieceWithPaging(PagingModel pageModel)
         {
-            var result = await _timepieceRepository.GetAllTimepieceWithPaging(pageModel);
+            var result = await Task.FromResult(_timepieceRepository.GetAllTimepieceWithPaging(pageModel));
             if (result != null)
-                return new APIResponse<PageList<TimepieceModel>>
+                return new APIResponse<PageList<TimepieceViewModel>>
                 {
                     Message = "Get all timepiece success",
                     isSuccess = true,
                     Data = result
                 };
-            return new APIResponse<PageList<TimepieceModel>>
+            return new APIResponse<PageList<TimepieceViewModel>>
             {
                 Message = "Don't have any timepiece",
                 isSuccess = false,
                 Data = result
             };
         }
-        public async Task<APIResponse<PageList<TimepieceModel>>> GetAllTimepieceWithPagingExceptUser(User user, PagingModel pagingModel)
+        public async Task<APIResponse<PageList<TimepieceViewModel>>> GetAllTimepieceWithPagingExceptUser(User user, PagingModel pagingModel)
         {
-            var result = await _timepieceRepository.GetAllTimepieceWithPagingExceptUser(user, pagingModel);
+            var result = await Task.FromResult(_timepieceRepository.GetAllTimepieceWithPagingExceptUser(user, pagingModel));
             if (result == null)
-                return new APIResponse<PageList<TimepieceModel>>
+                return new APIResponse<PageList<TimepieceViewModel>>
                 {
                     Message = "Don't have any time piece",
                     isSuccess = false,
                 };
-            return new APIResponse<PageList<TimepieceModel>>
+            return new APIResponse<PageList<TimepieceViewModel>>
             {
                 Message = "Get all time pice with paging success",
                 isSuccess = true,
                 Data = result
             };
         }
-        public async Task<APIResponse<TimepieceModel>> GetOneTimepiece(int id)
+        public async Task<APIResponse<TimepieceViewModel>> GetOneTimepiece(int id)
         {
-            var result = await _timepieceRepository.GetTimepieceById(id);
+            var result = await Task.FromResult(_timepieceRepository.GetTimepieceById(id));
             if (result == null)
             {
-                return new APIResponse<TimepieceModel>
+                return new APIResponse<TimepieceViewModel>
                 {
                     Message = "Not found",
                     isSuccess = false,
                 };
             }
 
-            return new APIResponse<TimepieceModel>
+            return new APIResponse<TimepieceViewModel>
             {
                 Message = "Get timepiece success",
                 isSuccess = true,
                 Data = result
             };
         }
-        public async Task<APIResponse<List<TimepieceModel>>> GetTimepieceByName(string name)
+        public async Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByName(string name)
         {
-            var result = await _timepieceRepository.GetTimepieceByName(name);
+            var result = await Task.FromResult(_timepieceRepository.GetTimepieceByName(name));
             if (result.Count > 0)
-                return new APIResponse<List<TimepieceModel>>
+                return new APIResponse<List<TimepieceViewModel>>
                 {
                     Message = "Get product success",
                     isSuccess = true,
                     Data = result
                 };
-            return new APIResponse<List<TimepieceModel>>
+            return new APIResponse<List<TimepieceViewModel>>
             {
                 Message = "Don't have any product",
                 isSuccess = false,
@@ -107,42 +107,69 @@ namespace VintageTimepieceService.Service
         }
 
         // CUD
-        public async Task<APIResponse<TimepieceModel>> DeleteTimepiece(int id)
+        public async Task<APIResponse<TimepieceViewModel>> DeleteTimepiece(int id)
         {
-            var result = await _timepieceRepository.GetTimepieceById(id);
-            if (result != null)
-                return new APIResponse<TimepieceModel>
+            var timepiece = await Task.FromResult(_timepieceRepository.GetTimepieceById(id));
+            if (timepiece != null)
+                return new APIResponse<TimepieceViewModel>
                 {
                     Message = "Timepiece not exists",
                     isSuccess = false,
                 };
-            result.timepiece.IsDel = true;
-            await _timepieceRepository.Update(result.timepiece);
-            return new APIResponse<TimepieceModel>
+            timepiece.timepiece.IsDel = true;
+            var result = await Task.FromResult(_timepieceRepository.Update(timepiece.timepiece));
+            if (result == null)
+                return new APIResponse<TimepieceViewModel>
+                {
+                    Message = "Delete timepiece fail",
+                    isSuccess = false
+                };
+            return new APIResponse<TimepieceViewModel>
             {
                 Message = "Delete timepiece success",
-                isSuccess = true,
-                Data = result
+                isSuccess = true
             };
         }
-        public async Task<APIResponse<TimepieceModel>> UpdateTimepiece(int id, TimepieceModel timePiece)
+        public async Task<APIResponse<TimepieceViewModel>> UpdateTimepiece(int id, TimepieceViewModel timePiece)
         {
-            var result = await _timepieceRepository.GetTimepieceById(id);
-            if (result == null)
+            var timepiece = await Task.FromResult(_timepieceRepository.GetTimepieceById(id));
+            if (timepiece == null)
             {
-                return new APIResponse<TimepieceModel>
+                return new APIResponse<TimepieceViewModel>
                 {
                     Message = "Timepiece not exists",
-                    isSuccess = false,
-                    Data = result
+                    isSuccess = false
                 };
             }
-            result.timepiece = timePiece.timepiece;
-            await _timepieceRepository.Update(result.timepiece);
-            return new APIResponse<TimepieceModel>
+            timepiece.timepiece = timePiece.timepiece;
+            var result = await Task.FromResult(_timepieceRepository.Update(timepiece.timepiece));
+            if (result == null)
+                return new APIResponse<TimepieceViewModel>
+                {
+                    Message = "Update timepiece fail",
+                    isSuccess = true
+                };
+            return new APIResponse<TimepieceViewModel>
             {
                 Message = "Update timepiece success",
-                isSuccess = true,
+                isSuccess = true
+            };
+        }
+
+        public async Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByCategory(int categoryId)
+        {
+            var result = await Task.FromResult(_timepieceRepository.GetTimepieceByCategory(categoryId));
+            if (result.Count > 0)
+                return new APIResponse<List<TimepieceViewModel>>
+                {
+                    Message = "Get timepiece success",
+                    isSuccess = true,
+                    Data = result
+                };
+            return new APIResponse<List<TimepieceViewModel>>
+            {
+                Message = "Don't have timepiece",
+                isSuccess = false,
                 Data = result
             };
         }
