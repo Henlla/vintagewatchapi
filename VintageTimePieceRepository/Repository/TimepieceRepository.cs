@@ -149,14 +149,14 @@ namespace VintageTimePieceRepository.Repository
             return listTimePiece;
         }
 
-        public string UploadImage(IFormFile files)
+        public string UploadImage(IFormFile files, string folder)
         {
             string base64String = _helper.ConvertFileToBase64(files).Result;
             if (base64String == string.Empty)
             {
                 return base64String;
             }
-            var url = _helper.UploadImageToFirebase(base64String).Result;
+            var url = _helper.UploadImageToFirebase(base64String, folder).Result;
             return url;
         }
 

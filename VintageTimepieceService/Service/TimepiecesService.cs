@@ -8,33 +8,45 @@ namespace VintageTimepieceService.Service
     public class TimepiecesService : ITimepiecesService
     {
         private readonly ITimepieceRepository _timepieceRepository;
-        private readonly IImageRepository _imageRepository;
-        public TimepiecesService(ITimepieceRepository timepieceRepository,
-            IImageRepository imageRepository)
+        public TimepiecesService(ITimepieceRepository timepieceRepository)
         {
             _timepieceRepository = timepieceRepository;
-            _imageRepository = imageRepository;
         }
         // R
         public async Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepiece()
         {
             var result = await Task.FromResult(_timepieceRepository.GetAllTimepiece());
+            if (result.Count > 0)
+                return new APIResponse<List<TimepieceViewModel>>
+                {
+                    Message = "Get all product success",
+                    isSuccess = true,
+                    Data = result
+                };
             return new APIResponse<List<TimepieceViewModel>>
             {
-                Message = "Get all product success",
-                isSuccess = true,
+                Message = "Don't have any timepiece",
+                isSuccess = false,
                 Data = result
             };
         }
         public async Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepieceExceptUser(User user)
         {
             var result = await Task.FromResult(_timepieceRepository.GetAllTimepieceExceptUser(user));
+            if (result.Count > 0)
+                return new APIResponse<List<TimepieceViewModel>>
+                {
+                    Message = "Get all result success",
+                    isSuccess = true,
+                    Data = result
+                };
             return new APIResponse<List<TimepieceViewModel>>
             {
-                Message = "Get all result success",
-                isSuccess = true,
+                Message = "Don't have any timepiece",
+                isSuccess = false,
                 Data = result
             };
+
         }
         public async Task<APIResponse<PageList<TimepieceViewModel>>> GetAllTimepieceWithPaging(PagingModel pageModel)
         {
@@ -56,11 +68,12 @@ namespace VintageTimepieceService.Service
         public async Task<APIResponse<PageList<TimepieceViewModel>>> GetAllTimepieceWithPagingExceptUser(User user, PagingModel pagingModel)
         {
             var result = await Task.FromResult(_timepieceRepository.GetAllTimepieceWithPagingExceptUser(user, pagingModel));
-            if (result == null)
+            if (result.Count == 0)
                 return new APIResponse<PageList<TimepieceViewModel>>
                 {
                     Message = "Don't have any time piece",
                     isSuccess = false,
+                    Data= result
                 };
             return new APIResponse<PageList<TimepieceViewModel>>
             {
@@ -78,6 +91,7 @@ namespace VintageTimepieceService.Service
                 {
                     Message = "Not found",
                     isSuccess = false,
+                    Data = result
                 };
             }
 
@@ -105,6 +119,23 @@ namespace VintageTimepieceService.Service
                 Data = result
             };
         }
+        public async Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByNameExceptUser(string name, User user)
+        {
+            var result = await Task.FromResult(_timepieceRepository.GetTimepieceByNameExceptUser(name, user));
+            if (result.Count > 0)
+                return new APIResponse<List<TimepieceViewModel>>
+                {
+                    Message = "Get timepiece success",
+                    isSuccess = true,
+                    Data = result
+                };
+            return new APIResponse<List<TimepieceViewModel>>
+            {
+                Message = "Don't find the timepiece",
+                isSuccess = false,
+                Data = result
+            };
+        }
 
         // CUD
         public async Task<APIResponse<TimepieceViewModel>> DeleteTimepiece(int id)
@@ -115,6 +146,7 @@ namespace VintageTimepieceService.Service
                 {
                     Message = "Timepiece not exists",
                     isSuccess = false,
+                    Data= timepiece
                 };
             timepiece.timepiece.IsDel = true;
             var result = await Task.FromResult(_timepieceRepository.Update(timepiece.timepiece));
@@ -122,7 +154,7 @@ namespace VintageTimepieceService.Service
                 return new APIResponse<TimepieceViewModel>
                 {
                     Message = "Delete timepiece fail",
-                    isSuccess = false
+                    isSuccess = false,
                 };
             return new APIResponse<TimepieceViewModel>
             {
@@ -138,7 +170,8 @@ namespace VintageTimepieceService.Service
                 return new APIResponse<TimepieceViewModel>
                 {
                     Message = "Timepiece not exists",
-                    isSuccess = false
+                    isSuccess = false,
+                    Data = timepiece
                 };
             }
             timepiece.timepiece = timePiece.timepiece;
@@ -147,15 +180,16 @@ namespace VintageTimepieceService.Service
                 return new APIResponse<TimepieceViewModel>
                 {
                     Message = "Update timepiece fail",
-                    isSuccess = true
+                    isSuccess = true,
+                    Data = timepiece
                 };
             return new APIResponse<TimepieceViewModel>
             {
                 Message = "Update timepiece success",
-                isSuccess = true
+                isSuccess = true,
+                Data = timepiece
             };
         }
-
         public async Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByCategory(int categoryId)
         {
             var result = await Task.FromResult(_timepieceRepository.GetTimepieceByCategory(categoryId));
@@ -173,5 +207,6 @@ namespace VintageTimepieceService.Service
                 Data = result
             };
         }
+
     }
 }

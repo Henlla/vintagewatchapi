@@ -33,11 +33,11 @@ namespace VintageTimePieceRepository.Util
             return Task.FromResult(base64String);
         }
 
-        public async Task<string> UploadImageToFirebase(string images)
+        public async Task<string> UploadImageToFirebase(string images, string folder)
         {
             byte[] imageData = Convert.FromBase64String(images);
             var storage = new FirebaseStorage(_configuration["Firebase:bucket"]);
-            var imageUrl = await storage.Child("images")
+            var imageUrl = await storage.Child("images/"+folder)
                 .Child($"{Guid.NewGuid()}_{DateTime.Now.Ticks}.jpg")
                 .PutAsync(new MemoryStream(imageData));
             return imageUrl;
