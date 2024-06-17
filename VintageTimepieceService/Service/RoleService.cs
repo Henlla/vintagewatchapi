@@ -64,10 +64,17 @@ namespace VintageTimepieceService.Service
         public async Task<APIResponse<List<Role>>> GetAllRole()
         {
             var result = await Task.FromResult(_roleRepository.GetAllRole());
+            if (result.Count > 0)
+                return new APIResponse<List<Role>>
+                {
+                    Message = "Get all role success",
+                    isSuccess = true,
+                    Data = result
+                };
             return new APIResponse<List<Role>>
             {
-                Message = "Get all role success",
-                isSuccess = true,
+                Message = "Get all role fail",
+                isSuccess = false,
                 Data = result
             };
         }
@@ -80,6 +87,7 @@ namespace VintageTimepieceService.Service
                 {
                     Message = "Role not exists",
                     isSuccess = false,
+                    Data= result
                 };
 
             return new APIResponse<Role>
@@ -98,6 +106,7 @@ namespace VintageTimepieceService.Service
                 {
                     Message = "Role not exists",
                     isSuccess = false,
+                    Data = result
                 };
             return new APIResponse<Role>
             {

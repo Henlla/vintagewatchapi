@@ -61,10 +61,17 @@ namespace VintageTimepieceService.Service
         public async Task<APIResponse<List<Category>>> GetAllCategory()
         {
             var result = await Task.FromResult(_categoryRepository.GetAllCategory());
+            if (result.Count > 0)
+                return new APIResponse<List<Category>>
+                {
+                    Message = "Get all category success",
+                    isSuccess = true,
+                    Data = result
+                };
             return new APIResponse<List<Category>>
             {
-                Message = "Get all category success",
-                isSuccess = true,
+                Message = "Get all category fail",
+                isSuccess = false,
                 Data = result
             };
         }
@@ -85,6 +92,7 @@ namespace VintageTimepieceService.Service
             {
                 Message = "Get category fail",
                 isSuccess = false,
+                Data = result
             };
         }
 
@@ -97,6 +105,7 @@ namespace VintageTimepieceService.Service
                 {
                     Message = "Update category fail, Category not exists",
                     isSuccess = false,
+                    Data = category
                 };
             }
             category.CategoryName = cate.CategoryName;
