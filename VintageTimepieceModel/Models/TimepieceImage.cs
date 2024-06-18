@@ -7,9 +7,11 @@ public partial class TimepieceImage
 {
     public int TimepieceImageId { get; set; }
 
-    public int? TimepieceId { get; set; }
+    public string? ImageName { get; set; }
 
     public string? ImageUrl { get; set; }
+
+    public int? TimepieceId { get; set; }
 
     public bool? IsDel { get; set; }
 

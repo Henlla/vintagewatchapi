@@ -12,12 +12,15 @@ namespace VintageTimepieceApi.Controllers
     [ApiController]
     public class TimepiecesController : ControllerBase
     {
-        private readonly ITimepiecesService _timepieceService;
-        private readonly IJwtConfigService _jwtConfigService;
-        public TimepiecesController(ITimepiecesService timepiecesService, IJwtConfigService jwtConfigService)
+        private ITimepiecesService _timepieceService { get; }
+        private IJwtConfigService _jwtConfigService { get; }
+        private IImageService _imageService { get; }
+        public TimepiecesController(ITimepiecesService timepiecesService, 
+            IJwtConfigService jwtConfigService, IImageService imageService)
         {
             _timepieceService = timepiecesService;
             _jwtConfigService = jwtConfigService;
+            _imageService = imageService;
         }
 
         [HttpGet, Route("GetAllProduct")]
@@ -106,8 +109,8 @@ namespace VintageTimepieceApi.Controllers
         }
 
 
-        [HttpGet, Route("{id}")]
-        public async Task<IActionResult> GetProductById(int id)
+        [HttpGet, Route("GetProductById")]
+        public async Task<IActionResult> GetProductById([FromQuery] int id)
         {
             var result = await _timepieceService.GetOneTimepiece(id);
             if (!result.isSuccess)
@@ -118,17 +121,17 @@ namespace VintageTimepieceApi.Controllers
 
 
 
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
-        //[HttpPost, Route("uploadTimepiece")]
-        //public async Task<IActionResult> Post([FromForm] List<IFormFile> files, [FromForm] Timepiece timepiece)
-        //{
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
+        [HttpPost, Route("uploadTimepiece")]
+        public async Task<IActionResult> Post([FromForm] List<IFormFile> files, [FromForm] Timepiece timepiece)
+        {
 
-        //    foreach (var file in files)
-        //    {
-        //        var result = await Task.FromResult(_timepieceRepository.UploadImage(file, "product"));
-        //    }
-        //    return Ok("");
-        //}
+            foreach (var file in files)
+            {
+                var result = await Task.FromResult(_imageService.uploadImage(file, "product"));
+            }
+            return Ok("");
+        }
 
 
 

@@ -115,17 +115,26 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 
+
 // Timepiece
 builder.Services.AddScoped<ITimepieceRepository, TimepieceRepository>();
 builder.Services.AddScoped<ITimepiecesService, TimepiecesService>();
+
+
+
+// TimepieceImage
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
+builder.Services.AddScoped<IImageService, ImageService>();
+
 
 
 // Rating
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 builder.Services.AddScoped<IRatingService, RatingService>();
 
-var app = builder.Build();
 
+
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
