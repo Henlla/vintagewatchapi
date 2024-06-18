@@ -8,6 +8,7 @@ namespace VintageTimePieceRepository.Repository
 {
     public class AuthenticateRepository : BaseRepository<User>, IAuthenticateRepository
     {
+        private string defaultAvatar = "https://firebasestorage.googleapis.com/v0/b/vintagetimepece.appspot.com/o/avatar%2Fuserdefault.png?alt=media";
         private readonly IHashPasswordRepository _passwordRepository;
 
         public AuthenticateRepository(VintagedbContext context,
@@ -16,7 +17,7 @@ namespace VintageTimePieceRepository.Repository
             _passwordRepository = hashPasswordRepository;
         }
 
-        public async Task<User>? checkLogin(LoginModel loginModel)
+        public async Task<User?> checkLogin(LoginModel loginModel)
         {
             var getUsers = await _context.Users.Where(us => us.Email.Equals(loginModel.Username) && us.IsDel == false).SingleOrDefaultAsync();
             if (getUsers == null)
@@ -31,18 +32,19 @@ namespace VintageTimePieceRepository.Repository
             return getUsers;
         }
 
-        public async Task<User>? CreateNewAccount(RegisterModel registerUser)
+        public async Task<User?> CreateNewAccount(RegisterModel registerUser)
         {
             var existsUser = await GetUserByEmail(registerUser.Email);
             if (existsUser == null)
             {
                 var newUser = new User();
                 var role = await _context.Roles.FirstOrDefaultAsync(x => x.RoleName.Equals("USERS") && x.IsDel == false);
+                newUser.Email = registerUser.Email;
                 newUser.Password = registerUser.Password == null ? null : _passwordRepository.Hash(registerUser.Password);
                 newUser.FirstName = registerUser.FirstName;
                 newUser.LastName = registerUser.LastName;
-                newUser.Email = registerUser.Email;
                 newUser.DateJoined = DateTime.Now;
+                newUser.Avatar = defaultAvatar;
                 newUser.RoleId = role.RoleId;
                 await _context.Users.AddAsync(newUser);
                 await _context.SaveChangesAsync();
@@ -51,7 +53,7 @@ namespace VintageTimePieceRepository.Repository
             return existsUser;
         }
 
-        public async Task<User>? GetUserByEmail(string email)
+        public async Task<User?> GetUserByEmail(string email)
         {
             var result = await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(email) && u.IsDel == false);
             if (result == null)

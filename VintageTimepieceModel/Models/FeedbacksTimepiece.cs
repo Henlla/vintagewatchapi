@@ -7,13 +7,13 @@ public partial class FeedbacksTimepiece
 {
     public int FeedbackId { get; set; }
 
-    public int? UserId { get; set; }
-
-    public int? TimepieceId { get; set; }
-
     public string? Comment { get; set; }
 
     public DateTime? FeedbackDate { get; set; }
+
+    public int? UserId { get; set; }
+
+    public int? TimepieceId { get; set; }
 
     public bool? IsDel { get; set; }
 

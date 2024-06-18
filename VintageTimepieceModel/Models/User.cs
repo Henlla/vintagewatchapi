@@ -22,6 +22,8 @@ public partial class User
 
     public DateTime? DateJoined { get; set; }
 
+    public string? Avatar { get; set; }
+
     public bool? IsDel { get; set; }
 
     public int? RoleId { get; set; }

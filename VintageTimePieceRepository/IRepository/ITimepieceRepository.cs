@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using VintageTimepieceModel.Models;
+﻿using VintageTimepieceModel.Models;
 using VintageTimepieceModel.Models.Shared;
 
 namespace VintageTimePieceRepository.IRepository
@@ -15,7 +14,5 @@ namespace VintageTimePieceRepository.IRepository
         public List<TimepieceViewModel> GetTimepieceByName(string name);
         public List<TimepieceViewModel> GetTimepieceByNameExceptUser(string name, User user);
         public List<TimepieceViewModel> GetTimepieceByCategory(int categoryId);
-
-        public string UploadImage(IFormFile files, string folder);
     }
 }

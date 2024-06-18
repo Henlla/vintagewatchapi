@@ -7,19 +7,19 @@ public partial class SupportTicket
 {
     public int TicketId { get; set; }
 
-    public int? UserId { get; set; }
-
-    public int? SupportAgentId { get; set; }
-
     public string? Desciption { get; set; }
 
     public string? Status { get; set; }
-    
+
     public DateTime? CreatedDate { get; set; }
 
     public DateTime? ResovleDate { get; set; }
 
     public bool? IsResovle { get; set; }
+
+    public int? UserId { get; set; }
+
+    public int? SupportAgentId { get; set; }
 
     public bool? IsDel { get; set; }
 

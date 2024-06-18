@@ -11,8 +11,6 @@ public partial class TimepieceEvaluation
 
     public int? EvaluationId { get; set; }
 
-    public string? Condition { get; set; }
-
     public DateTime? EvaluationDate { get; set; }
 
     public bool? IsDel { get; set; }

@@ -29,7 +29,7 @@ namespace VintageTimePieceRepository.Repository
                                {
                                    timepiece = tp,
                                    mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
                                }).ToList();
             return listProduct;
         }
@@ -43,7 +43,7 @@ namespace VintageTimePieceRepository.Repository
                                {
                                    timepiece = tp,
                                    mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
                                }).ToList();
             return listProduct;
         }
@@ -58,7 +58,7 @@ namespace VintageTimePieceRepository.Repository
                                {
                                    timepiece = tp,
                                    mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
                                });
             return PageList<TimepieceViewModel>.GetPagedList(listProduct, pagingModel.PageNumber, pagingModel.PageSize);
         }
@@ -73,7 +73,7 @@ namespace VintageTimePieceRepository.Repository
                                {
                                    timepiece = tp,
                                    mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
                                });
             return PageList<TimepieceViewModel>.GetPagedList(listProduct, pagingModel.PageNumber, pagingModel.PageSize);
         }
@@ -86,7 +86,7 @@ namespace VintageTimePieceRepository.Repository
                              {
                                  timepiece = tp,
                                  mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-                                 images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                                 images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
                              }).SingleOrDefault();
             return timePiece;
         }
@@ -99,7 +99,7 @@ namespace VintageTimePieceRepository.Repository
                                {
                                    timepiece = tp,
                                    mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
                                }).ToList();
             return listProduct;
         }
@@ -115,7 +115,7 @@ namespace VintageTimePieceRepository.Repository
                                {
                                    timepiece = tp,
                                    mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
                                }).ToList();
             }
             else
@@ -127,7 +127,7 @@ namespace VintageTimePieceRepository.Repository
                                {
                                    timepiece = tp,
                                    mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
                                }).ToList();
             }
 
@@ -144,21 +144,9 @@ namespace VintageTimePieceRepository.Repository
                                  {
                                      timepiece = tp,
                                      mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).First(),
-                                     images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).Skip(1).ToList()
+                                     images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
                                  }).ToList();
             return listTimePiece;
         }
-
-        public string UploadImage(IFormFile files, string folder)
-        {
-            string base64String = _helper.ConvertFileToBase64(files).Result;
-            if (base64String == string.Empty)
-            {
-                return base64String;
-            }
-            var url = _helper.UploadImageToFirebase(base64String, folder).Result;
-            return url;
-        }
-
     }
 }
