@@ -37,14 +37,40 @@ namespace VintageTimepieceService.Service
             };
         }
 
-        public Task<APIResponse<List<RatingsTimepiece>>> GetAllRatingOfUser(int userId)
+        public async Task<APIResponse<List<RatingsTimepiece>>> GetAllRatingOfUser(int userId)
         {
-            throw new NotImplementedException();
+            var result = await Task.FromResult(_ratingRepository.GetAllRatingOfUser(userId));
+            if (result.Count > 0)
+                return new APIResponse<List<RatingsTimepiece>>
+                {
+                    Message = "Get rating of user success",
+                    isSuccess = true,
+                    Data = result
+                };
+            return new APIResponse<List<RatingsTimepiece>>
+            {
+                Message = "Don't have any rating",
+                isSuccess = false,
+                Data = result
+            };
         }
 
-        public Task<APIResponse<RatingsTimepiece>> MakeRating(RatingsTimepiece rating)
+        public async Task<APIResponse<RatingsTimepiece>> MakeRating(RatingsTimepiece rating)
         {
-            throw new NotImplementedException();
+            var result = await Task.FromResult(_ratingRepository.MakeRating(rating));
+            if (result != null)
+                return new APIResponse<RatingsTimepiece>
+                {
+                    Message = "Make rating success",
+                    isSuccess = true,
+                    Data = result
+                };
+            return new APIResponse<RatingsTimepiece>
+            {
+                Message = "Make rating fail",
+                isSuccess = false,
+                Data = result
+            };
         }
     }
 }

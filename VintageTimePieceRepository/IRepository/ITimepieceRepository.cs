@@ -14,5 +14,8 @@ namespace VintageTimePieceRepository.IRepository
         public List<TimepieceViewModel> GetTimepieceByName(string name);
         public List<TimepieceViewModel> GetTimepieceByNameExceptUser(string name, User user);
         public List<TimepieceViewModel> GetTimepieceByCategory(int categoryId);
+
+        // CUD
+        public Timepiece UploadNewTimepiece(Timepiece timepiece);
     }
 }

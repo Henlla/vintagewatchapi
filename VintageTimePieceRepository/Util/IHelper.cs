@@ -10,6 +10,8 @@ namespace VintageTimePieceRepository.Util
     public interface IHelper
     {
         public Task<string> UploadImageToFirebase(string imageBase64, string folder);
+        public Task<string> UploadReportToFirebase(string imageBase64, string folder);
+
         public Task<string> ConvertFileToBase64(IFormFile files);
     }
 }

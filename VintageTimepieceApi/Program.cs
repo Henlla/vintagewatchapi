@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("Cors",
         builder => builder.WithOrigins("http://localhost:5173")
-        .AllowAnyOrigin()
+        .AllowCredentials()
         .AllowAnyHeader()
         .AllowAnyMethod());
 });
@@ -36,9 +37,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication(options =>
 {
     // Set up jwt
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    //options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
     //Set up google cookie
     //options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     //options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -50,7 +51,7 @@ builder.Services.AddAuthentication(options =>
     options.AuthorizationEndpoint = GoogleDefaults.AuthorizationEndpoint;
     options.ClientId = builder.Configuration["Google:clientId"];
     options.ClientSecret = builder.Configuration["Google:clientSecret"];
-    //options.CallbackPath = builder.Configuration["Google:RedirectUri"];
+    options.CallbackPath = builder.Configuration["Google:RedirectUri"];
     //options.SaveTokens = true;
     options.Scope.Add("profile");
     options.Scope.Add("email");
@@ -65,7 +66,7 @@ builder.Services.AddAuthentication(options =>
     {
         ValidateIssuer = false,
         ValidateAudience = false,
-        ValidateIssuerSigningKey = false,
+        ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:JwtIssuer"],
         ValidAudience = builder.Configuration["Jwt:JwtAudience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:JwtSecret"])),
@@ -147,6 +148,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors("Cors");
+
+app.UseTokenMiddleware();
 
 app.UseCookiePolicy();
 

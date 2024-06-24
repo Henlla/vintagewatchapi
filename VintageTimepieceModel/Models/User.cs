@@ -30,8 +30,6 @@ public partial class User
     [JsonIgnore]
     public virtual ICollection<Evaluation> Evaluations { get; set; } = new List<Evaluation>();
     [JsonIgnore]
-    public virtual ICollection<FeedbacksTimepiece> FeedbacksTimepieces { get; set; } = new List<FeedbacksTimepiece>();
-    [JsonIgnore]
     public virtual ICollection<FeedbacksUser> FeedbacksUserFeedbackTargets { get; set; } = new List<FeedbacksUser>();
     [JsonIgnore]
     public virtual ICollection<FeedbacksUser> FeedbacksUserUsers { get; set; } = new List<FeedbacksUser>();

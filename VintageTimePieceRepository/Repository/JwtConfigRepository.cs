@@ -84,7 +84,6 @@ namespace VintageTimePieceRepository.Repository
             {
                 Message = "Get user from token string success",
                 isSuccess = true,
-                AccessToken = token,
                 Data = user
             };
         }

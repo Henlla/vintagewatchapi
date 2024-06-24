@@ -19,7 +19,7 @@ namespace VintageTimePieceRepository.Repository
 
         public async Task<User?> checkLogin(LoginModel loginModel)
         {
-            var getUsers = await _context.Users.Where(us => us.Email.Equals(loginModel.Username) && us.IsDel == false).SingleOrDefaultAsync();
+            var getUsers = await _context.Users.Where(us => us.Email.Equals(loginModel.Email) && us.IsDel == false).SingleOrDefaultAsync();
             if (getUsers == null)
             {
                 return null;

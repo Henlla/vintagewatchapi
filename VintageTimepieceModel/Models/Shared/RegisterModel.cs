@@ -13,8 +13,6 @@ namespace VintageTimepieceModel.Models.Shared
         public string? Email { get; set; }
         [Required(ErrorMessage = "Password is required")]
         public string? Password { get; set; }
-        [Compare("Password", ErrorMessage = "Confirm password doesn't match")]
-        public string? ConfirmPassword { get; set; }
         [Required(ErrorMessage = "First name is required")]
         public string? FirstName { get; set; }
         [Required(ErrorMessage = "Last name is required")]
