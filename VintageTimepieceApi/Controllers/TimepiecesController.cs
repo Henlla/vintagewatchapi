@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VintageTimepieceModel.Models;
 using VintageTimepieceModel.Models.Shared;
-using VintageTimePieceRepository.IRepository;
 using VintageTimepieceService.IService;
 
 namespace VintageTimepieceApi.Controllers
@@ -15,7 +14,8 @@ namespace VintageTimepieceApi.Controllers
         private ITimepiecesService _timepieceService { get; }
         private IJwtConfigService _jwtConfigService { get; }
         private IImageService _imageService { get; }
-        public TimepiecesController(ITimepiecesService timepiecesService, 
+
+        public TimepiecesController(ITimepiecesService timepiecesService,
             IJwtConfigService jwtConfigService, IImageService imageService)
         {
             _timepieceService = timepiecesService;
@@ -26,32 +26,42 @@ namespace VintageTimepieceApi.Controllers
         [HttpGet, Route("GetAllProduct")]
         public async Task<IActionResult> GetAllProduct()
         {
-            var result = await _timepieceService.GetAllTimepiece();
-            if (!result.isSuccess)
-                return NotFound(result);
-            return Ok(result);
-        }
-
-
-
-        [HttpGet, Route("GetAllProductExeptUser")]
-        public async Task<IActionResult> GetAllProductExeptUser([FromQuery] string token)
-        {
+            var result = new APIResponse<List<TimepieceViewModel>>();
+            HttpContext.Request.Cookies.TryGetValue("access_token", out var token);
+            if (token == null)
+            {
+                result = await _timepieceService.GetAllTimepiece();
+                return Ok(result);
+            }
             var user = _jwtConfigService.GetUserFromAccessToken(token);
             if (user.isSuccess)
             {
-                var timepieces = await _timepieceService.GetAllTimepieceExceptUser(user.Data);
-                if (timepieces.isSuccess)
-                {
-                    return Ok(timepieces);
-                }
-                else
-                {
-                    return BadRequest(timepieces);
-                }
+                result = await _timepieceService.GetAllTimepieceExceptUser(user.Data);
+                return Ok(result);
             }
             return BadRequest(user);
         }
+
+
+
+        //[HttpGet, Route("GetAllProductExeptUser")]
+        //public async Task<IActionResult> GetAllProductExeptUser()
+        //{
+        //    var user = _jwtConfigService.GetUserFromAccessToken(token);
+        //    if (user.isSuccess)
+        //    {
+        //        var timepieces = await _timepieceService.GetAllTimepieceExceptUser(user.Data);
+        //        if (timepieces.isSuccess)
+        //        {
+        //            return Ok(timepieces);
+        //        }
+        //        else
+        //        {
+        //            return BadRequest(timepieces);
+        //        }
+        //    }
+        //    return BadRequest(user);
+        //}
 
 
 
@@ -59,8 +69,6 @@ namespace VintageTimepieceApi.Controllers
         public async Task<IActionResult> GetAllProductWithPaging([FromQuery] PagingModel pagingModel)
         {
             var result = await _timepieceService.GetAllTimepieceWithPaging(pagingModel);
-            if (!result.isSuccess)
-                return NotFound(result);
             return Ok(result);
         }
 
@@ -89,9 +97,7 @@ namespace VintageTimepieceApi.Controllers
         public async Task<IActionResult> GetAllProductByName([FromQuery] string name)
         {
             var result = await _timepieceService.GetTimepieceByName(name);
-            if (result.isSuccess)
-                return Ok(result);
-            return NotFound(result);
+            return Ok(result);
         }
 
         [HttpGet, Route("GetAllProductByNameExceptUser")]
@@ -109,27 +115,29 @@ namespace VintageTimepieceApi.Controllers
         }
 
 
-        [HttpGet, Route("GetProductById")]
-        public async Task<IActionResult> GetProductById([FromQuery] int id)
+        [HttpGet, Route("GetProductById/{id}")]
+        public async Task<IActionResult> GetProductById(int id)
         {
             var result = await _timepieceService.GetOneTimepiece(id);
-            if (!result.isSuccess)
-                return NotFound(result);
             return Ok(result);
         }
 
 
 
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
         [HttpPost, Route("uploadTimepiece")]
-        public async Task<IActionResult> Post([FromForm] List<IFormFile> files, [FromForm] Timepiece timepiece)
+        public async Task<IActionResult> Post([FromForm] List<IFormFile> files)
         {
-
             foreach (var file in files)
             {
-                var result = await Task.FromResult(_imageService.uploadImage(file, "product"));
+                var result = await Task.FromResult(_imageService.uploadImage(file, "report"));
             }
+
+            //foreach (var file in files)
+            //{
+            //    var result = await Task.FromResult(_imageService.uploadImage(file, "product"));
+            //}
             return Ok("");
         }
 

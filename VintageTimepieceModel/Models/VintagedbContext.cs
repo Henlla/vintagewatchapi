@@ -21,8 +21,6 @@ public partial class VintagedbContext : DbContext
 
     public virtual DbSet<Evaluation> Evaluations { get; set; }
 
-    public virtual DbSet<FeedbacksTimepiece> FeedbacksTimepieces { get; set; }
-
     public virtual DbSet<FeedbacksUser> FeedbacksUsers { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
@@ -141,34 +139,6 @@ public partial class VintagedbContext : DbContext
                 .HasConstraintName("FK_UserEvaluation");
         });
 
-        modelBuilder.Entity<FeedbacksTimepiece>(entity =>
-        {
-            entity.HasKey(e => e.FeedbackId).HasName("PK__feedback__2613FD24C3287F67");
-
-            entity.ToTable("feedbacks_timepiece");
-
-            entity.Property(e => e.FeedbackId).HasColumnName("feedbackId");
-            entity.Property(e => e.Comment)
-                .HasColumnType("text")
-                .HasColumnName("comment");
-            entity.Property(e => e.FeedbackDate)
-                .HasColumnType("datetime")
-                .HasColumnName("feedbackDate");
-            entity.Property(e => e.IsDel)
-                .HasDefaultValue(false)
-                .HasColumnName("isDel");
-            entity.Property(e => e.TimepieceId).HasColumnName("timepieceId");
-            entity.Property(e => e.UserId).HasColumnName("userId");
-
-            entity.HasOne(d => d.Timepiece).WithMany(p => p.FeedbacksTimepieces)
-                .HasForeignKey(d => d.TimepieceId)
-                .HasConstraintName("FK_UserFeebackTimepiece");
-
-            entity.HasOne(d => d.User).WithMany(p => p.FeedbacksTimepieces)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK_FeedbackTimepiece");
-        });
-
         modelBuilder.Entity<FeedbacksUser>(entity =>
         {
             entity.HasKey(e => e.FeedbackUsersId).HasName("PK__feedback__5587998174A1FE69");
@@ -249,11 +219,14 @@ public partial class VintagedbContext : DbContext
 
         modelBuilder.Entity<RatingsTimepiece>(entity =>
         {
-            entity.HasKey(e => e.RatingId).HasName("PK__ratings___2D290CA93D675121");
+            entity.HasKey(e => e.RatingId).HasName("PK__ratings___2D290CA997836043");
 
             entity.ToTable("ratings_timepiece");
 
             entity.Property(e => e.RatingId).HasColumnName("ratingId");
+            entity.Property(e => e.FeedbackContent)
+                .HasMaxLength(200)
+                .HasColumnName("feedbackContent");
             entity.Property(e => e.IsDel)
                 .HasDefaultValue(false)
                 .HasColumnName("isDel");

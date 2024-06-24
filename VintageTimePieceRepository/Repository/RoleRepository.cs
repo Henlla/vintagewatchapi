@@ -27,7 +27,7 @@ namespace VintageTimePieceRepository.Repository
 
         public Role? GetRoleById(int id)
         {
-            return FindAll().Where(r => r.RoleId == id).SingleOrDefault();
+            return FindAll().Where(r => r.RoleId == id && r.IsDel == false).SingleOrDefault();
         }
 
         public Role? GetRoleByName(string roleName)

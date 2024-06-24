@@ -11,6 +11,8 @@ public partial class RatingsTimepiece
 
     public DateTime? RatingDate { get; set; }
 
+    public string? FeedbackContent { get; set; }
+
     public int? UserId { get; set; }
 
     public int? TimepieceId { get; set; }

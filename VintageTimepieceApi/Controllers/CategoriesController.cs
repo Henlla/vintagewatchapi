@@ -23,16 +23,12 @@ namespace VintageTimepieceApi.Controllers
         public async Task<IActionResult> Get()
         {
             var result = await _categoryService.GetAllCategory();
-            if (!result.isSuccess)
-                return NotFound(result);
             return Ok(result);
         }
         [HttpGet("id")]
         public async Task<IActionResult> Get(int id)
         {
             var result = await _categoryService.GetCategoryById(id);
-            if (!result.isSuccess)
-                return NotFound(result);
             return Ok(result);
         }
 

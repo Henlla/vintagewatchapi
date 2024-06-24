@@ -6,7 +6,7 @@ using VintageTimepieceService.IService;
 
 namespace VintageTimepieceApi.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "ADMIN")]
+    [Authorize(Roles = "ADMIN")]
     [Route("roles")]
     [ApiController]
     public class RolesController : ControllerBase
@@ -21,8 +21,6 @@ namespace VintageTimepieceApi.Controllers
         public async Task<IActionResult> Get()
         {
             var result = await _roleService.GetAllRole();
-            if (!result.isSuccess)
-                return NotFound(result);
             return Ok(result);
         }
 

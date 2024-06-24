@@ -1,11 +1,6 @@
 ﻿using Firebase.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace VintageTimePieceRepository.Util
 {
@@ -41,6 +36,16 @@ namespace VintageTimePieceRepository.Util
                 .Child($"{Guid.NewGuid()}_{DateTime.Now.Ticks}.jpg")
                 .PutAsync(new MemoryStream(imageData));
             return imageUrl;
+        }
+
+        public async Task<string> UploadReportToFirebase(string file, string folder)
+        {
+            byte[] imageData = Convert.FromBase64String(file);
+            var storage = new FirebaseStorage(_configuration["Firebase:bucket"]);
+            var fileUrl = await storage.Child(folder)
+                .Child($"{Guid.NewGuid()}_{DateTime.Now.Ticks}.xlsx")
+                .PutAsync(new MemoryStream(imageData));
+            return fileUrl;
         }
     }
 }

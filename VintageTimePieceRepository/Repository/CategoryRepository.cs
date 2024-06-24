@@ -27,7 +27,7 @@ namespace VintageTimePieceRepository.Repository
 
         public Category? GetCategoryById(int id)
         {
-            return FindAll().Where(c=>c.CategoryId == id).SingleOrDefault();
+            return FindAll().Where(c => c.CategoryId == id && c.IsDel == false).SingleOrDefault();
         }
 
         public Category UpdateCategory(Category category)

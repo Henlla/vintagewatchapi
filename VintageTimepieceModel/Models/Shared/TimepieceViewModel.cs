@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VintageTimepieceModel.Models.Shared
+﻿namespace VintageTimepieceModel.Models.Shared
 {
     public class TimepieceViewModel
     {
         public Timepiece? timepiece { get; set; }
         public TimepieceImage? mainImage { get; set; }
+        public List<TimepieceCategory>? category { get; set; }
         public List<TimepieceImage>? images { get; set; }
     }
 }

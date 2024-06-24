@@ -42,8 +42,6 @@ public partial class Timepiece
 
     public virtual Brand? Brand { get; set; }
     [JsonIgnore]
-    public virtual ICollection<FeedbacksTimepiece> FeedbacksTimepieces { get; set; } = new List<FeedbacksTimepiece>();
-    [JsonIgnore]
     public virtual ICollection<OrdersDetail> OrdersDetails { get; set; } = new List<OrdersDetail>();
     [JsonIgnore]
     public virtual ICollection<RatingsTimepiece> RatingsTimepieces { get; set; } = new List<RatingsTimepiece>();

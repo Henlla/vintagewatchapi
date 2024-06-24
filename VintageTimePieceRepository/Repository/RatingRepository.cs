@@ -22,7 +22,7 @@ namespace VintageTimePieceRepository.Repository
 
         public List<RatingsTimepiece> GetAllRatingOfUser(int userId)
         {
-            var result = FindAll().Where(r => r.UserId == userId).ToList();
+            var result = FindAll().Where(r => r.UserId == userId && r.IsDel == false).ToList();
             return result;
         }
 
