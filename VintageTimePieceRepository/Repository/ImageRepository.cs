@@ -28,5 +28,10 @@ namespace VintageTimePieceRepository.Repository
             var url = _helper.UploadImageToFirebase(base64String, folder).Result;
             return url;
         }
+
+        public TimepieceImage CreateTimepieceImage(TimepieceImage timepieceImage)
+        {
+            return Add(timepieceImage);
+        }
     }
 }

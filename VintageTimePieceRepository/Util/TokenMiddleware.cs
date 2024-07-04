@@ -29,20 +29,6 @@ namespace VintageTimePieceRepository.Util
                     context.Request.Headers.Add("Authorization", $"Bearer {token}");
                 }
             }
-            else
-            {
-                if (context.Request.Cookies.TryGetValue("JWT-SESSION", out var googleToken))
-                {
-                    if (context.Request.Headers.ContainsKey("Authorization"))
-                    {
-                        context.Response.Headers["Authorization"] = $"Bearer {googleToken}";
-                    }
-                    else
-                    {
-                        context.Request.Headers.Add("Authorization", $"Bearer {googleToken}");
-                    }
-                }
-            }
             await _next(context);
         }
 

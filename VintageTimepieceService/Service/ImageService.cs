@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VintageTimepieceModel.Models;
 using VintageTimepieceModel.Models.Shared;
 using VintageTimePieceRepository.IRepository;
 using VintageTimepieceService.IService;
@@ -32,6 +33,24 @@ namespace VintageTimepieceService.Service
             return new APIResponse<string>
             {
                 Message = "Upload file success",
+                isSuccess = true,
+                Data = result
+            };
+        }
+
+        public async Task<APIResponse<TimepieceImage>> CreateNewTimepieceImage(TimepieceImage timepieceImage)
+        {
+            var result = await Task.FromResult(_imageRepository.CreateTimepieceImage(timepieceImage));
+            if (result == null)
+                return new APIResponse<TimepieceImage>
+                {
+                    Message = "Create timepiece image fail",
+                    isSuccess = false,
+                    Data = result
+                };
+            return new APIResponse<TimepieceImage>
+            {
+                Message = "Create timepiece image success",
                 isSuccess = true,
                 Data = result
             };

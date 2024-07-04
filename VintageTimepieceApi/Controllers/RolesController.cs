@@ -6,7 +6,7 @@ using VintageTimepieceService.IService;
 
 namespace VintageTimepieceApi.Controllers
 {
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "ADMIN")]
     [Route("roles")]
     [ApiController]
     public class RolesController : ControllerBase

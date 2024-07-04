@@ -14,11 +14,6 @@ namespace VintageTimePieceRepository.Repository
         {
         }
 
-        public Evaluation DeleteEvaluation(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public IEnumerable<Evaluation> GetAllEvaluation()
         {
             var result = FindAll().Where(eva => eva.IsDel == false).AsEnumerable();
@@ -31,14 +26,14 @@ namespace VintageTimePieceRepository.Repository
             return result;
         }
 
-        public Evaluation RequestEvaluation(Evaluation evaluation)
+        public Evaluation CreateEvaluation(Evaluation evaluation)
         {
             return Add(evaluation);
         }
 
         public Evaluation UpdateEvaluation(Evaluation evaluation)
         {
-            throw new NotImplementedException();
+            return Update(evaluation);
         }
     }
 }

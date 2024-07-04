@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using VintageTimepieceModel.Models;
 using VintageTimepieceModel.Models.Shared;
 using VintageTimepieceService.IService;
@@ -42,7 +43,12 @@ namespace VintageTimepieceApi.Controllers
             return BadRequest(user);
         }
 
-
+        [HttpGet, Route("GetAllTimepieceNotEvaluate")]
+        public async Task<IActionResult> GetAllTimepieceNotEvaluate()
+        {
+            var result = await _timepieceService.GetAllTimepieceNotEvaluate();
+            return Ok(result);
+        }
 
         //[HttpGet, Route("GetAllProductExeptUser")]
         //public async Task<IActionResult> GetAllProductExeptUser()
@@ -65,54 +71,64 @@ namespace VintageTimepieceApi.Controllers
 
 
 
-        [HttpGet, Route("GetAllProductWithPaging")]
-        public async Task<IActionResult> GetAllProductWithPaging([FromQuery] PagingModel pagingModel)
-        {
-            var result = await _timepieceService.GetAllTimepieceWithPaging(pagingModel);
-            return Ok(result);
-        }
+        //[HttpGet, Route("GetAllProductWithPaging")]
+        //public async Task<IActionResult> GetAllProductWithPaging([FromQuery] PagingModel pagingModel)
+        //{
+        //    var result = await _timepieceService.GetAllTimepieceWithPaging(pagingModel);
+        //    return Ok(result);
+        //}
 
 
 
-        [HttpGet, Route("GetAllProductExceptUserWithPaging")]
-        public async Task<IActionResult> GetAllProductExceptUserWithPaging([FromQuery] string token, [FromQuery] PagingModel pagingModel)
-        {
-            var user = _jwtConfigService.GetUserFromAccessToken(token);
-            if (user.isSuccess)
-            {
-                var result = await _timepieceService.GetAllTimepieceWithPagingExceptUser(user.Data, pagingModel);
-                if (result.isSuccess)
-                    return Ok(result);
-                return BadRequest(result);
-            }
-            else
-            {
-                return BadRequest(user);
-            }
-        }
+        //[HttpGet, Route("GetAllProductExceptUserWithPaging")]
+        //public async Task<IActionResult> GetAllProductExceptUserWithPaging([FromQuery] string token, [FromQuery] PagingModel pagingModel)
+        //{
+        //    var user = _jwtConfigService.GetUserFromAccessToken(token);
+        //    if (user.isSuccess)
+        //    {
+        //        var result = await _timepieceService.GetAllTimepieceWithPagingExceptUser(user.Data, pagingModel);
+        //        if (result.isSuccess)
+        //            return Ok(result);
+        //        return BadRequest(result);
+        //    }
+        //    else
+        //    {
+        //        return BadRequest(user);
+        //    }
+        //}
 
 
 
         [HttpGet, Route("GetAllProductByName")]
         public async Task<IActionResult> GetAllProductByName([FromQuery] string name)
         {
-            var result = await _timepieceService.GetTimepieceByName(name);
+            APIResponse<List<TimepieceViewModel>> result;
+            HttpContext.Request.Cookies.TryGetValue("access_token", out var token);
+            if (token == null)
+            {
+                result = await _timepieceService.GetTimepieceByName(name);
+            }
+            else
+            {
+                var user = _jwtConfigService.GetUserFromAccessToken(token);
+                result = await _timepieceService.GetTimepieceByNameExceptUser(name, user.Data);
+            }
             return Ok(result);
         }
 
-        [HttpGet, Route("GetAllProductByNameExceptUser")]
-        public async Task<IActionResult> GetAllProductByNameExceptUser([FromQuery] string name, [FromQuery] string token)
-        {
-            var user = _jwtConfigService.GetUserFromAccessToken(token);
-            if (user.isSuccess)
-            {
-                var result = await _timepieceService.GetTimepieceByNameExceptUser(name, user.Data);
-                if (result.isSuccess)
-                    return Ok(result);
-                return BadRequest(result);
-            }
-            return BadRequest(user);
-        }
+        //[HttpGet, Route("GetAllProductByNameExceptUser")]
+        //public async Task<IActionResult> GetAllProductByNameExceptUser([FromQuery] string name, [FromQuery] string token)
+        //{
+        //    var user = _jwtConfigService.GetUserFromAccessToken(token);
+        //    if (user.isSuccess)
+        //    {
+        //        var result = await _timepieceService.GetTimepieceByNameExceptUser(name, user.Data);
+        //        if (result.isSuccess)
+        //            return Ok(result);
+        //        return BadRequest(result);
+        //    }
+        //    return BadRequest(user);
+        //}
 
 
         [HttpGet, Route("GetProductById/{id}")]
@@ -122,25 +138,47 @@ namespace VintageTimepieceApi.Controllers
             return Ok(result);
         }
 
-
-
-
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
-        [HttpPost, Route("uploadTimepiece")]
-        public async Task<IActionResult> Post([FromForm] List<IFormFile> files)
+        [HttpGet,Route("GetEvaluationTimepiece")]
+        public async Task<IActionResult> GetEvaluationTimepiece()
         {
-            foreach (var file in files)
-            {
-                var result = await Task.FromResult(_imageService.uploadImage(file, "report"));
-            }
-
-            //foreach (var file in files)
-            //{
-            //    var result = await Task.FromResult(_imageService.uploadImage(file, "product"));
-            //}
             return Ok("");
         }
 
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
+        [HttpPost, Route("requestEvaluation")]
+        public async Task<IActionResult> Post([FromForm] List<IFormFile> files, [FromForm] string timepiece)
+        {
+            HttpContext.Request.Cookies.TryGetValue("access_token", out var access_token);
+            var user = _jwtConfigService.GetUserFromAccessToken(access_token);
+            var data = JsonConvert.DeserializeObject<Timepiece>(timepiece);
+            data.DatePost = DateTime.Now;
+            data.UserId = user.Data.UserId;
+            var resultTimepiece = await _timepieceService.UploadNewTimepiece(data);
+            if (!resultTimepiece.isSuccess)
+            {
+                return BadRequest(resultTimepiece);
+            }
+
+            foreach (var file in files)
+            {
+                var resultUploadImage = await _imageService.uploadImage(file, "product");
+                if (!resultUploadImage.isSuccess)
+                {
+                    return BadRequest(resultUploadImage);
+                }
+                TimepieceImage timepieceImage = new TimepieceImage();
+                timepieceImage.TimepieceId = resultTimepiece.Data.TimepieceId;
+                timepieceImage.ImageName = resultTimepiece.Data.TimepieceName;
+                timepieceImage.ImageUrl = resultUploadImage.Data;
+                var resultTimepieceImage = await _imageService.CreateNewTimepieceImage(timepieceImage);
+                if (!resultTimepieceImage.isSuccess)
+                {
+                    return BadRequest(resultTimepieceImage);
+                }
+            }
+            return Ok(resultTimepiece);
+        }
 
 
 

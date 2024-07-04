@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Rollbar;
+using Rollbar.NetCore.AspNet;
 using System.Text;
 using VintageTimepieceModel.Models;
 using VintageTimePieceRepository.IRepository;
@@ -14,7 +16,7 @@ using VintageTimepieceService.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Set up CORS
+// ----------------------------Set up CORS----------------------------
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Cors",
@@ -33,7 +35,7 @@ builder.Services.AddSwaggerGen();
 
 
 
-// Setup JWT
+// ----------------------------------------- Setup JWT -----------------------------------------
 builder.Services.AddAuthentication(options =>
 {
     // Set up jwt
@@ -83,7 +85,7 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 });
 
 
-// Setup DB
+// ----------------------------------------- Setup DB ------------------------------------------------
 builder.Services.AddDbContext<VintagedbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("connectString"));
@@ -91,7 +93,7 @@ builder.Services.AddDbContext<VintagedbContext>(options =>
 });
 
 
-// Setup DI
+// -------------------------------------------- Setup DI --------------------------------------------
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<IHelper, Helper>();
 
@@ -123,7 +125,7 @@ builder.Services.AddScoped<ITimepiecesService, TimepiecesService>();
 
 
 
-// TimepieceImage
+// Timepiece Image
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddScoped<IImageService, ImageService>();
 
@@ -135,6 +137,62 @@ builder.Services.AddScoped<IRatingService, RatingService>();
 
 
 
+// Brand
+builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+builder.Services.AddScoped<IBrandService, BrandService>();
+
+
+
+// Evaluate
+builder.Services.AddScoped<IEvaluationRepository, EvaluationRepository>();
+builder.Services.AddScoped<IEvaluationService, EvaluationService>();
+
+
+
+// Timepiece Evaluate
+builder.Services.AddScoped<ITimepieceEvaluateRepository, TimepieceEvaluateRepository>();
+builder.Services.AddScoped<ITimepieceEvaluateService, TimepieceEvaluateService>();
+
+
+
+
+
+
+// ------------------------------------------- Set up Rollbar --------------------------------------------------
+//builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+//ConfigureRollbarInfrastructure();
+
+//// STEP 4 - Add Rollbar logger with the log level filter accordingly configured
+//builder.Services.AddRollbarLogger(loggerOptions =>
+//{
+//    loggerOptions.Filter =
+//      (loggerName, loglevel) => loglevel >= LogLevel.Trace;
+//});
+
+//void ConfigureRollbarInfrastructure()
+//{
+//    RollbarInfrastructureConfig config = new RollbarInfrastructureConfig(
+//      "ecd6794c63274ba9ae3c03df4d6631ae",
+//      "development"
+//    );
+//    RollbarDataSecurityOptions dataSecurityOptions = new RollbarDataSecurityOptions();
+//    dataSecurityOptions.ScrubFields = new string[]
+//    {
+//      "url",
+//      "method",
+//    };
+//    config.RollbarLoggerConfig.RollbarDataSecurityOptions.Reconfigure(dataSecurityOptions);
+
+//    RollbarInfrastructure.Instance.Init(config);
+//}
+
+// ----------------------------------------------- end set up rollbar -----------------------------------------------------
+
+
+
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -143,6 +201,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// ----------------------------------------- Use Rollbar middleware -----------------------------------------
+//app.UseRollbarMiddleware();
+
+
 
 
 app.UseHttpsRedirection();
