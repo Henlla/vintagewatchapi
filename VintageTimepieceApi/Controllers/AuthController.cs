@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Azure.Core;
+using Newtonsoft.Json;
 
 
 namespace VintageTimepieceApi.Controllers
@@ -33,6 +34,22 @@ namespace VintageTimepieceApi.Controllers
             _configuration = configuration;
         }
 
+
+        [HttpGet("checkError")]
+        public async Task<IActionResult> checkError()
+        {
+            try
+            {
+                var num1 = 1;
+                var num2 = 0;
+                return Ok(num1 / num2);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+        }
 
         [HttpPost, Route("signin")]
         public async Task<IActionResult> Login([FromBody] LoginModel user)
@@ -108,15 +125,9 @@ namespace VintageTimepieceApi.Controllers
 
         public IActionResult SignInWithGoogle()
         {
-            //var redirectUrl = Url.Action("CallBack", "Auth");
-            //var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
-            //return Challenge(properties, GoogleDefaults.AuthenticationScheme);
             var redirectUrl = Url.Action(nameof(CallBack), "auth", null, Request.Scheme);
-            //var clientId = _configuration["Google:clientId"];
-            //var url = $"https://accounts.google.com/o/oauth2/v2/auth?client_id={clientId}&redirect_uri={redirectUrl}&response_type=code&scope=openid profile email";
             var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
-            //return Redirect(url);
         }
 
 
@@ -126,16 +137,11 @@ namespace VintageTimepieceApi.Controllers
         {
             APIResponse<User> responseResult = null;
             APIResponse<JwtSecurityToken> token;
-            string accessToken = "";
+            string accessToken = "", jsonString = "";
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             if (!result.Succeeded)
             {
-                return Redirect("http://localhost:5173?isAuthenticate=false");
-                //return Ok(new APIResponse<string>
-                //{
-                //    Message = "Sign in with google fail",
-                //    isSuccess = false
-                //});
+                return Redirect("http://localhost:5173/");
             }
 
             var email = result.Principal.FindFirst(ClaimTypes.Email).Value;
@@ -147,6 +153,7 @@ namespace VintageTimepieceApi.Controllers
             {
                 token = _jwtConfigService.GetAccessTokenFromUser(existsUser.Data);
                 accessToken = new JwtSecurityTokenHandler().WriteToken(token.Data);
+
                 Response.Cookies.Append("access_token", accessToken, new CookieOptions
                 {
                     HttpOnly = true,
@@ -154,7 +161,7 @@ namespace VintageTimepieceApi.Controllers
                     SameSite = SameSiteMode.Strict,
                     Expires = token.Data?.ValidTo
                 });
-                return Redirect("http://localhost:5173?isAuthenticate=true");
+                return Redirect("http://localhost:5173/");
             }
 
             var user = new RegisterModel();
@@ -165,17 +172,14 @@ namespace VintageTimepieceApi.Controllers
             var registerResult = await _authService.RegisterAccount(user);
             if (!registerResult.isSuccess)
             {
-                return Ok(new APIResponse<string>
-                {
-                    Message = "Login fail",
-                    isSuccess = false,
-                });
+                return Redirect("http://localhost:5173/");
             }
 
 
             var newUser = await _authService.GetUsersByEmail(user.Email);
             token = _jwtConfigService.GetAccessTokenFromUser(newUser.Data);
             accessToken = new JwtSecurityTokenHandler().WriteToken(token.Data);
+
             Response.Cookies.Append("access_token", accessToken, new CookieOptions
             {
                 HttpOnly = true,
@@ -183,7 +187,39 @@ namespace VintageTimepieceApi.Controllers
                 SameSite = SameSiteMode.Strict,
                 Expires = token.Data?.ValidTo
             });
-            return Redirect("http://localhost:5173?isAuthenticate=true");
+            return Redirect("http://localhost:5173/");
+        }
+
+
+
+
+        [HttpGet, Route("checkAuthenticate")]
+        public IActionResult checkAuthenticate()
+        {
+            if (HttpContext.Request.Cookies.TryGetValue("access_token", out var access_token))
+            {
+                if (access_token == null)
+                {
+                    return Ok(new APIResponse<User>
+                    {
+                        Message = "Authenticate fail",
+                        isSuccess = false,
+                    });
+                }
+                var user = _jwtConfigService.GetUserFromAccessToken(access_token);
+                return Ok(new APIResponse<User>
+                {
+                    Message = "Authenticate success",
+                    isSuccess = true,
+                    AccessToken = access_token,
+                    Data = user.Data
+                });
+            }
+            return Ok(new APIResponse<User>
+            {
+                Message = "Not authenticate",
+                isSuccess = false
+            });
         }
     }
 }

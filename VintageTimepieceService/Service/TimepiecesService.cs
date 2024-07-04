@@ -30,6 +30,24 @@ namespace VintageTimepieceService.Service
                 Data = result
             };
         }
+        public async Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepieceNotEvaluate()
+        {
+            var result = await Task.FromResult(_timepieceRepository.GetAllTimepieceNotEvaluate());
+            if (result.Count > 0)
+                return new APIResponse<List<TimepieceViewModel>>
+                {
+                    Message = "Get timepiece not evaluate success",
+                    isSuccess = true,
+                    Data = result
+                };
+            return new APIResponse<List<TimepieceViewModel>>
+            {
+                Message = "Don't have timepiece not evaluate",
+                isSuccess = false,
+                Data = result
+            };
+
+        }
         public async Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepieceExceptUser(User user)
         {
             var result = await Task.FromResult(_timepieceRepository.GetAllTimepieceExceptUser(user));
@@ -48,40 +66,40 @@ namespace VintageTimepieceService.Service
             };
 
         }
-        public async Task<APIResponse<PageList<TimepieceViewModel>>> GetAllTimepieceWithPaging(PagingModel pageModel)
-        {
-            var result = await Task.FromResult(_timepieceRepository.GetAllTimepieceWithPaging(pageModel));
-            if (result != null)
-                return new APIResponse<PageList<TimepieceViewModel>>
-                {
-                    Message = "Get all timepiece success",
-                    isSuccess = true,
-                    Data = result
-                };
-            return new APIResponse<PageList<TimepieceViewModel>>
-            {
-                Message = "Don't have any timepiece",
-                isSuccess = false,
-                Data = result
-            };
-        }
-        public async Task<APIResponse<PageList<TimepieceViewModel>>> GetAllTimepieceWithPagingExceptUser(User user, PagingModel pagingModel)
-        {
-            var result = await Task.FromResult(_timepieceRepository.GetAllTimepieceWithPagingExceptUser(user, pagingModel));
-            if (result.Count == 0)
-                return new APIResponse<PageList<TimepieceViewModel>>
-                {
-                    Message = "Don't have any time piece",
-                    isSuccess = false,
-                    Data= result
-                };
-            return new APIResponse<PageList<TimepieceViewModel>>
-            {
-                Message = "Get all time pice with paging success",
-                isSuccess = true,
-                Data = result
-            };
-        }
+        //public async Task<APIResponse<PageList<TimepieceViewModel>>> GetAllTimepieceWithPaging(PagingModel pageModel)
+        //{
+        //    var result = await Task.FromResult(_timepieceRepository.GetAllTimepieceWithPaging(pageModel));
+        //    if (result != null)
+        //        return new APIResponse<PageList<TimepieceViewModel>>
+        //        {
+        //            Message = "Get all timepiece success",
+        //            isSuccess = true,
+        //            Data = result
+        //        };
+        //    return new APIResponse<PageList<TimepieceViewModel>>
+        //    {
+        //        Message = "Don't have any timepiece",
+        //        isSuccess = false,
+        //        Data = result
+        //    };
+        //}
+        //public async Task<APIResponse<PageList<TimepieceViewModel>>> GetAllTimepieceWithPagingExceptUser(User user, PagingModel pagingModel)
+        //{
+        //    var result = await Task.FromResult(_timepieceRepository.GetAllTimepieceWithPagingExceptUser(user, pagingModel));
+        //    if (result.Count == 0)
+        //        return new APIResponse<PageList<TimepieceViewModel>>
+        //        {
+        //            Message = "Don't have any time piece",
+        //            isSuccess = false,
+        //            Data= result
+        //        };
+        //    return new APIResponse<PageList<TimepieceViewModel>>
+        //    {
+        //        Message = "Get all time pice with paging success",
+        //        isSuccess = true,
+        //        Data = result
+        //    };
+        //}
         public async Task<APIResponse<TimepieceViewModel>> GetOneTimepiece(int id)
         {
             var result = await Task.FromResult(_timepieceRepository.GetTimepieceById(id));
@@ -146,7 +164,7 @@ namespace VintageTimepieceService.Service
                 {
                     Message = "Timepiece not exists",
                     isSuccess = false,
-                    Data= timepiece
+                    Data = timepiece
                 };
             timepiece.timepiece.IsDel = true;
             var result = await Task.FromResult(_timepieceRepository.Update(timepiece.timepiece));
@@ -208,5 +226,22 @@ namespace VintageTimepieceService.Service
             };
         }
 
+        public async Task<APIResponse<Timepiece>> UploadNewTimepiece(Timepiece timepiece)
+        {
+            var result = await Task.FromResult(_timepieceRepository.UploadNewTimepiece(timepiece));
+            if (result != null)
+                return new APIResponse<Timepiece>
+                {
+                    Message = "Upload timepiece success",
+                    isSuccess = true,
+                    Data = result
+                };
+            return new APIResponse<Timepiece>
+            {
+                Message = "Upload timepiece fail",
+                isSuccess = false,
+                Data = result
+            };
+        }
     }
 }
