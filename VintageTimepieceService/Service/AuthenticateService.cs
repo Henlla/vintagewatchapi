@@ -64,5 +64,27 @@ namespace VintageTimepieceService.Service
                 Data = result
             };
         }
+
+        public async Task<APIResponse<User>> UpdateAccount(int userId, User user)
+        {
+
+            var result = await _authenticateRepository.updateUser(userId, user);
+            if (result != null)
+            {
+                return new APIResponse<User>
+                {
+                    Message = "update success",
+                    isSuccess = true,
+                    Data = result
+                };
+            }
+            return new APIResponse<User>
+            {
+                Message = "update fail",
+                isSuccess = true,
+                Data = result
+            };
+
+        }
     }
 }

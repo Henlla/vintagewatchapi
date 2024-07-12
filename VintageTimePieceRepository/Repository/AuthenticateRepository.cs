@@ -61,5 +61,26 @@ namespace VintageTimePieceRepository.Repository
                 return null;
             return result;
         }
+
+        public async Task<User?> updateUser(int userID, User user)
+        {
+
+            var currentUser = await GetUserById(userID);
+            currentUser.FirstName = user.FirstName;
+            currentUser.LastName = user.LastName;
+            currentUser.PhoneNumber = user.PhoneNumber;
+            currentUser.Email = user.Email;
+            currentUser.Address = user.Address;
+            var result = Update(currentUser);
+            return await Task.FromResult( result);
+
+        }
+
+        public async Task<User?> GetUserById(int userID)
+        {
+            var result = await _context.Users.FirstOrDefaultAsync(u=>u.UserId==userID);
+            return result;
+
+        }
     }
 }

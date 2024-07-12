@@ -190,6 +190,49 @@ namespace VintageTimepieceApi.Controllers
             return Redirect("http://localhost:5173/");
         }
 
+        [HttpGet, Route("getUser")]
+        public IActionResult getUser()
+        {
+            if (HttpContext.Request.Cookies.TryGetValue("access_token", out var access_token))
+            {
+                if (access_token == null)
+                {
+                    return Ok(new APIResponse<User>
+                    {
+                        Message = "GetUser Fail",
+                        isSuccess = false,
+                    });
+                }
+                var user = _jwtConfigService.GetUserFromAccessToken(access_token);
+                return Ok(new APIResponse<User>
+                {
+                    Message = "GetUser success",
+                    isSuccess = true,
+                    AccessToken = access_token,
+                    Data = user.Data
+                });
+            }
+            return Ok(new APIResponse<User>
+            {
+                Message = "Not authenticate",
+                isSuccess = false
+            });
+        }
+
+        [HttpPut, Route("editUser")]
+        public async Task<IActionResult> editUser([FromForm]string user)
+        {
+            if (HttpContext.Request.Cookies.TryGetValue("access_token", out var access_token))
+            {
+              
+                var currentAcount = _jwtConfigService.GetUserFromAccessToken(access_token);
+                var result = await _authService.UpdateAccount(currentAcount.Data.UserId,JsonConvert.DeserializeObject<User>(user));
+                return Ok(result);
+               
+            }
+          return BadRequest();
+        }
+
 
 
 

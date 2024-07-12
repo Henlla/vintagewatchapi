@@ -14,5 +14,6 @@ namespace VintageTimepieceService.IService
         public Task<APIResponse<User>> CheckLogin(LoginModel user);
         public Task<APIResponse<User>> GetUsersByEmail(string value);
         public Task<APIResponse<User>> RegisterAccount(RegisterModel registerAccount);
+        public Task<APIResponse<User>> UpdateAccount(int userId, User user);
     }
 }
