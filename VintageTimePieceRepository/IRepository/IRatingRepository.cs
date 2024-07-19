@@ -10,7 +10,7 @@ namespace VintageTimePieceRepository.IRepository
     public interface IRatingRepository
     {
         public List<RatingsTimepiece> GetAllRatingOfTimepiece(int timepiceId);
-        public List<RatingsTimepiece> GetAllRatingOfUser(int userId);
+        public RatingsTimepiece? GetRatingOfUser(int? userId, int? timepieceId);
         public RatingsTimepiece MakeRating(RatingsTimepiece rating);
     }
 }

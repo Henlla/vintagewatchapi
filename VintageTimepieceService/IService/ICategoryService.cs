@@ -10,6 +10,5 @@ namespace VintageTimepieceService.IService
         public Task<APIResponse<Category>> UpdateCategory(int id, Category category);
         public Task<APIResponse<Category>> GetCategoryById(int id);
         public Task<APIResponse<List<Category>>> GetAllCategory();
-
     }
 }

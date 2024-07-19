@@ -43,7 +43,7 @@ namespace VintageTimepieceService.Service
             return new APIResponse<List<TimepieceViewModel>>
             {
                 Message = "Don't have timepiece not evaluate",
-                isSuccess = false,
+                isSuccess = true,
                 Data = result
             };
 
@@ -66,40 +66,6 @@ namespace VintageTimepieceService.Service
             };
 
         }
-        //public async Task<APIResponse<PageList<TimepieceViewModel>>> GetAllTimepieceWithPaging(PagingModel pageModel)
-        //{
-        //    var result = await Task.FromResult(_timepieceRepository.GetAllTimepieceWithPaging(pageModel));
-        //    if (result != null)
-        //        return new APIResponse<PageList<TimepieceViewModel>>
-        //        {
-        //            Message = "Get all timepiece success",
-        //            isSuccess = true,
-        //            Data = result
-        //        };
-        //    return new APIResponse<PageList<TimepieceViewModel>>
-        //    {
-        //        Message = "Don't have any timepiece",
-        //        isSuccess = false,
-        //        Data = result
-        //    };
-        //}
-        //public async Task<APIResponse<PageList<TimepieceViewModel>>> GetAllTimepieceWithPagingExceptUser(User user, PagingModel pagingModel)
-        //{
-        //    var result = await Task.FromResult(_timepieceRepository.GetAllTimepieceWithPagingExceptUser(user, pagingModel));
-        //    if (result.Count == 0)
-        //        return new APIResponse<PageList<TimepieceViewModel>>
-        //        {
-        //            Message = "Don't have any time piece",
-        //            isSuccess = false,
-        //            Data= result
-        //        };
-        //    return new APIResponse<PageList<TimepieceViewModel>>
-        //    {
-        //        Message = "Get all time pice with paging success",
-        //        isSuccess = true,
-        //        Data = result
-        //    };
-        //}
         public async Task<APIResponse<TimepieceViewModel>> GetOneTimepiece(int id)
         {
             var result = await Task.FromResult(_timepieceRepository.GetTimepieceById(id));
@@ -151,6 +117,23 @@ namespace VintageTimepieceService.Service
             {
                 Message = "Don't find the timepiece",
                 isSuccess = false,
+                Data = result
+            };
+        }
+        public async Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceHasEvaluate(User user)
+        {
+            var result = await Task.FromResult(_timepieceRepository.GetAllTimepieceHasEvaluate(user));
+            if (result.Count > 0)
+                return new APIResponse<List<TimepieceViewModel>>
+                {
+                    Message = "Get timepiece not evaluate success",
+                    isSuccess = true,
+                    Data = result
+                };
+            return new APIResponse<List<TimepieceViewModel>>
+            {
+                Message = "Don't have timepiece not evaluate",
+                isSuccess = true,
                 Data = result
             };
         }
@@ -225,7 +208,6 @@ namespace VintageTimepieceService.Service
                 Data = result
             };
         }
-
         public async Task<APIResponse<Timepiece>> UploadNewTimepiece(Timepiece timepiece)
         {
             var result = await Task.FromResult(_timepieceRepository.UploadNewTimepiece(timepiece));
@@ -240,6 +222,26 @@ namespace VintageTimepieceService.Service
             {
                 Message = "Upload timepiece fail",
                 isSuccess = false,
+                Data = result
+            };
+        }
+
+        public async Task<APIResponse<Timepiece>> UpdateTimepiecePrice(int timpieceId, int price)
+        {
+            var result = await Task.FromResult(_timepieceRepository.UpdateTimepiecePrice(timpieceId, price));
+            if (result == null)
+            {
+                return new APIResponse<Timepiece>
+                {
+                    Message = "Update timepiece price fail",
+                    isSuccess = false,
+                    Data = result
+                };
+            }
+            return new APIResponse<Timepiece>
+            {
+                Message = "Update timepiece price success",
+                isSuccess = true,
                 Data = result
             };
         }

@@ -443,7 +443,6 @@ public partial class VintagedbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("address");
             entity.Property(e => e.Avatar)
-                .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("avatar");
             entity.Property(e => e.DateJoined)

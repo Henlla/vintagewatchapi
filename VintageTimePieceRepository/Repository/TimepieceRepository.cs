@@ -25,7 +25,7 @@ namespace VintageTimePieceRepository.Repository
             var listProduct = (from tp in _context.Timepieces
                                join eva in _context.TimepieceEvaluations on tp.TimepieceId equals eva.TimepieceId
                                join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-                               where tp.IsDel == false
+                               where tp.IsDel == false && tp.Price != null
                                select new TimepieceViewModel
                                {
                                    timepiece = tp,
@@ -41,7 +41,9 @@ namespace VintageTimePieceRepository.Repository
                                join eva in _context.TimepieceEvaluations on tp.TimepieceId equals eva.TimepieceId into tpEva
                                from eva in tpEva.DefaultIfEmpty()
                                join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-                               where tp.IsDel == false && tp.TimepieceId != eva.TimepieceId
+                               where tp.IsDel == false
+                               && tp.TimepieceId != eva.TimepieceId
+                               && tp.Price == null
                                select new TimepieceViewModel
                                {
                                    timepiece = tp,
@@ -56,7 +58,10 @@ namespace VintageTimePieceRepository.Repository
             var listProduct = (from tp in _context.Timepieces
                                join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
                                join eva in _context.TimepieceEvaluations on tp.TimepieceId equals eva.TimepieceId
-                               where tp.IsDel == false && tp.UserId != user.UserId
+                               where tp.IsDel == false
+                               && tp.UserId != user.UserId
+                               && tp.TimepieceId == eva.TimepieceId
+                               && tp.Price != null
                                select new TimepieceViewModel
                                {
                                    timepiece = tp,
@@ -65,46 +70,18 @@ namespace VintageTimePieceRepository.Repository
                                }).ToList();
             return listProduct;
         }
-
-        //public PageList<TimepieceViewModel> GetAllTimepieceWithPaging(PagingModel pagingModel)
-        //{
-        //    var listProduct = (from tp in _context.Timepieces
-        //                       where tp.IsDel == false
-        //                       orderby tp.TimepieceId
-        //                       join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-        //                       select new TimepieceViewModel
-        //                       {
-        //                           timepiece = tp,
-        //                           mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-        //                           images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
-        //                       });
-        //    return PageList<TimepieceViewModel>.GetPagedList(listProduct, pagingModel.PageNumber, pagingModel.PageSize);
-        //}
-
-        //public PageList<TimepieceViewModel> GetAllTimepieceWithPagingExceptUser(User user, PagingModel pagingModel)
-        //{
-        //    var listProduct = (from tp in _context.Timepieces
-        //                       where tp.IsDel == false && tp.UserId != user.UserId
-        //                       orderby tp.TimepieceId
-        //                       join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-        //                       select new TimepieceViewModel
-        //                       {
-        //                           timepiece = tp,
-        //                           mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-        //                           images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
-        //                       });
-        //    return PageList<TimepieceViewModel>.GetPagedList(listProduct, pagingModel.PageNumber, pagingModel.PageSize);
-        //}
         public TimepieceViewModel? GetTimepieceById(int id)
         {
             var timePiece = (from tp in _context.Timepieces
-                             where tp.TimepieceId == id && tp.IsDel == false
+                             join eva in _context.TimepieceEvaluations on tp.TimepieceId equals eva.TimepieceId
                              join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
+                             where tp.TimepieceId == id && tp.IsDel == false
                              select new TimepieceViewModel
                              {
                                  timepiece = tp,
                                  mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-                                 images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
+                                 images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList(),
+                                 evaluation = eva.Evaluation,
                              }).SingleOrDefault();
             return timePiece;
         }
@@ -166,12 +143,38 @@ namespace VintageTimePieceRepository.Repository
                                  }).ToList();
             return listTimePiece;
         }
-
+        public List<TimepieceViewModel> GetAllTimepieceHasEvaluate(User user)
+        {
+            var listProduct = (from tp in _context.Timepieces
+                               join eva in _context.TimepieceEvaluations on tp.TimepieceId equals eva.TimepieceId into tpEva
+                               from eva in tpEva.DefaultIfEmpty()
+                               join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
+                               where tp.IsDel == false
+                               && (tp.TimepieceId == eva.TimepieceId || tp.TimepieceId != eva.TimepieceId)
+                               && (tp.Price == null || tp.Price != null)
+                               && (tp.UserId == user.UserId)
+                               select new TimepieceViewModel
+                               {
+                                   timepiece = tp,
+                                   evaluation = eva.Evaluation,
+                                   mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
+                                   category = _context.TimepieceCategories.Where(tc => tc.TimepieceId == tp.TimepieceId).OrderBy(tc => tc.TimepieceCategoryId).ToList(),
+                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
+                               }).ToList();
+            return listProduct;
+        }
 
         // CUD
         public Timepiece UploadNewTimepiece(Timepiece timepiece)
         {
             return Add(timepiece);
+        }
+        public Timepiece UpdateTimepiecePrice(int timepieceId, int price)
+        {
+            var currentTimepiece = _context.Timepieces.Where(ti => ti.TimepieceId == timepieceId).Single();
+            currentTimepiece.Price = price;
+            var result = Update(currentTimepiece);
+            return result;
         }
     }
 }

@@ -28,11 +28,47 @@ namespace VintageTimePieceRepository.Util
             return Task.FromResult(base64String);
         }
 
+        public async Task DeleteImageFromFireBase(string imageUrl)
+        {
+            Uri uri = new Uri(imageUrl);
+            string imagePath = uri.LocalPath.Substring(uri.LocalPath.IndexOf("/o/") + 3);
+            if (imagePath == "avatar/userdefault.png")
+            {
+                return;
+            }
+            bool isImageExists = await ImageExistsInFirebase(imageUrl);
+            if (!isImageExists)
+            {
+                return;
+            }
+            var storage = new FirebaseStorage(_configuration["Firebase:bucket"]);
+            await storage.Child(imagePath).DeleteAsync();
+        }
+        public async Task<bool> ImageExistsInFirebase(string imageUrl)
+        {
+            try
+            {
+                Uri uri = new Uri(imageUrl);
+                string path = uri.LocalPath.Substring(uri.LocalPath.IndexOf("/o/") + 3);
+                var storage = new FirebaseStorage(_configuration["Firebase:bucket"]);
+                await storage.Child(path).GetDownloadUrlAsync();
+                return true;
+            }
+            catch (FirebaseStorageException ex)
+            {
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<string> UploadImageToFirebase(string images, string folder)
         {
             byte[] imageData = Convert.FromBase64String(images);
             var storage = new FirebaseStorage(_configuration["Firebase:bucket"]);
-            var imageUrl = await storage.Child("images/"+folder)
+            var imageUrl = await storage.Child("images/" + folder)
                 .Child($"{Guid.NewGuid()}_{DateTime.Now.Ticks}.jpg")
                 .PutAsync(new MemoryStream(imageData));
             return imageUrl;

@@ -17,6 +17,8 @@ namespace VintageTimepieceModel.Models.Shared
         public string? FirstName { get; set; }
         [Required(ErrorMessage = "Last name is required")]
         public string? LastName { get; set; }
+        public string? phoneNumber { get; set; }
+        public string? address { get; set; }
         public DateTime? JoinedDate { get; set; }
     }
 }

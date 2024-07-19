@@ -22,7 +22,7 @@ namespace VintageTimePieceRepository.Repository
 
         public List<Category> GetAllCategory()
         {
-            return FindAll().ToList();
+            return FindAll().Where(c => c.IsDel == false).ToList();
         }
 
         public Category? GetCategoryById(int id)

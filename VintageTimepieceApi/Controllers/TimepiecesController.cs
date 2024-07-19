@@ -15,13 +15,18 @@ namespace VintageTimepieceApi.Controllers
         private ITimepiecesService _timepieceService { get; }
         private IJwtConfigService _jwtConfigService { get; }
         private IImageService _imageService { get; }
+        private IOrderService _orderService { get; }
+        private IOrderDetailService _orderDetailService { get; }
 
         public TimepiecesController(ITimepiecesService timepiecesService,
-            IJwtConfigService jwtConfigService, IImageService imageService)
+            IJwtConfigService jwtConfigService, IImageService imageService,
+            IOrderService orderService, IOrderDetailService orderDetailService)
         {
             _timepieceService = timepiecesService;
             _jwtConfigService = jwtConfigService;
             _imageService = imageService;
+            _orderService = orderService;
+            _orderDetailService = orderDetailService;
         }
 
         [HttpGet, Route("GetAllProduct")]
@@ -50,55 +55,6 @@ namespace VintageTimepieceApi.Controllers
             return Ok(result);
         }
 
-        //[HttpGet, Route("GetAllProductExeptUser")]
-        //public async Task<IActionResult> GetAllProductExeptUser()
-        //{
-        //    var user = _jwtConfigService.GetUserFromAccessToken(token);
-        //    if (user.isSuccess)
-        //    {
-        //        var timepieces = await _timepieceService.GetAllTimepieceExceptUser(user.Data);
-        //        if (timepieces.isSuccess)
-        //        {
-        //            return Ok(timepieces);
-        //        }
-        //        else
-        //        {
-        //            return BadRequest(timepieces);
-        //        }
-        //    }
-        //    return BadRequest(user);
-        //}
-
-
-
-        //[HttpGet, Route("GetAllProductWithPaging")]
-        //public async Task<IActionResult> GetAllProductWithPaging([FromQuery] PagingModel pagingModel)
-        //{
-        //    var result = await _timepieceService.GetAllTimepieceWithPaging(pagingModel);
-        //    return Ok(result);
-        //}
-
-
-
-        //[HttpGet, Route("GetAllProductExceptUserWithPaging")]
-        //public async Task<IActionResult> GetAllProductExceptUserWithPaging([FromQuery] string token, [FromQuery] PagingModel pagingModel)
-        //{
-        //    var user = _jwtConfigService.GetUserFromAccessToken(token);
-        //    if (user.isSuccess)
-        //    {
-        //        var result = await _timepieceService.GetAllTimepieceWithPagingExceptUser(user.Data, pagingModel);
-        //        if (result.isSuccess)
-        //            return Ok(result);
-        //        return BadRequest(result);
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(user);
-        //    }
-        //}
-
-
-
         [HttpGet, Route("GetAllProductByName")]
         public async Task<IActionResult> GetAllProductByName([FromQuery] string name)
         {
@@ -116,39 +72,31 @@ namespace VintageTimepieceApi.Controllers
             return Ok(result);
         }
 
-        //[HttpGet, Route("GetAllProductByNameExceptUser")]
-        //public async Task<IActionResult> GetAllProductByNameExceptUser([FromQuery] string name, [FromQuery] string token)
-        //{
-        //    var user = _jwtConfigService.GetUserFromAccessToken(token);
-        //    if (user.isSuccess)
-        //    {
-        //        var result = await _timepieceService.GetTimepieceByNameExceptUser(name, user.Data);
-        //        if (result.isSuccess)
-        //            return Ok(result);
-        //        return BadRequest(result);
-        //    }
-        //    return BadRequest(user);
-        //}
-
-
         [HttpGet, Route("GetProductById/{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {
             var result = await _timepieceService.GetOneTimepiece(id);
             return Ok(result);
         }
-
-        [HttpGet,Route("GetEvaluationTimepiece")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
+        [HttpGet, Route("GetEvaluationTimepiece")]
         public async Task<IActionResult> GetEvaluationTimepiece()
         {
-            return Ok("");
+            HttpContext.Request.Cookies.TryGetValue("access_token", out var token);
+            if (token == null)
+            {
+                return Unauthorized();
+            }
+            var user = _jwtConfigService.GetUserFromAccessToken(token);
+            var result = await _timepieceService.GetTimepieceHasEvaluate(user.Data);
+            return Ok(result);
         }
-
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
         [HttpPost, Route("requestEvaluation")]
         public async Task<IActionResult> Post([FromForm] List<IFormFile> files, [FromForm] string timepiece)
         {
+
             HttpContext.Request.Cookies.TryGetValue("access_token", out var access_token);
             var user = _jwtConfigService.GetUserFromAccessToken(access_token);
             var data = JsonConvert.DeserializeObject<Timepiece>(timepiece);
@@ -168,8 +116,8 @@ namespace VintageTimepieceApi.Controllers
                     return BadRequest(resultUploadImage);
                 }
                 TimepieceImage timepieceImage = new TimepieceImage();
-                timepieceImage.TimepieceId = resultTimepiece.Data.TimepieceId;
-                timepieceImage.ImageName = resultTimepiece.Data.TimepieceName;
+                timepieceImage.TimepieceId = resultTimepiece.Data?.TimepieceId;
+                timepieceImage.ImageName = resultTimepiece.Data?.TimepieceName;
                 timepieceImage.ImageUrl = resultUploadImage.Data;
                 var resultTimepieceImage = await _imageService.CreateNewTimepieceImage(timepieceImage);
                 if (!resultTimepieceImage.isSuccess)
@@ -179,9 +127,6 @@ namespace VintageTimepieceApi.Controllers
             }
             return Ok(resultTimepiece);
         }
-
-
-
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
         [HttpPut, Route("{id}")]
@@ -193,10 +138,6 @@ namespace VintageTimepieceApi.Controllers
             return Ok(result);
         }
 
-
-
-
-
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
         [HttpDelete, Route("{id}")]
         public async Task<IActionResult> Delete(int id)
@@ -205,6 +146,43 @@ namespace VintageTimepieceApi.Controllers
             if (!result.isSuccess)
                 return BadRequest(result);
             return Ok(result);
+        }
+
+        [HttpPost, Route("checkout")]
+        public async Task<IActionResult> CheckOut([FromForm] string timepieceId, [FromForm] string userId)
+        {
+            var timepiece = await _timepieceService.GetOneTimepiece(int.Parse(timepieceId));
+            var order = new Order();
+            order.OrderDate = DateTime.UtcNow;
+            order.UserId = int.Parse(userId);
+            order.TotalPrice = timepiece.Data?.timepiece?.Price;
+            var resultOrder = await _orderService.CreateOrder(order);
+            if (!resultOrder.isSuccess)
+            {
+                return BadRequest(resultOrder);
+            }
+            var orderDetail = new OrdersDetail();
+            orderDetail.TimepieceId = int.Parse(timepieceId);
+            orderDetail.OrderId = resultOrder.Data?.OrderId;
+            orderDetail.UnitPrice = timepiece.Data?.timepiece?.Price;
+            orderDetail.Quantity = 1;
+            var resultOrderDetail = await _orderDetailService.CreateOrderDetail(orderDetail);
+            if (!resultOrderDetail.isSuccess)
+            {
+                return BadRequest(resultOrderDetail);
+            }
+            return Ok(resultOrder);
+        }
+
+        [HttpPut, Route("UpdateTimepiecePrice")]
+        public async Task<IActionResult> UpdateTimepiecePrice([FromForm] int timepieceId, [FromForm] int price)
+        {
+            var result = await _timepieceService.UpdateTimepiecePrice(timepieceId, price);
+            if (result.isSuccess)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }

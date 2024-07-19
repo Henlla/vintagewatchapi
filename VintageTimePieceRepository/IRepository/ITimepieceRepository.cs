@@ -9,14 +9,13 @@ namespace VintageTimePieceRepository.IRepository
         public List<TimepieceViewModel> GetAllTimepiece();
         public List<TimepieceViewModel> GetAllTimepieceNotEvaluate();
         public List<TimepieceViewModel> GetAllTimepieceExceptUser(User user);
-        //public PageList<TimepieceViewModel> GetAllTimepieceWithPaging(PagingModel paginModel);
-        //public PageList<TimepieceViewModel> GetAllTimepieceWithPagingExceptUser(User user, PagingModel pagingModel);
         public TimepieceViewModel? GetTimepieceById(int id);
         public List<TimepieceViewModel> GetTimepieceByName(string name);
         public List<TimepieceViewModel> GetTimepieceByNameExceptUser(string name, User user);
         public List<TimepieceViewModel> GetTimepieceByCategory(int categoryId);
-
+        public List<TimepieceViewModel> GetAllTimepieceHasEvaluate(User user);
         // CUD
         public Timepiece UploadNewTimepiece(Timepiece timepiece);
+        public Timepiece UpdateTimepiecePrice(int timepieceId, int price);
     }
 }

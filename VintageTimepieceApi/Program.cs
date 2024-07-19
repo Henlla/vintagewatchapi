@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Rollbar;
-using Rollbar.NetCore.AspNet;
 using System.Text;
 using VintageTimepieceModel.Models;
 using VintageTimePieceRepository.IRepository;
@@ -42,11 +40,6 @@ builder.Services.AddAuthentication(options =>
     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-    //Set up google cookie
-    //options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    //options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    //options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-
 })
 .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
 {
@@ -54,7 +47,6 @@ builder.Services.AddAuthentication(options =>
     options.ClientId = builder.Configuration["Google:clientId"];
     options.ClientSecret = builder.Configuration["Google:clientSecret"];
     options.CallbackPath = builder.Configuration["Google:RedirectUri"];
-    //options.SaveTokens = true;
     options.Scope.Add("profile");
     options.Scope.Add("email");
 })
@@ -154,43 +146,14 @@ builder.Services.AddScoped<ITimepieceEvaluateRepository, TimepieceEvaluateReposi
 builder.Services.AddScoped<ITimepieceEvaluateService, TimepieceEvaluateService>();
 
 
+// Order
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 
-
-
-// ------------------------------------------- Set up Rollbar --------------------------------------------------
-//builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-//ConfigureRollbarInfrastructure();
-
-//// STEP 4 - Add Rollbar logger with the log level filter accordingly configured
-//builder.Services.AddRollbarLogger(loggerOptions =>
-//{
-//    loggerOptions.Filter =
-//      (loggerName, loglevel) => loglevel >= LogLevel.Trace;
-//});
-
-//void ConfigureRollbarInfrastructure()
-//{
-//    RollbarInfrastructureConfig config = new RollbarInfrastructureConfig(
-//      "ecd6794c63274ba9ae3c03df4d6631ae",
-//      "development"
-//    );
-//    RollbarDataSecurityOptions dataSecurityOptions = new RollbarDataSecurityOptions();
-//    dataSecurityOptions.ScrubFields = new string[]
-//    {
-//      "url",
-//      "method",
-//    };
-//    config.RollbarLoggerConfig.RollbarDataSecurityOptions.Reconfigure(dataSecurityOptions);
-
-//    RollbarInfrastructure.Instance.Init(config);
-//}
-
-// ----------------------------------------------- end set up rollbar -----------------------------------------------------
-
-
-
-
+//Order Detail
+builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
+builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
 
 
 var app = builder.Build();
@@ -202,11 +165,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// ----------------------------------------- Use Rollbar middleware -----------------------------------------
-//app.UseRollbarMiddleware();
-
-
-
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
