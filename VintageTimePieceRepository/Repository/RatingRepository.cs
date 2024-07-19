@@ -20,9 +20,9 @@ namespace VintageTimePieceRepository.Repository
             return result;
         }
 
-        public List<RatingsTimepiece> GetAllRatingOfUser(int userId)
+        public RatingsTimepiece? GetRatingOfUser(int? userId, int? timepieceId)
         {
-            var result = FindAll().Where(r => r.UserId == userId && r.IsDel == false).ToList();
+            var result = FindAll().Where(r => r.UserId == userId && r.TimepieceId == timepieceId && r.IsDel == false).SingleOrDefault();
             return result;
         }
 

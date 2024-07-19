@@ -34,23 +34,6 @@ namespace VintageTimepieceApi.Controllers
             _configuration = configuration;
         }
 
-
-        [HttpGet("checkError")]
-        public async Task<IActionResult> checkError()
-        {
-            try
-            {
-                var num1 = 1;
-                var num2 = 0;
-                return Ok(num1 / num2);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-
-        }
-
         [HttpPost, Route("signin")]
         public async Task<IActionResult> Login([FromBody] LoginModel user)
         {
@@ -79,8 +62,6 @@ namespace VintageTimepieceApi.Controllers
             });
         }
 
-
-
         [HttpPost, Route("signup")]
         public async Task<IActionResult> RegisterAccount([FromBody] RegisterModel registerModel)
         {
@@ -102,7 +83,6 @@ namespace VintageTimepieceApi.Controllers
             return Ok(result);
         }
 
-
         [HttpPost, Route("logout")]
         public async Task<IActionResult> Logout()
         {
@@ -119,7 +99,6 @@ namespace VintageTimepieceApi.Controllers
             });
         }
 
-
         [AllowAnonymous]
         [HttpGet, Route("signinWithGoogle")]
 
@@ -129,7 +108,6 @@ namespace VintageTimepieceApi.Controllers
             var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
-
 
         [AllowAnonymous]
         [HttpGet, Route("signin-google")]
@@ -190,52 +168,6 @@ namespace VintageTimepieceApi.Controllers
             return Redirect("http://localhost:5173/");
         }
 
-        [HttpGet, Route("getUser")]
-        public IActionResult getUser()
-        {
-            if (HttpContext.Request.Cookies.TryGetValue("access_token", out var access_token))
-            {
-                if (access_token == null)
-                {
-                    return Ok(new APIResponse<User>
-                    {
-                        Message = "GetUser Fail",
-                        isSuccess = false,
-                    });
-                }
-                var user = _jwtConfigService.GetUserFromAccessToken(access_token);
-                return Ok(new APIResponse<User>
-                {
-                    Message = "GetUser success",
-                    isSuccess = true,
-                    AccessToken = access_token,
-                    Data = user.Data
-                });
-            }
-            return Ok(new APIResponse<User>
-            {
-                Message = "Not authenticate",
-                isSuccess = false
-            });
-        }
-
-        [HttpPut, Route("editUser")]
-        public async Task<IActionResult> editUser([FromForm]string user)
-        {
-            if (HttpContext.Request.Cookies.TryGetValue("access_token", out var access_token))
-            {
-              
-                var currentAcount = _jwtConfigService.GetUserFromAccessToken(access_token);
-                var result = await _authService.UpdateAccount(currentAcount.Data.UserId,JsonConvert.DeserializeObject<User>(user));
-                return Ok(result);
-               
-            }
-          return BadRequest();
-        }
-
-
-
-
         [HttpGet, Route("checkAuthenticate")]
         public IActionResult checkAuthenticate()
         {
@@ -263,6 +195,43 @@ namespace VintageTimepieceApi.Controllers
                 Message = "Not authenticate",
                 isSuccess = false
             });
+        }
+
+        [HttpGet, Route("getAllUser")]
+        public async Task<IActionResult> GetAllUser()
+        {
+            var result = await _authService.GetAllUser();
+            return Ok(result);
+        }
+
+        [HttpPut, Route("UpdateUserInformation")]
+        public async Task<IActionResult> UpdateUserInformation([FromForm] string userId, [FromForm] string userData)
+        {
+            var user = JsonConvert.DeserializeObject<User>(userData);
+            var result = await _authService.UpdateUserInformation(int.Parse(userId), user);
+            if (result.isSuccess)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpPut, Route("UpdateUserImage")]
+        public async Task<IActionResult> UpdateUserImage([FromForm] IFormFile file, [FromForm] int userId)
+        {
+            var result = await _authService.UpdateUserImage(file, userId);
+            return Ok(result);
+        }
+
+        [HttpDelete, Route("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var result = await _authService.DeleteUser(id);
+            if (result.isSuccess)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }

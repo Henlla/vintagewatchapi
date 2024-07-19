@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VintageTimepieceModel.Models;
 using VintageTimepieceService.IService;
+using Newtonsoft.Json;
 
 namespace VintageTimepieceApi.Controllers
 {
@@ -25,7 +26,7 @@ namespace VintageTimepieceApi.Controllers
             var result = await _categoryService.GetAllCategory();
             return Ok(result);
         }
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
             var result = await _categoryService.GetCategoryById(id);
@@ -35,8 +36,9 @@ namespace VintageTimepieceApi.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "ADMIN,APPRAISER")]
         [HttpPost]
 
-        public async Task<IActionResult> Post(string token, [FromBody] Category category)
+        public async Task<IActionResult> Post([FromForm] string categoryString)
         {
+            var category = JsonConvert.DeserializeObject<Category>(categoryString);
             var result = await _categoryService.CreateNewCategory(category);
             if (!result.isSuccess)
                 return BadRequest(result);
