@@ -30,7 +30,7 @@ namespace VintageTimePieceRepository.Repository
                                {
                                    timepiece = tp,
                                    mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-                                   category = _context.TimepieceCategories.Where(tc => tc.TimepieceId == tp.TimepieceId).OrderBy(tc => tc.TimepieceCategoryId).ToList(),
+                                   category = _context.TimepieceCategories.Where(tc => tc.TimepieceId == tp.TimepieceId && tc.IsDel == false).OrderBy(tc => tc.TimepieceCategoryId).ToList(),
                                    images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
                                }).ToList();
             return listProduct;
@@ -48,7 +48,7 @@ namespace VintageTimePieceRepository.Repository
                                {
                                    timepiece = tp,
                                    mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-                                   category = _context.TimepieceCategories.Where(tc => tc.TimepieceId == tp.TimepieceId).OrderBy(tc => tc.TimepieceCategoryId).ToList(),
+                                   category = _context.TimepieceCategories.Where(tc => tc.TimepieceId == tp.TimepieceId && tc.IsDel == false).OrderBy(tc => tc.TimepieceCategoryId).ToList(),
                                    images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
                                }).ToList();
             return listProduct;
