@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,20 +15,20 @@ namespace VintageTimePieceRepository.Repository
         {
         }
 
-        public Brand? DeleteBrand(int id)
+        public async Task<Brand?> DeleteBrand(int id)
         {
-            var brand = GetBrandById(id);
+            var brand = await GetBrandById(id);
             if (brand != null)
             {
                 brand.IsDel = true;
-                return Update(brand);
+                return await Update(brand);
             }
             return brand;
         }
 
-        public Brand? GetBrandById(int id)
+        public async Task<Brand?> GetBrandById(int id)
         {
-            return FindAll().Where(br => br.BrandId == id && br.IsDel == false).SingleOrDefault();
+            return await FindAll().Where(br => br.BrandId == id && br.IsDel == false).SingleOrDefaultAsync();
         }
     }
 }

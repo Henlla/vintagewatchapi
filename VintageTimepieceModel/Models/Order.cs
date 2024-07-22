@@ -14,6 +14,8 @@ public partial class Order
 
     public int? UserId { get; set; }
 
+    public string? Status { get; set; }
+
     public bool? IsDel { get; set; }
     [JsonIgnore]
     public virtual ICollection<OrdersDetail> OrdersDetails { get; set; } = new List<OrdersDetail>();

@@ -15,25 +15,29 @@ namespace VintageTimepieceService.Service
 
         public async Task<APIResponse<Category>> CreateNewCategory(Category cate)
         {
-            var result = await Task.FromResult(_categoryRepository.Add(cate));
-            if (result == null)
-                return new APIResponse<Category>
-                {
-                    Message = "Create category fail",
-                    isSuccess = false,
-                    Data = result
-                };
+            var result = await _categoryRepository.Add(cate);
+            bool isSuccess = false;
+            if (result != null)
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Create category success" : "Create category fail";
+
             return new APIResponse<Category>
             {
-                Message = "Create category success",
-                isSuccess = true,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }
 
         public async Task<APIResponse<Category>> DeleteCategory(int id)
         {
-            var category = _categoryRepository.GetCategoryById(id);
+            var category = await _categoryRepository.GetCategoryById(id);
             if (category == null)
             {
                 return new APIResponse<Category>
@@ -43,62 +47,73 @@ namespace VintageTimepieceService.Service
                 };
             }
             category.IsDel = true;
-            var result = await Task.FromResult(_categoryRepository.Update(category));
-            if (result == null)
-                return new APIResponse<Category>
-                {
-                    Message = "Delete category fail",
-                    isSuccess = false,
-                };
+            var result = await _categoryRepository.Update(category);
+            bool isSuccess = false;
+            if (result != null)
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Delete category success" : "Delete category fail";
+
             return new APIResponse<Category>
             {
-                Message = "Delete category success",
-                isSuccess = true,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }
 
         public async Task<APIResponse<List<Category>>> GetAllCategory()
         {
-            var result = await Task.FromResult(_categoryRepository.GetAllCategory());
+            var result = await _categoryRepository.GetAllCategory();
+            bool isSuccess = false;
             if (result.Count > 0)
-                return new APIResponse<List<Category>>
-                {
-                    Message = "Get all category success",
-                    isSuccess = true,
-                    Data = result
-                };
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Get all category success" : "Get all category fail";
+
             return new APIResponse<List<Category>>
             {
-                Message = "Get all category fail",
-                isSuccess = false,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }
 
         public async Task<APIResponse<Category>> GetCategoryById(int id)
         {
-            var result = await Task.FromResult(_categoryRepository.GetCategoryById(id));
+            var result = await _categoryRepository.GetCategoryById(id);
+            bool isSuccess = false;
             if (result != null)
             {
-                return new APIResponse<Category>
-                {
-                    Message = "Get category success",
-                    isSuccess = true,
-                    Data = result
-                };
+                isSuccess = true;
             }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Get category success" : "Get category fail";
+
             return new APIResponse<Category>
             {
-                Message = "Get category fail",
-                isSuccess = false,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }
 
         public async Task<APIResponse<Category>> UpdateCategory(int id, Category cate)
         {
-            var category = await Task.FromResult(_categoryRepository.GetCategoryById(id));
+            var category = await _categoryRepository.GetCategoryById(id);
             if (category == null)
             {
                 return new APIResponse<Category>
@@ -109,18 +124,22 @@ namespace VintageTimepieceService.Service
                 };
             }
             category.CategoryName = cate.CategoryName;
-            var result = await Task.FromResult(_categoryRepository.Update(category));
-            if (result == null)
-                return new APIResponse<Category>
-                {
-                    Message = "Update category fail",
-                    isSuccess = false,
-                    Data = result
-                };
+            var result = await _categoryRepository.Update(category);
+            bool isSuccess = false;
+            if (result != null)
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Update category success" : "Update category fail";
+
             return new APIResponse<Category>
             {
-                Message = "Update category success",
-                isSuccess = true,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }

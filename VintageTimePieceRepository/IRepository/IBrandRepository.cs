@@ -9,8 +9,8 @@ namespace VintageTimePieceRepository.IRepository
 {
     public interface IBrandRepository : IBaseRepository<Brand>
     {
-        public Brand? GetBrandById(int id);
+        public Task<Brand?> GetBrandById(int id);
 
-        public Brand? DeleteBrand(int id);
+        public Task<Brand?> DeleteBrand(int id);
     }
 }

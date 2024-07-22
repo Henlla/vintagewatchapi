@@ -10,12 +10,13 @@ namespace VintageTimepieceApi.Controllers
     {
         private IOrderService _orderService;
         private IJwtConfigService _jwtConfigService;
+        private ITimepiecesService _timepieceService;
         public OrderController(IOrderService orderService,
-            IJwtConfigService jwtConfigService)
+            IJwtConfigService jwtConfigService, ITimepiecesService timepieceService)
         {
             _orderService = orderService;
             _jwtConfigService = jwtConfigService;
-
+            _timepieceService = timepieceService;
         }
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -24,6 +25,27 @@ namespace VintageTimepieceApi.Controllers
             var user = _jwtConfigService.GetUserFromAccessToken(token);
             var result = await _orderService.GetOrderOfUser(user.Data.UserId);
             return Ok(result);
+        }
+        [HttpGet, Route("GetAllOrder")]
+        public async Task<IActionResult> GetAllOrder()
+        {
+            var result = await _orderService.GetAllOrder();
+            return Ok(result);
+        }
+
+        [HttpPut, Route("UpdateOrderStatus")]
+        public async Task<IActionResult> UpdateOrderStatus([FromForm] int orderId, [FromForm] string status)
+        {
+            var result = await _orderService.UpdateOrderStatus(orderId, status);
+            if (result.isSuccess)
+            {
+                if (status == "cancled")
+                {
+                    await _timepieceService.UpdateTimepieceOrder(result.Data.OrdersDetails.ToList(), false);
+                }
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }

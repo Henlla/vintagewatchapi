@@ -1,4 +1,5 @@
-﻿using VintageTimepieceModel;
+﻿using Microsoft.EntityFrameworkCore;
+using VintageTimepieceModel;
 using VintageTimepieceModel.Models;
 using VintageTimePieceRepository.IRepository;
 
@@ -10,29 +11,29 @@ namespace VintageTimePieceRepository.Repository
         {
         }
 
-        public Category CreateNewCategory(Category category)
+        public async Task<Category> CreateNewCategory(Category category)
         {
-            return Add(category);
+            return await Add(category);
         }
 
-        public Category DeleteCategory(Category category)
+        public async Task<Category> DeleteCategory(Category category)
         {
-            return Update(category);
+            return await Update(category);
         }
 
-        public List<Category> GetAllCategory()
+        public async Task<List<Category>> GetAllCategory()
         {
-            return FindAll().Where(c => c.IsDel == false).ToList();
+            return await FindAll().Where(c => c.IsDel == false).ToListAsync();
         }
 
-        public Category? GetCategoryById(int id)
+        public async Task<Category?> GetCategoryById(int id)
         {
-            return FindAll().Where(c => c.CategoryId == id && c.IsDel == false).SingleOrDefault();
+            return await FindAll().Where(c => c.CategoryId == id && c.IsDel == false).SingleOrDefaultAsync();
         }
 
-        public Category UpdateCategory(Category category)
+        public async Task<Category?> UpdateCategory(Category category)
         {
-            return Update(category);
+            return await Update(category);
         }
     }
 }

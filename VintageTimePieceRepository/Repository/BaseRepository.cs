@@ -6,33 +6,33 @@ namespace VintageTimePieceRepository.Repository
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
-        protected VintagedbContext _context { get; }
+        protected VintagedbContext _context;
         public BaseRepository(VintagedbContext context)
         {
             _context = context;
         }
-        public T Add(T entity)
+        public async Task<T> Add(T entity)
         {
-            _context.Set<T>().Add(entity);
-            _context.SaveChanges();
+            await _context.Set<T>().AddAsync(entity);
+            await _context.SaveChangesAsync();
             return entity;
         }
-        public List<T> AddRange(List<T> entity)
+        public async Task<List<T>> AddRange(List<T> entity)
         {
-            _context.Set<T>().AddRange(entity);
-            _context.SaveChanges();
+            await _context.Set<T>().AddRangeAsync(entity);
+            await _context.SaveChangesAsync();
             return entity;
         }
 
         public IQueryable<T> FindAll()
         {
-            return _context.Set<T>().AsNoTracking();
+            return _context.Set<T>().AsQueryable();
         }
 
-        public T Update(T entity)
+        public async Task<T> Update(T entity)
         {
             _context.Set<T>().Update(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return entity;
         }
 

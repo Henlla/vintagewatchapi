@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VintageTimepieceModel.Models;
 using VintageTimePieceRepository.IRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace VintageTimePieceRepository.Repository
 {
@@ -14,21 +15,25 @@ namespace VintageTimePieceRepository.Repository
         {
         }
 
-        public List<RatingsTimepiece> GetAllRatingOfTimepiece(int timepiceId)
+        public async Task<List<RatingsTimepiece>> GetAllRatingOfTimepiece(int timepiceId)
         {
-            var result = FindAll().Where(r => r.IsDel == false && r.TimepieceId == timepiceId).ToList();
+            var result = await _context.RatingsTimepieces
+                                        .Where(r => r.IsDel == false && r.TimepieceId == timepiceId)
+                                        .ToListAsync();
             return result;
         }
 
-        public RatingsTimepiece? GetRatingOfUser(int? userId, int? timepieceId)
+        public async Task<RatingsTimepiece?> GetRatingOfUser(int? userId, int? timepieceId)
         {
-            var result = FindAll().Where(r => r.UserId == userId && r.TimepieceId == timepieceId && r.IsDel == false).SingleOrDefault();
+            var result = await FindAll()
+                .Where(r => r.UserId == userId && r.TimepieceId == timepieceId && r.IsDel == false)
+                .SingleOrDefaultAsync();
             return result;
         }
 
-        public RatingsTimepiece MakeRating(RatingsTimepiece rating)
+        public async Task<RatingsTimepiece> MakeRating(RatingsTimepiece rating)
         {
-            var result = Add(rating);
+            var result = await Add(rating);
             return result;
         }
     }

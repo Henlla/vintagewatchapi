@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,26 +15,26 @@ namespace VintageTimePieceRepository.Repository
         {
         }
 
-        public IEnumerable<Evaluation> GetAllEvaluation()
+        public async Task<List<Evaluation>> GetAllEvaluation()
         {
-            var result = FindAll().Where(eva => eva.IsDel == false).AsEnumerable();
+            var result = await FindAll().Where(eva => eva.IsDel == false).ToListAsync();
             return result;
         }
 
-        public Evaluation GetOneEvaluation(int id)
+        public async Task<Evaluation> GetOneEvaluation(int id)
         {
-            var result = FindAll().Where(eva => eva.IsDel == false && eva.EvaluationId == id).AsEnumerable().Single();
+            var result = await FindAll().Where(eva => eva.IsDel == false && eva.EvaluationId == id).SingleAsync();
             return result;
         }
 
-        public Evaluation CreateEvaluation(Evaluation evaluation)
+        public async Task<Evaluation> CreateEvaluation(Evaluation evaluation)
         {
-            return Add(evaluation);
+            return await Add(evaluation);
         }
 
-        public Evaluation UpdateEvaluation(Evaluation evaluation)
+        public async Task<Evaluation> UpdateEvaluation(Evaluation evaluation)
         {
-            return Update(evaluation);
+            return await Update(evaluation);
         }
     }
 }

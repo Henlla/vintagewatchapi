@@ -1,4 +1,4 @@
-﻿using System.Data.Entity;
+﻿using Microsoft.EntityFrameworkCore;
 using VintageTimepieceModel.Models;
 using VintageTimePieceRepository.IRepository;
 
@@ -10,29 +10,29 @@ namespace VintageTimePieceRepository.Repository
         {
         }
 
-        public Role? CreateNewRole(Role role)
+        public async Task<Role?> CreateNewRole(Role role)
         {
-            return Add(role);
+            return await Add(role);
         }
 
-        public Role? DeleteRole(Role role)
+        public async Task<Role?> DeleteRole(Role role)
         {
-            return Update(role);
+            return await Update(role);
         }
 
-        public List<Role> GetAllRole()
+        public async Task<List<Role>> GetAllRole()
         {
-            return FindAll().Where(role => role.IsDel == false).ToList();
+            return await FindAll().Where(role => role.IsDel == false).ToListAsync();
         }
 
-        public Role? GetRoleById(int id)
+        public async Task<Role?> GetRoleById(int id)
         {
-            return FindAll().Where(r => r.RoleId == id && r.IsDel == false).SingleOrDefault();
+            return await FindAll().Where(r => r.RoleId == id && r.IsDel == false).SingleOrDefaultAsync();
         }
 
-        public Role? GetRoleByName(string roleName)
+        public async Task<Role?> GetRoleByName(string roleName)
         {
-            var role = FindAll().Where(r => r.IsDel == false && r.RoleName.Equals(roleName)).SingleOrDefault();
+            var role = await FindAll().Where(r => r.IsDel == false && r.RoleName.Equals(roleName)).SingleOrDefaultAsync();
             return role;
         }
     }

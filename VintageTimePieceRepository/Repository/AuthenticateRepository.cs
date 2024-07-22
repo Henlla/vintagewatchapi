@@ -45,17 +45,17 @@ namespace VintageTimePieceRepository.Repository
         }
         public async Task<IEnumerable<User>> GetAllUser()
         {
-            var result = (from user in _context.Users
-                          join role in _context.Roles on user.RoleId equals role.RoleId
-                          where user.IsDel == false && role.IsDel == false
-                          && role.RoleName == "USERS"
-                          select user).AsEnumerable();
-            return await Task.FromResult(result);
+            var result = await (from user in _context.Users
+                                join role in _context.Roles on user.RoleId equals role.RoleId
+                                where user.IsDel == false && role.IsDel == false
+                                && role.RoleName == "USERS"
+                                select user).ToListAsync();
+            return result;
         }
         public async Task<User?> GetUserById(int userId)
         {
-            var result = Task.FromResult(_context.Users.Where(u => u.UserId == userId && u.IsDel == false).SingleOrDefault());
-            return await result;
+            var result = await _context.Users.Where(u => u.UserId == userId && u.IsDel == false).SingleOrDefaultAsync();
+            return result;
         }
         // CUD
         public async Task<User?> CreateNewAccount(RegisterModel registerUser)
@@ -82,25 +82,25 @@ namespace VintageTimePieceRepository.Repository
         }
         public async Task<User> UpdateUserInformation(int userId, User user)
         {
-            var currentUser = _context.Users.Single(u => u.UserId == userId && u.IsDel == false);
+            var currentUser = await _context.Users.SingleAsync(u => u.UserId == userId && u.IsDel == false);
             currentUser.Email = user.Email;
             currentUser.FirstName = user.FirstName;
             currentUser.LastName = user.LastName;
             currentUser.PhoneNumber = user.PhoneNumber;
             currentUser.Address = user.Address;
-            var result = Update(currentUser);
-            return await Task.FromResult(result);
+            var result = await Update(currentUser);
+            return result;
         }
         public async Task<User> DeleteUser(int userId)
         {
-            var currentData = _context.Users.Where(u => u.UserId == userId && u.IsDel == false).Single();
+            var currentData = await _context.Users.Where(u => u.UserId == userId && u.IsDel == false).SingleAsync();
             currentData.IsDel = true;
-            var result = Update(currentData);
-            return await Task.FromResult(result);
+            var result = await Update(currentData);
+            return result;
         }
         public async Task<User?> UpdateUserImage(IFormFile file, int userId)
         {
-            var user = _context.Users.Where(u => u.UserId == userId && u.IsDel == false).SingleOrDefault();
+            var user = await _context.Users.Where(u => u.UserId == userId && u.IsDel == false).SingleOrDefaultAsync();
             if (user == null)
             {
                 return await Task.FromResult(user);
@@ -109,29 +109,8 @@ namespace VintageTimePieceRepository.Repository
             await _helper.DeleteImageFromFireBase(user.Avatar);
             var imageString = await _helper.UploadImageToFirebase(base64String, "avatar");
             user.Avatar = imageString;
-            var result = Update(user);
-            return await Task.FromResult(result);
-        }
-
-        public async Task<User?> updateUser(int userID, User user)
-        {
-
-            var currentUser = await GetUserById(userID);
-            currentUser.FirstName = user.FirstName;
-            currentUser.LastName = user.LastName;
-            currentUser.PhoneNumber = user.PhoneNumber;
-            currentUser.Email = user.Email;
-            currentUser.Address = user.Address;
-            var result = Update(currentUser);
-            return await Task.FromResult( result);
-
-        }
-
-        public async Task<User?> GetUserById(int userID)
-        {
-            var result = await _context.Users.FirstOrDefaultAsync(u=>u.UserId==userID);
+            var result = await Update(user);
             return result;
-
         }
     }
 }

@@ -19,31 +19,87 @@ namespace VintageTimepieceService.Service
         }
         public async Task<APIResponse<Order>> CreateOrder(Order order)
         {
-            var result = await Task.FromResult(_orderRepository.PostOrder(order));
+            var result = await _orderRepository.PostOrder(order);
+            bool isSuccess = false;
             if (result != null)
             {
-                return new APIResponse<Order>()
-                {
-                    Message = "Create order success",
-                    isSuccess = true,
-                    Data = result
-                };
+                isSuccess = true;
             }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Create order success" : "Create order fail";
+
             return new APIResponse<Order>
             {
-                Message = "Create order fail",
-                isSuccess = false,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }
 
-        public async Task<APIResponse<List<Object>>> GetOrderOfUser(int userId)
+        public async Task<APIResponse<List<OrderViewModel>>> GetAllOrder()
         {
-            var result = await Task.FromResult(_orderRepository.GetAllTheOrderOfUser(userId));
-            return new APIResponse<List<Object>>
+            var result = await _orderRepository.GetAllTheOrder();
+            bool isSuccess = false;
+            if (result.Count > 0)
             {
-                Message = "Get order of user success",
-                isSuccess = true,
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Get all order success" : "Don't have any order";
+
+            return new APIResponse<List<OrderViewModel>>
+            {
+                Message = message,
+                isSuccess = isSuccess,
+                Data = result
+            };
+        }
+
+        public async Task<APIResponse<List<OrderViewModel>>> GetOrderOfUser(int userId)
+        {
+            var result = await _orderRepository.GetAllTheOrderOfUser(userId);
+            bool isSuccess = false;
+            if (result.Count > 0)
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Get order of user success" : "Don't have any order";
+            return new APIResponse<List<OrderViewModel>>
+            {
+                Message = message,
+                isSuccess = isSuccess,
+                Data = result
+            };
+        }
+
+        public async Task<APIResponse<Order>> UpdateOrderStatus(int orderId, string status)
+        {
+            var result = await _orderRepository.UpdateOrderStatus(orderId, status);
+            bool isSuccess = false;
+            if (result != null)
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Update order status success" : "Update order status fail";
+
+            return new APIResponse<Order>
+            {
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }

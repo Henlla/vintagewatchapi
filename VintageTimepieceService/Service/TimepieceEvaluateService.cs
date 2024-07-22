@@ -19,18 +19,22 @@ namespace VintageTimepieceService.Service
         }
         public async Task<APIResponse<TimepieceEvaluation>> CreateTimepieceEvaluate(TimepieceEvaluation timepieceEvaluation)
         {
-            var result = await Task.FromResult(_timepieceEvaluateRepository.Add(timepieceEvaluation));
-            if (result == null)
-                return new APIResponse<TimepieceEvaluation>
-                {
-                    Message = "Create timepiece evaluate fail",
-                    isSuccess = false,
-                    Data = result
-                };
+            var result = await _timepieceEvaluateRepository.Add(timepieceEvaluation);
+            bool isSuccess = false;
+            if (result != null)
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Create timepiece evaluate success" : "Create timepiece evaluate fail";
+
             return new APIResponse<TimepieceEvaluation>
             {
-                Message = "Create timepiece evaluate success",
-                isSuccess = true,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }

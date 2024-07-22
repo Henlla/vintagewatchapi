@@ -5,10 +5,10 @@ namespace VintageTimePieceRepository.IRepository
 {
     public interface ICategoryRepository : IBaseRepository<Category>
     {
-        public Category CreateNewCategory(Category category);
-        public Category DeleteCategory(Category category);
-        public Category UpdateCategory(Category category);
-        public Category? GetCategoryById(int id);
-        public List<Category> GetAllCategory();
+        public Task<Category> CreateNewCategory(Category category);
+        public Task<Category> DeleteCategory(Category category);
+        public Task<Category?> UpdateCategory(Category category);
+        public Task<Category?> GetCategoryById(int id);
+        public Task<List<Category>> GetAllCategory();
     }
 }
