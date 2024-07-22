@@ -16,7 +16,7 @@ namespace VintageTimepieceService.Service
 
         public async Task<APIResponse<Role>> CreateNewRole(Role role)
         {
-            var existsRole = _roleRepository.FindAll().Where(x => x.RoleName.ToLower().Equals(role.RoleName.ToLower()) && x.IsDel == false).FirstOrDefault();
+            var existsRole = await _roleRepository.FindAll().Where(x => x.RoleName.ToLower().Equals(role.RoleName.ToLower()) && x.IsDel == false).FirstOrDefaultAsync();
             if (existsRole != null)
             {
                 return new APIResponse<Role>
@@ -25,7 +25,7 @@ namespace VintageTimepieceService.Service
                     isSuccess = false,
                 };
             }
-            var result = await Task.FromResult(_roleRepository.CreateNewRole(role));
+            var result = await _roleRepository.CreateNewRole(role);
             return new APIResponse<Role>
             {
                 Message = "Create role sucess",
@@ -37,7 +37,7 @@ namespace VintageTimepieceService.Service
 
         public async Task<APIResponse<Role>> DeleteRole(int id)
         {
-            var existsRole = _roleRepository.GetRoleById(id);
+            var existsRole = await _roleRepository.GetRoleById(id);
             if (existsRole == null)
             {
                 return new APIResponse<Role>
@@ -46,72 +46,89 @@ namespace VintageTimepieceService.Service
                     isSuccess = false,
                 };
             }
-            var result = await Task.FromResult(_roleRepository.DeleteRole(existsRole));
-            if (result == null)
-                return new APIResponse<Role>
-                {
-                    Message = "Delete role fail",
-                    isSuccess = false,
-                };
+            var result = await _roleRepository.DeleteRole(existsRole);
+            bool isSuccess = false;
+            if (result != null)
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Delete role success" : "Delete role fail";
+
             return new APIResponse<Role>
             {
-                Message = "Delete role success",
-                isSuccess = true,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }
 
         public async Task<APIResponse<List<Role>>> GetAllRole()
         {
-            var result = await Task.FromResult(_roleRepository.GetAllRole());
+            var result = await _roleRepository.GetAllRole();
+            bool isSuccess = false;
             if (result.Count > 0)
-                return new APIResponse<List<Role>>
-                {
-                    Message = "Get all role success",
-                    isSuccess = true,
-                    Data = result
-                };
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Get all role success" : "Don't have any role";
+
             return new APIResponse<List<Role>>
             {
-                Message = "Get all role fail",
-                isSuccess = false,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }
 
         public async Task<APIResponse<Role>> GetRoleById(int id)
         {
-            var result = await Task.FromResult(_roleRepository.GetRoleById(id));
-            if (result == null)
-                return new APIResponse<Role>
-                {
-                    Message = "Role not exists",
-                    isSuccess = false,
-                    Data= result
-                };
+            var result = await _roleRepository.GetRoleById(id);
+            bool isSuccess = false;
+            if (result != null)
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Finded the role" : "Role not exists";
 
             return new APIResponse<Role>
             {
-                Message = "Finded the role",
-                isSuccess = true,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }
 
         public async Task<APIResponse<Role>> GetRoleByName(string name)
         {
-            var result = await Task.FromResult(_roleRepository.GetRoleByName(name));
-            if (result == null)
-                return new APIResponse<Role>
-                {
-                    Message = "Role not exists",
-                    isSuccess = false,
-                    Data = result
-                };
+            var result = await _roleRepository.GetRoleByName(name);
+            bool isSuccess = false;
+            if (result != null)
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Finded the role" : "Role not exists";
+
+
             return new APIResponse<Role>
             {
-                Message = "Finded the role",
-                isSuccess = true,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }

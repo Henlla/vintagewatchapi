@@ -20,10 +20,11 @@ namespace VintageTimepieceService.IService
         public Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByCategory(int categoryId);
         public Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceHasEvaluate(User user);
         // C
-        public Task<APIResponse<TimepieceViewModel>> DeleteTimepiece(int id);
+        public Task<APIResponse<Timepiece>> DeleteTimepiece(int id);
         public Task<APIResponse<Timepiece>> UploadNewTimepiece(Timepiece timepiece);
         public Task<APIResponse<TimepieceViewModel>> UpdateTimepiece(int id, TimepieceViewModel timepiece);
         public Task<APIResponse<Timepiece>> UpdateTimepiecePrice(int timpieceId, int price);
+        public Task<APIResponse<string>> UpdateTimepieceOrder(List<OrdersDetail> ordersDetails, bool isOrder);
 
     }
 }

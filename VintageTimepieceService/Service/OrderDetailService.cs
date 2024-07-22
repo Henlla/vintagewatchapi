@@ -19,20 +19,22 @@ namespace VintageTimepieceService.Service
         }
         public async Task<APIResponse<OrdersDetail>> CreateOrderDetail(OrdersDetail orderDetail)
         {
-            var result = await Task.FromResult(_orderDetailRepository.PostOrderDetail(orderDetail));
-            if (result == null)
+            var result = await _orderDetailRepository.PostOrderDetail(orderDetail);
+            bool isSuccess = false;
+            if (result != null)
             {
-                return new APIResponse<OrdersDetail>()
-                {
-                    Message = "Create order detail fail",
-                    isSuccess = false,
-                    Data = result
-                };
+                isSuccess = true;
             }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Create order detail success" : "Create order detail fail";
+
             return new APIResponse<OrdersDetail>
             {
-                Message = "Create order detail success",
-                isSuccess = true,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }

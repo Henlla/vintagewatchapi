@@ -175,6 +175,10 @@ public partial class VintagedbContext : DbContext
             entity.ToTable("orders");
 
             entity.Property(e => e.OrderId).HasColumnName("orderId");
+            entity.Property(e => e.Status)
+            .HasMaxLength(50)
+            .HasDefaultValue(false)
+            .HasColumnName("status");
             entity.Property(e => e.IsDel)
                 .HasDefaultValue(false)
                 .HasColumnName("isDel");
@@ -327,6 +331,9 @@ public partial class VintagedbContext : DbContext
             entity.Property(e => e.IsDel)
                 .HasDefaultValue(false)
                 .HasColumnName("isDel");
+            entity.Property(e => e.IsBuy)
+                .HasDefaultValue(false)
+                .HasColumnName("isBuy");
             entity.Property(e => e.Movement)
                 .HasMaxLength(200)
                 .IsUnicode(false)

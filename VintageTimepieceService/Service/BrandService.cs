@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,77 +20,88 @@ namespace VintageTimepieceService.Service
         }
         public async Task<APIResponse<Brand>> CreateNewBrand(Brand brand)
         {
-            var result = await Task.FromResult(_brandRepository.Add(brand));
+            var result = await _brandRepository.Add(brand);
+            bool isSuccess = false;
             if (result != null)
             {
-                return new APIResponse<Brand>
-                {
-                    Message = "Create brand success",
-                    isSuccess = true,
-                    Data = result
-                };
+                isSuccess = true;
             }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Create brand success" : "Create brand fail";
+
             return new APIResponse<Brand>
             {
-                Message = "Create brand fail",
-                isSuccess = false,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }
 
         public async Task<APIResponse<Brand>> DeleteBrand(int id)
         {
-            var result = await Task.FromResult(_brandRepository.DeleteBrand(id));
+            var result = await _brandRepository.DeleteBrand(id);
+            bool isSuccess = false;
             if (result != null)
             {
-                return new APIResponse<Brand>
-                {
-                    Message = "Delete brand success",
-                    isSuccess = true,
-                    Data = result
-                };
+                isSuccess = true;
             }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Delete brand success" : "Delete brand fail";
+
             return new APIResponse<Brand>
             {
-                Message = "Delete brand fail",
-                isSuccess = false,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }
 
         public async Task<APIResponse<List<Brand>>> GetAllBrand()
         {
-            var result = await Task.FromResult(_brandRepository.FindAll().ToList());
-            if (result.Count > 0)
+            var result = await _brandRepository.FindAll().ToListAsync();
+            bool isSuccess = false;
+            if (result != null)
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Get all brand success" : "Don't have any brand";
 
-                return new APIResponse<List<Brand>>
-                {
-                    Message = "Get all brand success",
-                    isSuccess = true,
-                    Data = result
-                };
             return new APIResponse<List<Brand>>
             {
-                Message = "Don't have any brand",
-                isSuccess = false,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }
 
         public async Task<APIResponse<Brand>> GetOneBrand(int id)
         {
-            var result = await Task.FromResult(_brandRepository.GetBrandById(id));
-            if (result == null)
-                return new APIResponse<Brand>
-                {
-                    Message = "Don't find the brand",
-                    isSuccess = false,
-                    Data = result
-                };
+            var result = await _brandRepository.GetBrandById(id);
+            bool isSuccess = false;
+            if (result != null)
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Get brand success" : "Don't find the brand";
+
             return new APIResponse<Brand>
             {
-                Message = "Get brand success",
-                isSuccess = true,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }

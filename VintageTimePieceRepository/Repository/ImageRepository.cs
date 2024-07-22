@@ -29,9 +29,9 @@ namespace VintageTimePieceRepository.Repository
             return url;
         }
 
-        public TimepieceImage CreateTimepieceImage(TimepieceImage timepieceImage)
+        public async Task<TimepieceImage> CreateTimepieceImage(TimepieceImage timepieceImage)
         {
-            return Add(timepieceImage);
+            return await Add(timepieceImage);
         }
     }
 }

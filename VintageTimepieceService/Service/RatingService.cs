@@ -19,56 +19,65 @@ namespace VintageTimepieceService.Service
         }
         public async Task<APIResponse<List<RatingsTimepiece>>> GetAllRatingOfTimepiece(int timepieceId)
         {
-            var result = await Task.FromResult(_ratingRepository.GetAllRatingOfTimepiece(timepieceId));
+            var result = await _ratingRepository.GetAllRatingOfTimepiece(timepieceId);
+            bool isSuccess = false;
             if (result.Count > 0)
             {
-                return new APIResponse<List<RatingsTimepiece>>
-                {
-                    Message = "Get rating success",
-                    isSuccess = true,
-                    Data = result
-                };
+                isSuccess = true;
             }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Get rating success" : "No rating availables";
             return new APIResponse<List<RatingsTimepiece>>
             {
-                Message = "Don't have rating",
-                isSuccess = false,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }
 
         public async Task<APIResponse<RatingsTimepiece>> GetRatingOfUser(int? userId, int? timepieceId)
         {
-            var result = await Task.FromResult(_ratingRepository.GetRatingOfUser(userId, timepieceId));
-            if (result != null)
-                return new APIResponse<RatingsTimepiece>
-                {
-                    Message = "You have rating this product",
-                    isSuccess = false,
-                    Data = result
-                };
+            var result = await _ratingRepository.GetRatingOfUser(userId, timepieceId);
+            bool isSuccess = false;
+            if (result == null)
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Rating successesful" : "You have rating this product";
+
             return new APIResponse<RatingsTimepiece>
             {
-                Message = "The user not rating this product",
-                isSuccess = true,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }
 
         public async Task<APIResponse<RatingsTimepiece>> MakeRating(RatingsTimepiece rating)
         {
-            var result = await Task.FromResult(_ratingRepository.MakeRating(rating));
+            var result = await _ratingRepository.MakeRating(rating);
+            bool isSuccess = false;
             if (result != null)
-                return new APIResponse<RatingsTimepiece>
-                {
-                    Message = "Rating product success",
-                    isSuccess = true,
-                    Data = result
-                };
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Rating product success" : "Rating product fail";
+
             return new APIResponse<RatingsTimepiece>
             {
-                Message = "Rating product fail",
-                isSuccess = false,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }

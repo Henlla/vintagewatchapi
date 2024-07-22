@@ -9,9 +9,9 @@ namespace VintageTimePieceRepository.IRepository
 {
     public interface IEvaluationRepository : IBaseRepository<Evaluation>
     {
-        public IEnumerable<Evaluation> GetAllEvaluation();
-        public Evaluation CreateEvaluation(Evaluation evaluation);
-        public Evaluation UpdateEvaluation(Evaluation evaluation);
-        public Evaluation GetOneEvaluation(int id);
+        public Task<List<Evaluation>> GetAllEvaluation();
+        public Task<Evaluation> CreateEvaluation(Evaluation evaluation);
+        public Task<Evaluation> UpdateEvaluation(Evaluation evaluation);
+        public Task<Evaluation> GetOneEvaluation(int id);
     }
 }

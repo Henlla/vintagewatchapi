@@ -11,6 +11,7 @@ namespace VintageTimePieceRepository.IRepository
         public Task<User?> GetUserById(int userId);
         public Task<User?> GetUserByEmail(string email);
         public Task<User?> checkLogin(LoginModel loginModel);
+        public Task<IEnumerable<User>> GetAllUser();
         // CUD
         public Task<User?> CreateNewAccount(RegisterModel registerUser);
         public Task<User> UpdateUserInformation(int userId, User user);

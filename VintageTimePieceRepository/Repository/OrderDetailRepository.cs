@@ -14,9 +14,9 @@ namespace VintageTimePieceRepository.Repository
         {
         }
 
-        public OrdersDetail PostOrderDetail(OrdersDetail orderDetail)
+        public async Task<OrdersDetail> PostOrderDetail(OrdersDetail orderDetail)
         {
-            var result = Add(orderDetail);
+            var result = await Add(orderDetail);
             return result;
         }
     }

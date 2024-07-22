@@ -11,6 +11,6 @@ namespace VintageTimePieceRepository.IRepository
     public interface IImageRepository
     {
         public string UploadImage(IFormFile file, string folder);
-        public TimepieceImage CreateTimepieceImage(TimepieceImage timepieceImage);
+        public Task<TimepieceImage> CreateTimepieceImage(TimepieceImage timepieceImage);
     }
 }

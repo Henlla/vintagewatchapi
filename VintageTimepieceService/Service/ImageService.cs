@@ -40,18 +40,22 @@ namespace VintageTimepieceService.Service
 
         public async Task<APIResponse<TimepieceImage>> CreateNewTimepieceImage(TimepieceImage timepieceImage)
         {
-            var result = await Task.FromResult(_imageRepository.CreateTimepieceImage(timepieceImage));
-            if (result == null)
-                return new APIResponse<TimepieceImage>
-                {
-                    Message = "Create timepiece image fail",
-                    isSuccess = false,
-                    Data = result
-                };
+            var result = await _imageRepository.CreateTimepieceImage(timepieceImage);
+            bool isSuccess = false;
+            if (result != null)
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Create timepiece image success" : "Create timepiece image fail";
+
             return new APIResponse<TimepieceImage>
             {
-                Message = "Create timepiece image success",
-                isSuccess = true,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }

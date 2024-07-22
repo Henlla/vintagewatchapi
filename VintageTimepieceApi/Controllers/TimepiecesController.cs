@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using VintageTimepieceModel.Models;
 using VintageTimepieceModel.Models.Shared;
 using VintageTimepieceService.IService;
+using VintageTimepieceService.Service;
 
 namespace VintageTimepieceApi.Controllers
 {
@@ -171,6 +172,9 @@ namespace VintageTimepieceApi.Controllers
             {
                 return BadRequest(resultOrderDetail);
             }
+            List<OrdersDetail> lisOrderDetail = new List<OrdersDetail>();
+            lisOrderDetail.Add(orderDetail);
+            await _timepieceService.UpdateTimepieceOrder(lisOrderDetail, true);
             return Ok(resultOrder);
         }
 
@@ -178,6 +182,17 @@ namespace VintageTimepieceApi.Controllers
         public async Task<IActionResult> UpdateTimepiecePrice([FromForm] int timepieceId, [FromForm] int price)
         {
             var result = await _timepieceService.UpdateTimepiecePrice(timepieceId, price);
+            if (result.isSuccess)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpDelete, Route("DeleteTimepiece/{id}")]
+        public async Task<IActionResult> DeleteTimepiece(int id)
+        {
+            var result = await _timepieceService.DeleteTimepiece(id);
             if (result.isSuccess)
             {
                 return Ok(result);

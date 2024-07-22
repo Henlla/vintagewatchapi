@@ -11,6 +11,8 @@ namespace VintageTimepieceService.IService
     public interface IOrderService
     {
         public Task<APIResponse<Order>> CreateOrder(Order order);
-        public Task<APIResponse<List<Object>>> GetOrderOfUser(int userId);
+        public Task<APIResponse<List<OrderViewModel>>> GetOrderOfUser(int userId);
+        public Task<APIResponse<List<OrderViewModel>>> GetAllOrder();
+        public Task<APIResponse<Order>> UpdateOrderStatus(int orderId, string status);
     }
 }

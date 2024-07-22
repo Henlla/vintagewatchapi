@@ -40,6 +40,8 @@ public partial class Timepiece
 
     public bool? IsDel { get; set; }
 
+    public bool? IsBuy { get; set; }
+
     public virtual Brand? Brand { get; set; }
     [JsonIgnore]
     public virtual ICollection<OrdersDetail> OrdersDetails { get; set; } = new List<OrdersDetail>();
