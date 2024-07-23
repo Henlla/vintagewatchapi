@@ -41,6 +41,8 @@ public partial class VintagedbContext : DbContext
 
     public virtual DbSet<TimepieceImage> TimepieceImages { get; set; }
 
+    public virtual DbSet<Transaction> Transactions { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -477,9 +479,42 @@ public partial class VintagedbContext : DbContext
                 .HasColumnName("phoneNumber");
             entity.Property(e => e.RoleId).HasColumnName("roleId");
 
-            entity.HasOne(d => d.Role).WithMany(p => p.Users)
+            entity.HasOne(d => d.Role)
+            .WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
                 .HasConstraintName("FK_User_Role");
+        });
+
+        modelBuilder.Entity<Transaction>(entity =>
+        {
+            entity.HasKey(e => e.TransactionId).HasName("FK_Order_Transaction");
+
+            entity.Property(e => e.TransactionId).HasColumnName("transactionId");
+
+            entity.Property(e => e.PaymentMethod)
+            .HasMaxLength(100)
+            .HasColumnName("paymentMethod");
+
+            entity.Property(e => e.TransactionDate)
+            .HasColumnType("datetime")
+            .HasColumnName("transactionDate");
+
+            entity.Property(e => e.Amount)
+            .HasColumnType("decimal(18,2)")
+            .HasColumnName("amount");
+
+            entity.Property(e => e.TransactionStatus)
+            .HasMaxLength(50)
+            .HasColumnName("transactionStatus");
+
+            entity.Property(e => e.IsDel)
+            .HasDefaultValue(false)
+            .HasColumnName("isDel");
+
+            entity.HasOne(e => e.Order)
+            .WithOne(p => p.Transaction)
+            .HasForeignKey<Transaction>(e => e.OrderId);
+
         });
 
         OnModelCreatingPartial(modelBuilder);
