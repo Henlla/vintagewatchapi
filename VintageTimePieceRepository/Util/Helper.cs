@@ -1,6 +1,10 @@
 ﻿using Firebase.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
+
 
 namespace VintageTimePieceRepository.Util
 {
@@ -12,6 +16,7 @@ namespace VintageTimePieceRepository.Util
             _configuration = configuration;
         }
 
+        // FIREBASE
         public Task<string> ConvertFileToBase64(IFormFile files)
         {
             string base64String = "";
@@ -27,7 +32,6 @@ namespace VintageTimePieceRepository.Util
             }
             return Task.FromResult(base64String);
         }
-
         public async Task DeleteImageFromFireBase(string imageUrl)
         {
             Uri uri = new Uri(imageUrl);
@@ -63,7 +67,6 @@ namespace VintageTimePieceRepository.Util
                 throw;
             }
         }
-
         public async Task<string> UploadImageToFirebase(string images, string folder)
         {
             byte[] imageData = Convert.FromBase64String(images);
@@ -73,7 +76,6 @@ namespace VintageTimePieceRepository.Util
                 .PutAsync(new MemoryStream(imageData));
             return imageUrl;
         }
-
         public async Task<string> UploadReportToFirebase(string file, string folder)
         {
             byte[] imageData = Convert.FromBase64String(file);
@@ -82,6 +84,33 @@ namespace VintageTimePieceRepository.Util
                 .Child($"{Guid.NewGuid()}_{DateTime.Now.Ticks}.xlsx")
                 .PutAsync(new MemoryStream(imageData));
             return fileUrl;
+        }
+
+        //VNPAY
+        public string CreatePaymentRequestUrl(string baseUrl, string vnp_HashSecret, string queryString)
+        {
+            baseUrl += "?" + queryString;
+            String signData = queryString;
+            string vnp_SecureHash = HmacSHA512(vnp_HashSecret, signData);
+            baseUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+            return baseUrl;
+        }
+
+        public String HmacSHA512(string key, String inputData)
+        {
+            var hash = new StringBuilder();
+            byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+            byte[] inputBytes = Encoding.UTF8.GetBytes(inputData);
+            using (var hmac = new HMACSHA512(keyBytes))
+            {
+                byte[] hashValue = hmac.ComputeHash(inputBytes);
+                foreach (var theByte in hashValue)
+                {
+                    hash.Append(theByte.ToString("x2"));
+                }
+            }
+
+            return hash.ToString();
         }
     }
 }

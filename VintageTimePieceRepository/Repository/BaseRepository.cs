@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using System.Web;
 using VintageTimepieceModel.Models;
 using VintageTimePieceRepository.IRepository;
 
@@ -28,6 +30,7 @@ namespace VintageTimePieceRepository.Repository
         {
             return _context.Set<T>().AsQueryable();
         }
+
 
         public async Task<T> Update(T entity)
         {
