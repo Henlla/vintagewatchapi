@@ -490,6 +490,8 @@ public partial class VintagedbContext : DbContext
             entity.HasKey(e => e.TransactionId).HasName("FK_Order_Transaction");
 
             entity.Property(e => e.TransactionId).HasColumnName("transactionId");
+            entity.Property(e => e.OrderId).HasColumnName("orderId");
+
 
             entity.Property(e => e.PaymentMethod)
             .HasMaxLength(100)
@@ -506,6 +508,14 @@ public partial class VintagedbContext : DbContext
             entity.Property(e => e.TransactionStatus)
             .HasMaxLength(50)
             .HasColumnName("transactionStatus");
+
+            entity.Property(e => e.BankCode)
+            .HasMaxLength(200)
+            .HasColumnName("bankCode");
+
+            entity.Property(e => e.Description)
+            .HasMaxLength(200)
+            .HasColumnName("description");
 
             entity.Property(e => e.IsDel)
             .HasDefaultValue(false)

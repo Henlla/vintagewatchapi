@@ -10,5 +10,6 @@ namespace VintageTimePieceRepository.IRepository
     public interface IOrderDetailRepository : IBaseRepository<OrdersDetail>
     {
         public Task<OrdersDetail> PostOrderDetail(OrdersDetail orderDetail);
+        public Task<List<OrdersDetail>> GetOrderDetailOfOrder(int orderId);
     }
 }

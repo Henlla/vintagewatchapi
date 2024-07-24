@@ -21,6 +21,6 @@ public partial class Order
     public virtual ICollection<OrdersDetail> OrdersDetails { get; set; } = new List<OrdersDetail>();
 
     public virtual User? User { get; set; }
-
+    [JsonIgnore]
     public virtual Transaction? Transaction { get; set; }
 }

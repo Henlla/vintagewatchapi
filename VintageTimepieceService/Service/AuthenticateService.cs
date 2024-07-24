@@ -18,16 +18,17 @@ namespace VintageTimepieceService.Service
         public async Task<APIResponse<User>> CheckLogin(LoginModel user)
         {
             var result = await _authenticateRepository.checkLogin(user);
+            bool isSuccess = true;
             if (result == null)
-                return new APIResponse<User>
-                {
-                    Message = "Login fail",
-                    isSuccess = false,
-                };
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Success success" : "Login fail";
+
             return new APIResponse<User>
             {
-                Message = "Login success",
-                isSuccess = true,
+                Message = message,
+                isSuccess = isSuccess,
                 Data = result
             };
         }

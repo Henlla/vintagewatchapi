@@ -14,10 +14,5 @@ namespace VintageTimePieceRepository.Util
         public Task<string> UploadReportToFirebase(string imageBase64, string folder);
         public Task<string> ConvertFileToBase64(IFormFile files);
         public Task DeleteImageFromFireBase(string imageUrl);
-
-        // VNPAY
-        public string CreatePaymentRequestUrl(string baseUrl, string vnp_HashSecret,string queryString);
-        public string HmacSHA512(string key, string inputData);
-
     }
 }

@@ -86,8 +86,10 @@ builder.Services.AddDbContext<VintagedbContext>(options =>
 
 
 // -------------------------------------------- Setup DI --------------------------------------------
-builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
-builder.Services.AddScoped<IHelper, Helper>();
+builder.Services.AddSingleton(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+builder.Services.AddSingleton<IHelper, Helper>();
+builder.Services.AddSingleton<IVNPayService, VNPayService>();
+builder.Services.AddHttpContextAccessor();
 
 // Jwt
 builder.Services.AddScoped<IJwtConfigRepository, JwtConfigRepository>();
