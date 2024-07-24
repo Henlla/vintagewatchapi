@@ -149,35 +149,6 @@ namespace VintageTimepieceApi.Controllers
             return Ok(result);
         }
 
-        //[HttpPost, Route("checkout")]
-        //public async Task<IActionResult> CheckOut([FromForm] string timepieceId, [FromForm] string userId)
-        //{
-        //    var timepiece = await _timepieceService.GetOneTimepiece(int.Parse(timepieceId));
-        //    var order = new Order();
-        //    order.OrderDate = DateTime.UtcNow;
-        //    order.UserId = int.Parse(userId);
-        //    order.TotalPrice = timepiece.Data?.timepiece?.Price;
-        //    var resultOrder = await _orderService.CreateOrder(order);
-        //    if (!resultOrder.isSuccess)
-        //    {
-        //        return BadRequest(resultOrder);
-        //    }
-        //    var orderDetail = new OrdersDetail();
-        //    orderDetail.TimepieceId = int.Parse(timepieceId);
-        //    orderDetail.OrderId = resultOrder.Data?.OrderId;
-        //    orderDetail.UnitPrice = timepiece.Data?.timepiece?.Price;
-        //    orderDetail.Quantity = 1;
-        //    var resultOrderDetail = await _orderDetailService.CreateOrderDetail(orderDetail);
-        //    if (!resultOrderDetail.isSuccess)
-        //    {
-        //        return BadRequest(resultOrderDetail);
-        //    }
-        //    List<OrdersDetail> lisOrderDetail = new List<OrdersDetail>();
-        //    lisOrderDetail.Add(orderDetail);
-        //    await _timepieceService.UpdateTimepieceOrder(lisOrderDetail, true);
-        //    return Ok(resultOrder);
-        //}
-
         [HttpPut, Route("UpdateTimepiecePrice")]
         public async Task<IActionResult> UpdateTimepiecePrice([FromForm] int timepieceId, [FromForm] int price)
         {

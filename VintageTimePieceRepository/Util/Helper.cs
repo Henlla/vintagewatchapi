@@ -11,9 +11,11 @@ namespace VintageTimePieceRepository.Util
     public class Helper : IHelper
     {
         private readonly IConfiguration _configuration;
-        public Helper(IConfiguration configuration)
+        private readonly IHttpContextAccessor _contextAccessor;
+        public Helper(IConfiguration configuration, IHttpContextAccessor contextAccessor)
         {
             _configuration = configuration;
+            _contextAccessor = contextAccessor;
         }
 
         // FIREBASE
@@ -84,33 +86,6 @@ namespace VintageTimePieceRepository.Util
                 .Child($"{Guid.NewGuid()}_{DateTime.Now.Ticks}.xlsx")
                 .PutAsync(new MemoryStream(imageData));
             return fileUrl;
-        }
-
-        //VNPAY
-        public string CreatePaymentRequestUrl(string baseUrl, string vnp_HashSecret, string queryString)
-        {
-            baseUrl += "?" + queryString;
-            String signData = queryString;
-            string vnp_SecureHash = HmacSHA512(vnp_HashSecret, signData);
-            baseUrl += "&vnp_SecureHash=" + vnp_SecureHash;
-            return baseUrl;
-        }
-
-        public String HmacSHA512(string key, String inputData)
-        {
-            var hash = new StringBuilder();
-            byte[] keyBytes = Encoding.UTF8.GetBytes(key);
-            byte[] inputBytes = Encoding.UTF8.GetBytes(inputData);
-            using (var hmac = new HMACSHA512(keyBytes))
-            {
-                byte[] hashValue = hmac.ComputeHash(inputBytes);
-                foreach (var theByte in hashValue)
-                {
-                    hash.Append(theByte.ToString("x2"));
-                }
-            }
-
-            return hash.ToString();
         }
     }
 }

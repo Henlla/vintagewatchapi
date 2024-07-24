@@ -19,12 +19,14 @@ namespace VintageTimepieceApi.Controllers
         private IOrderDetailService _orderDetailService;
         private IConfiguration _configuration;
         private VintagedbContext _dbContext;
+        private IVNPayService _vnpayService;
         private IHelper _helper;
 
         public PaymentController(ITransactionService transactionService,
             ITimepiecesService timepiecesService, VintagedbContext dbContext,
             IOrderService orderService, IOrderDetailService orderDetailService,
-            IConfiguration configuration, IHelper helper)
+            IConfiguration configuration, IHelper helper,
+            IVNPayService vnpayService)
         {
             _transactionService = transactionService;
             _timepiecesService = timepiecesService;
@@ -33,6 +35,7 @@ namespace VintageTimepieceApi.Controllers
             _configuration = configuration;
             _dbContext = dbContext;
             _helper = helper;
+            _vnpayService = vnpayService;
         }
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -44,15 +47,14 @@ namespace VintageTimepieceApi.Controllers
             }
             return NotFound(result);
         }
-        [HttpPost, Route("Checkout")]
-        public async Task<IActionResult> MakePayment([FromForm] string paymentInformation)
+        [HttpPost, Route("RequestPayment")]
+        public async Task<IActionResult> Payment([FromBody] PaymentInformation paymentInformation)
         {
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    var paymentData = JsonConvert.DeserializeObject<PaymentInformation>(paymentInformation);
-                    var resultTimepiece = await _timepiecesService.GetOneTimepiece(paymentData.TimepieceId);
+                    var resultTimepiece = await _timepiecesService.GetOneTimepiece(paymentInformation.TimepieceId);
                     if (!resultTimepiece.isSuccess)
                     {
                         return BadRequest(resultTimepiece);
@@ -63,7 +65,7 @@ namespace VintageTimepieceApi.Controllers
                         OrderDate = DateTime.UtcNow,
                         TotalPrice = resultTimepiece?.Data?.timepiece?.Price,
                         Status = "pending",
-                        UserId = paymentData.UserId,
+                        UserId = paymentInformation.UserId,
                     };
                     // Create Order
                     var orderResult = await _orderService.CreateOrder(order);
@@ -74,7 +76,7 @@ namespace VintageTimepieceApi.Controllers
 
                     var orderDetail = new OrdersDetail
                     {
-                        TimepieceId = paymentData.TimepieceId,
+                        TimepieceId = paymentInformation.TimepieceId,
                         OrderId = orderResult?.Data?.OrderId,
                         UnitPrice = resultTimepiece?.Data?.timepiece?.Price,
                         Quantity = 1
@@ -89,30 +91,20 @@ namespace VintageTimepieceApi.Controllers
 
                     await transaction.CommitAsync();
 
-                    var vnpayInfomation = new VNPayDataModel
+                    var requestPayment = new VNPayRequestModel
                     {
-                        vnp_TmnCode = _configuration["VNPAY:vnp_TmnCode"],
-                        vnp_TxnRef = orderResult?.Data?.OrderId.ToString(),
-                        vnp_OrderInfo = paymentData.Description,
-                        vnp_Amount = (Math.Round(resultTimepiece.Data.timepiece.Price.Value) * 100).ToString(),
-                        vnp_ReturnUrl = _configuration["VNPAY:vnp_ReturnUrl"],
-                        vnp_CreateDate = DateTime.UtcNow.ToString("yyyyMMddHHmmss"),
-                        vnp_Bill_Mobile = paymentData.PhoneNumber,
-                        vnp_Bill_Email = paymentData.Email,
-                        vnp_Bill_FirstName = paymentData.FirstName,
-                        vnp_Bill_LastName = paymentData.LastName,
-                        vnp_Bill_Address = paymentData.Address,
-                        vnp_Inv_Phone = paymentData.PhoneNumber,
-                        vnp_Inv_Email = paymentData.Email,
-                        vnp_Inv_Customer = paymentData.FirstName + " " + paymentData.LastName,
-                        vnp_Inv_Address = paymentData.Address,
-                        vnp_Inv_Company = "Công ty VNPAY",
+                        OrderId = orderResult.Data.OrderId,
+                        OrderDate = orderResult.Data.OrderDate.Value,
+                        Amount = Math.Round(resultTimepiece.Data.timepiece.Price.Value),
+                        Description = paymentInformation.Description,
+                        FirstName = paymentInformation.FirstName,
+                        LastName = paymentInformation.LastName,
+                        PhoneNumber = paymentInformation.PhoneNumber,
+                        Email = paymentInformation.Email,
+                        Address = paymentInformation.Address,
                     };
 
-                    var queryString = vnpayInfomation.ToQueryString();
-                    var vnp_Url = _configuration["VNPAY:vnp_Url"];
-                    var vnp_HashSecret = _configuration["VNPAY:vnp_HashSecret"];
-                    string paymentUrl = _helper.CreatePaymentRequestUrl(vnp_Url, vnp_HashSecret, queryString);
+                    var paymentUrl = _vnpayService.CreatePaymentUrl(HttpContext, requestPayment);
                     return Ok(paymentUrl);
                 }
                 catch (Exception)
@@ -121,6 +113,49 @@ namespace VintageTimepieceApi.Controllers
                     return StatusCode(500, "Internal server");
                 }
             }
+        }
+
+        [HttpPost, Route("callBackPayment")]
+        public async Task<IActionResult> CallbackPayment([FromBody] Dictionary<string, string> queryParams)
+        {
+            var response = _vnpayService.PaymentExcute(queryParams);
+            var result = new APIResponse<Transaction>();
+
+            if (response == null || response.ResponseCode != "00")
+            {
+                result.isSuccess = false;
+                result.Message = "Payment fail";
+                if (!string.IsNullOrEmpty(response?.OrderId))
+                {
+                    await _orderService.UpdateOrderStatus(int.Parse(response.OrderId), "fail");
+                }
+                return BadRequest(result);
+            }
+
+            var transData = new Transaction
+            {
+                OrderId = int.Parse(response.OrderId),
+                BankCode = response.BankCode,
+                PaymentMethod = response.PaymentMethod,
+                TransactionDate = response.PayDate,
+                Amount = response.Amount / 100,
+                TransactionStatus = response.TransactionStatus,
+                Description = response.OrderDescription,
+            };
+
+            var resultTransaction = await _transactionService.CreateTransaction(transData);
+            if (resultTransaction.isSuccess)
+            {
+                result.isSuccess = true;
+                result.Message = "Payment success";
+                result.Data = resultTransaction.Data;
+
+                await _orderService.UpdateOrderStatus(int.Parse(response.OrderId), "success");
+                var orderDetails = await _orderDetailService.GetAllOrderDetailOfOrder(int.Parse(response.OrderId));
+                await _timepiecesService.UpdateTimepieceOrder(orderDetails.Data, true);
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }

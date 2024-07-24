@@ -38,5 +38,22 @@ namespace VintageTimepieceService.Service
                 Data = result
             };
         }
+
+        public async Task<APIResponse<List<OrdersDetail>>> GetAllOrderDetailOfOrder(int orderId)
+        {
+            var result = await _orderDetailRepository.GetOrderDetailOfOrder(orderId);
+            bool isSuccess = true;
+            if (!result.Any())
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Get all order detail success" : "Don't have any order detail";
+            return new APIResponse<List<OrdersDetail>>
+            {
+                Message = message,
+                isSuccess = isSuccess,
+                Data = result
+            };
+        }
     }
 }
