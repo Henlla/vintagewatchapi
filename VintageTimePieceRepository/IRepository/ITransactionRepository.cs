@@ -12,6 +12,6 @@ namespace VintageTimePieceRepository.IRepository
         public Task<Transaction> CreateTransaction(Transaction transaction);
         public Task<Transaction> UpdateTransaction(Transaction transaction);
         public Task<List<Transaction>> GetAllTransactions();
-        public Task<List<Transaction>> GetAllTransactionsOfUsers(int userId);
+        public Task<List<Transaction>> GetAllTransactionsOfUsers(User user);
     }
 }
