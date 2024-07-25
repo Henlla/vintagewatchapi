@@ -13,6 +13,6 @@ namespace VintageTimepieceService.IService
         public Task<APIResponse<Transaction>> CreateTransaction(Transaction transaction);
         public Task<APIResponse<Transaction>> UpdateTransaction(Transaction transaction);
         public Task<APIResponse<List<Transaction>>> GetAllTransactions();
-        public Task<APIResponse<List<Transaction>>> GetAllTransactionsOfUsers(int userId);
+        public Task<APIResponse<List<Transaction>>> GetAllTransactionsOfUsers(User user);
     }
 }

@@ -30,6 +30,33 @@ namespace VintageTimepieceApi.Controllers
             _orderDetailService = orderDetailService;
         }
 
+        [HttpGet, Route("GetPageListProduct")]
+        public async Task<IActionResult> GetPageListProduct([FromQuery] PagingModel pagingModel)
+        {
+            HttpContext.Request.Cookies.TryGetValue("access_token", out var token);
+            var user = _jwtConfigService.GetUserFromAccessToken(token);
+            var result = await _timepieceService.GetAllTimepieceWithPageList(pagingModel, user.Data);
+            return Ok(result);
+        }
+
+        [HttpGet, Route("GetProductByCategory")]
+        public async Task<IActionResult> GetProductByCategory([FromQuery] PagingModel pagingModel, [FromQuery] string categoryName)
+        {
+            HttpContext.Request.Cookies.TryGetValue("access_token", out var token);
+            var user = _jwtConfigService.GetUserFromAccessToken(token);
+            var result = await _timepieceService.GetAllTimepieceByCategoryNameWithPaging(categoryName, user.Data, pagingModel);
+            return Ok(result);
+        }
+
+        [HttpGet, Route("GetProductByNameAndCategory")]
+        public async Task<IActionResult> GetProductByNameAndCategory([FromQuery] string? name, [FromQuery] int categoryId)
+        {
+            HttpContext.Request.Cookies.TryGetValue("access_token", out var token);
+            var user = _jwtConfigService.GetUserFromAccessToken(token);
+            var result = await _timepieceService.GetProductByNameAndCategory(name, categoryId, user.Data);
+            return Ok(result);
+        }
+
         [HttpGet, Route("GetAllProduct")]
         public async Task<IActionResult> GetAllProduct()
         {
@@ -57,19 +84,11 @@ namespace VintageTimepieceApi.Controllers
         }
 
         [HttpGet, Route("GetAllProductByName")]
-        public async Task<IActionResult> GetAllProductByName([FromQuery] string name)
+        public async Task<IActionResult> GetAllProductByName([FromQuery] string? name)
         {
-            APIResponse<List<TimepieceViewModel>> result;
             HttpContext.Request.Cookies.TryGetValue("access_token", out var token);
-            if (token == null)
-            {
-                result = await _timepieceService.GetTimepieceByName(name);
-            }
-            else
-            {
-                var user = _jwtConfigService.GetUserFromAccessToken(token);
-                result = await _timepieceService.GetTimepieceByNameExceptUser(name, user.Data);
-            }
+            var user = _jwtConfigService.GetUserFromAccessToken(token);
+            var result = await _timepieceService.GetAllTimepieceByName(name, user.Data);
             return Ok(result);
         }
 

@@ -52,9 +52,9 @@ namespace VintageTimepieceService.Service
             };
         }
 
-        public async Task<APIResponse<List<Transaction>>> GetAllTransactionsOfUsers(int userId)
+        public async Task<APIResponse<List<Transaction>>> GetAllTransactionsOfUsers(User user)
         {
-            var result = await _transactionRepository.GetAllTransactionsOfUsers(userId);
+            var result = await _transactionRepository.GetAllTransactionsOfUsers(user);
             bool isSuccess = true;
             if (!result.Any())
             {

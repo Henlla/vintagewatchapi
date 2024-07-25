@@ -27,12 +27,12 @@ namespace VintageTimePieceRepository.Repository
             return result;
         }
 
-        public async Task<List<Transaction>> GetAllTransactionsOfUsers(int userId)
+        public async Task<List<Transaction>> GetAllTransactionsOfUsers(User user)
         {
             var result = await _context.Transactions
                 .Include(t => t.Order)
                 .ThenInclude(o => o.User)
-                .Where(t => t.Order.UserId == userId)
+                .Where(t => t.Order.User == user)
                 .ToListAsync();
             return result;
         }

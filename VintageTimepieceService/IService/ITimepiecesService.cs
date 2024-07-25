@@ -12,14 +12,19 @@ namespace VintageTimepieceService.IService
     {
         // R
         public Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepiece();
+        public Task<APIResponse<PageList<TimepieceViewModel>>> GetAllTimepieceWithPageList(PagingModel pagingModel, User user);
+        public Task<APIResponse<PageList<TimepieceViewModel>>> GetAllTimepieceByCategoryNameWithPaging(string categoryName, User user, PagingModel pagingModel);
+        public Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepieceByName(string name, User user);
         public Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepieceNotEvaluate();
         public Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepieceExceptUser(User user);
         public Task<APIResponse<TimepieceViewModel>> GetOneTimepiece(int id);
-        public Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByName(string name);
-        public Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByNameExceptUser(string name, User user);
-        public Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByCategory(int categoryId);
+        //public Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByName(string name);
+        //public Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByNameExceptUser(string name, User user);
+        //public Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByCategory(int categoryId);
         public Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceHasEvaluate(User user);
-        // C
+        public Task<APIResponse<List<TimepieceViewModel>>> GetProductByNameAndCategory(string name, int categoryId, User user);
+
+        // CUD
         public Task<APIResponse<Timepiece>> DeleteTimepiece(int id);
         public Task<APIResponse<Timepiece>> UploadNewTimepiece(Timepiece timepiece);
         public Task<APIResponse<TimepieceViewModel>> UpdateTimepiece(int id, TimepieceViewModel timepiece);
