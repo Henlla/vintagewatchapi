@@ -15,7 +15,7 @@ namespace VintageTimePieceRepository.Repository
         public OrderRepository(VintagedbContext context) : base(context)
         {
         }
-
+        // R
         public async Task<List<OrderViewModel>> GetAllTheOrder()
         {
             var data = await (from order in _context.Orders
@@ -28,7 +28,6 @@ namespace VintageTimePieceRepository.Repository
                               }).ToListAsync();
             return data;
         }
-
         public async Task<List<OrderViewModel>> GetAllTheOrderOfUser(int userId)
         {
             var data = await (from order in _context.Orders
@@ -41,13 +40,20 @@ namespace VintageTimePieceRepository.Repository
                               }).ToListAsync();
             return data;
         }
+        public async Task<Order?> GetOrderById(int orderId)
+        {
+            var result = await _context.Orders
+                .Where(or => or.OrderId == orderId && or.IsDel == false)
+                .SingleOrDefaultAsync();
+            return result;
+        }
 
+        // CUD
         public async Task<Order> PostOrder(Order order)
         {
             var result = await Add(order);
             return result;
         }
-
         public async Task<Order?> UpdateOrderStatus(int orderId, string status)
         {
             var currentOrder = await _context.Orders.SingleOrDefaultAsync(ord => ord.OrderId == orderId && ord.IsDel == false);

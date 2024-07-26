@@ -10,11 +10,14 @@ namespace VintageTimepieceApi.Controllers
     {
         private ITransactionService _transactionService;
         private IJwtConfigService _jwtConfigService;
+        private IOrderService _orderService;
         public TransactionController(ITransactionService transactionService,
-                                    IJwtConfigService jwtConfigService)
+                                    IJwtConfigService jwtConfigService,
+                                    IOrderService orderService)
         {
             _transactionService = transactionService;
             _jwtConfigService = jwtConfigService;
+            _orderService = orderService;
         }
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -29,6 +32,14 @@ namespace VintageTimepieceApi.Controllers
             HttpContext.Request.Cookies.TryGetValue("access_token", out var token);
             var user = _jwtConfigService.GetUserFromAccessToken(token);
             var result = await _transactionService.GetAllTransactionsOfUsers(user.Data);
+            return Ok(result);
+        }
+
+        [HttpGet, Route("GetTransactionOfOrder")]
+        public async Task<IActionResult> GetTransactionOfOrder([FromQuery] int orderId)
+        {
+            var order = await _orderService.GetOrderById(orderId);
+            var result = await _transactionService.GetTransactionOfOrder(order.Data);
             return Ok(result);
         }
     }

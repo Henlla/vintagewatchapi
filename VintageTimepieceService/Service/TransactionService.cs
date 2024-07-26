@@ -18,23 +18,7 @@ namespace VintageTimepieceService.Service
             _transactionRepository = transactionRepository;
         }
 
-        public async Task<APIResponse<Transaction>> CreateTransaction(Transaction transaction)
-        {
-            var result = await _transactionRepository.CreateTransaction(transaction);
-            bool isSuccess = true;
-            if (result == null)
-            {
-                isSuccess = false;
-            }
-            var message = isSuccess ? "Create transaction success" : "Create transaction fail";
-            return new APIResponse<Transaction>
-            {
-                Message = message,
-                isSuccess = isSuccess,
-                Data = result
-            };
-        }
-
+        // R
         public async Task<APIResponse<List<Transaction>>> GetAllTransactions()
         {
             var result = await _transactionRepository.GetAllTransactions();
@@ -51,7 +35,6 @@ namespace VintageTimepieceService.Service
                 Data = result
             };
         }
-
         public async Task<APIResponse<List<Transaction>>> GetAllTransactionsOfUsers(User user)
         {
             var result = await _transactionRepository.GetAllTransactionsOfUsers(user);
@@ -68,7 +51,41 @@ namespace VintageTimepieceService.Service
                 Data = result
             };
         }
+        public async Task<APIResponse<Transaction>> GetTransactionOfOrder(Order order)
+        {
+            var result = await _transactionRepository.GetTransactionOfOrder(order);
+            bool isSuccess = true;
+            if (result == null)
+            {
+                isSuccess = false;
+            }
 
+            var message = isSuccess ? "Get transaction success" : "Get transaction fail";
+            return new APIResponse<Transaction>
+            {
+                Message = message,
+                isSuccess = isSuccess,
+                Data = result
+            };
+        }
+
+        // CUD
+        public async Task<APIResponse<Transaction>> CreateTransaction(Transaction transaction)
+        {
+            var result = await _transactionRepository.CreateTransaction(transaction);
+            bool isSuccess = true;
+            if (result == null)
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Create transaction success" : "Create transaction fail";
+            return new APIResponse<Transaction>
+            {
+                Message = message,
+                isSuccess = isSuccess,
+                Data = result
+            };
+        }
         public async Task<APIResponse<Transaction>> UpdateTransaction(Transaction transaction)
         {
             var result = await _transactionRepository.UpdateTransaction(transaction);

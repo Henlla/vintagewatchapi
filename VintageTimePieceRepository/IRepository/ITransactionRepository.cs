@@ -9,9 +9,13 @@ namespace VintageTimePieceRepository.IRepository
 {
     public interface ITransactionRepository : IBaseRepository<Transaction>
     {
-        public Task<Transaction> CreateTransaction(Transaction transaction);
-        public Task<Transaction> UpdateTransaction(Transaction transaction);
+        // R
         public Task<List<Transaction>> GetAllTransactions();
         public Task<List<Transaction>> GetAllTransactionsOfUsers(User user);
+        public Task<Transaction?> GetTransactionOfOrder(Order order);
+
+        // CUD
+        public Task<Transaction> CreateTransaction(Transaction transaction);
+        public Task<Transaction> UpdateTransaction(Transaction transaction);
     }
 }

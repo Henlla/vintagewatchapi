@@ -10,9 +10,12 @@ namespace VintageTimepieceService.IService
 {
     public interface IOrderService
     {
-        public Task<APIResponse<Order>> CreateOrder(Order order);
+        // R
         public Task<APIResponse<List<OrderViewModel>>> GetOrderOfUser(int userId);
         public Task<APIResponse<List<OrderViewModel>>> GetAllOrder();
+        public Task<APIResponse<Order>> GetOrderById(int orderId);
+        // CUD
+        public Task<APIResponse<Order>> CreateOrder(Order order);
         public Task<APIResponse<Order>> UpdateOrderStatus(int orderId, string status);
     }
 }

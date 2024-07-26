@@ -1,9 +1,17 @@
 ﻿using Firebase.Storage;
+using HtmlRendererCore.PdfSharp;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using PdfSharpCore;
+using PdfSharpCore.Pdf;
+using System;
+using System.Management;
 using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using VintageTimepieceModel.Models;
+using VintageTimepieceModel.Models.Shared;
 
 
 namespace VintageTimePieceRepository.Util
@@ -12,7 +20,8 @@ namespace VintageTimePieceRepository.Util
     {
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _contextAccessor;
-        public Helper(IConfiguration configuration, IHttpContextAccessor contextAccessor)
+        public Helper(IConfiguration configuration,
+            IHttpContextAccessor contextAccessor)
         {
             _configuration = configuration;
             _contextAccessor = contextAccessor;
@@ -60,7 +69,7 @@ namespace VintageTimePieceRepository.Util
                 await storage.Child(path).GetDownloadUrlAsync();
                 return true;
             }
-            catch (FirebaseStorageException ex)
+            catch (FirebaseStorageException)
             {
                 return false;
             }

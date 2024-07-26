@@ -10,9 +10,12 @@ namespace VintageTimepieceService.IService
 {
     public interface ITransactionService
     {
-        public Task<APIResponse<Transaction>> CreateTransaction(Transaction transaction);
-        public Task<APIResponse<Transaction>> UpdateTransaction(Transaction transaction);
+        // R
         public Task<APIResponse<List<Transaction>>> GetAllTransactions();
         public Task<APIResponse<List<Transaction>>> GetAllTransactionsOfUsers(User user);
+        public Task<APIResponse<Transaction>> GetTransactionOfOrder(Order order);
+        // CUD
+        public Task<APIResponse<Transaction>> CreateTransaction(Transaction transaction);
+        public Task<APIResponse<Transaction>> UpdateTransaction(Transaction transaction);
     }
 }

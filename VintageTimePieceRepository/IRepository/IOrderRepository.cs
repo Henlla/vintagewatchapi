@@ -7,6 +7,7 @@ namespace VintageTimePieceRepository.IRepository
     {
         public Task<List<OrderViewModel>> GetAllTheOrderOfUser(int userId);
         public Task<List<OrderViewModel>> GetAllTheOrder();
+        public Task<Order?> GetOrderById(int orderId);
         public Task<Order?> UpdateOrderStatus(int orderId, string status);
         public Task<Order> PostOrder(Order order);
     }
