@@ -139,7 +139,7 @@ namespace VintageTimepieceApi.Controllers
                 PaymentMethod = response.PaymentMethod,
                 TransactionDate = response.PayDate,
                 Amount = response.Amount / 100,
-                TransactionStatus = response.TransactionStatus,
+                TransactionStatus = response.TransactionStatus == "00" ? "Success" : "Fail",
                 Description = response.OrderDescription,
             };
 

@@ -20,12 +20,8 @@ namespace VintageTimepieceService.Service
         public async Task<APIResponse<Order>> CreateOrder(Order order)
         {
             var result = await _orderRepository.PostOrder(order);
-            bool isSuccess = false;
-            if (result != null)
-            {
-                isSuccess = true;
-            }
-            else
+            bool isSuccess = true;
+            if (result == null)
             {
                 isSuccess = false;
             }
@@ -38,16 +34,11 @@ namespace VintageTimepieceService.Service
                 Data = result
             };
         }
-
         public async Task<APIResponse<List<OrderViewModel>>> GetAllOrder()
         {
             var result = await _orderRepository.GetAllTheOrder();
-            bool isSuccess = false;
-            if (result.Count > 0)
-            {
-                isSuccess = true;
-            }
-            else
+            bool isSuccess = true;
+            if (!result.Any())
             {
                 isSuccess = false;
             }
@@ -61,15 +52,28 @@ namespace VintageTimepieceService.Service
             };
         }
 
+        public async Task<APIResponse<Order>> GetOrderById(int orderId)
+        {
+            var result = await _orderRepository.GetOrderById(orderId);
+            bool isSuccess = true;
+            if (result == null)
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Get order success" : "Get order fail";
+            return new APIResponse<Order>
+            {
+                Message = message,
+                isSuccess = isSuccess,
+                Data = result
+            };
+        }
+
         public async Task<APIResponse<List<OrderViewModel>>> GetOrderOfUser(int userId)
         {
             var result = await _orderRepository.GetAllTheOrderOfUser(userId);
-            bool isSuccess = false;
-            if (result.Count > 0)
-            {
-                isSuccess = true;
-            }
-            else
+            bool isSuccess = true;
+            if (!result.Any())
             {
                 isSuccess = false;
             }
@@ -85,17 +89,12 @@ namespace VintageTimepieceService.Service
         public async Task<APIResponse<Order>> UpdateOrderStatus(int orderId, string status)
         {
             var result = await _orderRepository.UpdateOrderStatus(orderId, status);
-            bool isSuccess = false;
-            if (result != null)
-            {
-                isSuccess = true;
-            }
-            else
+            bool isSuccess = true;
+            if (result == null)
             {
                 isSuccess = false;
             }
             var message = isSuccess ? "Update order status success" : "Update order status fail";
-
             return new APIResponse<Order>
             {
                 Message = message,

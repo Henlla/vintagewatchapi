@@ -15,28 +15,36 @@ namespace VintageTimePieceRepository.Repository
         {
         }
 
-        public async Task<Transaction> CreateTransaction(Transaction transaction)
-        {
-            var result = await Add(transaction);
-            return result;
-        }
-
+        // R
         public async Task<List<Transaction>> GetAllTransactions()
         {
             var result = await FindAll().Where(trans => trans.IsDel == false).ToListAsync();
             return result;
         }
-
         public async Task<List<Transaction>> GetAllTransactionsOfUsers(User user)
         {
             var result = await _context.Transactions
                 .Include(t => t.Order)
                 .ThenInclude(o => o.User)
-                .Where(t => t.Order.User == user)
+                .Where(t => t.Order.User == user && t.IsDel == false)
                 .ToListAsync();
             return result;
         }
+        public async Task<Transaction?> GetTransactionOfOrder(Order order)
+        {
+            var result = await _context.Transactions
+                        .Include(t => t.Order)
+                        .Where(t => t.Order == order && t.IsDel == false)
+                        .SingleOrDefaultAsync();
+            return result;
+        }
 
+        // CUD
+        public async Task<Transaction> CreateTransaction(Transaction transaction)
+        {
+            var result = await Add(transaction);
+            return result;
+        }
         public async Task<Transaction> UpdateTransaction(Transaction transaction)
         {
             var result = await Update(transaction);
