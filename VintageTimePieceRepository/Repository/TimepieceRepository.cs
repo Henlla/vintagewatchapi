@@ -111,13 +111,18 @@ namespace VintageTimePieceRepository.Repository
         //                               }).ToListAsync();
         //    return listTimePiece;
         //}
-        public async Task<List<TimepieceViewModel>> GetAllTimepieceNotEvaluate()
+        public async Task<List<TimepieceViewModel>> GetAllTimepieceNotEvaluate(string keyword)
         {
             var listProduct = await (from tp in _context.Timepieces
                                      join eva in _context.TimepieceEvaluations on tp.TimepieceId equals eva.TimepieceId into tpEva
                                      from eva in tpEva.DefaultIfEmpty()
                                      join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
                                      where tp.IsDel == false
+                                     && (tp.TimepieceName.Contains(keyword)
+                                     || tp.User.FirstName.Contains(keyword)
+                                     || tp.User.LastName.Contains(keyword)
+                                     || tp.Brand.BrandName.Contains(keyword)
+                                     || keyword == null)
                                      && tp.TimepieceId != eva.TimepieceId
                                      && tp.Price == null
                                      && tp.IsBuy == false

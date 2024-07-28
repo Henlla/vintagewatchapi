@@ -16,18 +16,13 @@ namespace VintageTimepieceService.Service
         public async Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepiece()
         {
             var result = await _timepieceRepository.GetAllTimepiece();
-            bool isSuccess = false;
-            if (result.Count > 0)
-            {
-                isSuccess = true;
-            }
-            else
+            bool isSuccess = true;
+            if (!result.Any())
             {
                 isSuccess = false;
             }
+
             var message = isSuccess ? "Get all product success" : "Don't have any timepiece";
-
-
             return new APIResponse<List<TimepieceViewModel>>
             {
                 Message = message,
@@ -91,15 +86,11 @@ namespace VintageTimepieceService.Service
                 Data = result,
             };
         }
-        public async Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepieceNotEvaluate()
+        public async Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepieceNotEvaluate(string keyword)
         {
-            var result = await _timepieceRepository.GetAllTimepieceNotEvaluate();
-            bool isSuccess = false;
-            if (result.Count > 0)
-            {
-                isSuccess = true;
-            }
-            else
+            var result = await _timepieceRepository.GetAllTimepieceNotEvaluate(keyword);
+            bool isSuccess = true;
+            if (!result.Any())
             {
                 isSuccess = false;
             }
@@ -116,15 +107,12 @@ namespace VintageTimepieceService.Service
         public async Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepieceExceptUser(User user)
         {
             var result = await _timepieceRepository.GetAllTimepieceExceptUser(user);
-            bool isSuccess = false;
-            if (result.Count > 0)
-            {
-                isSuccess = true;
-            }
-            else
+            bool isSuccess = true;
+            if (!result.Any())
             {
                 isSuccess = false;
             }
+
             var message = isSuccess ? "Get all result success" : "Don't have any timepiece";
 
             return new APIResponse<List<TimepieceViewModel>>
@@ -138,15 +126,12 @@ namespace VintageTimepieceService.Service
         public async Task<APIResponse<TimepieceViewModel>> GetOneTimepiece(int id)
         {
             var result = await _timepieceRepository.GetTimepieceById(id);
-            bool isSuccess = false;
-            if (result != null)
-            {
-                isSuccess = true;
-            }
-            else
+            bool isSuccess = true;
+            if (result == null)
             {
                 isSuccess = false;
             }
+
             var message = isSuccess ? "Get timepiece success" : "Not found";
 
             return new APIResponse<TimepieceViewModel>
@@ -240,7 +225,6 @@ namespace VintageTimepieceService.Service
         //        Data = result
         //    };
         //}
-       
         public async Task<APIResponse<List<TimepieceViewModel>>> GetProductByNameAndCategory(string name, int categoryId, User user)
         {
             var result = await _timepieceRepository.GetProductByNameAndCategory(name, categoryId, user);

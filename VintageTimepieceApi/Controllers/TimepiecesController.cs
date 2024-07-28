@@ -77,9 +77,9 @@ namespace VintageTimepieceApi.Controllers
         }
 
         [HttpGet, Route("GetAllTimepieceNotEvaluate")]
-        public async Task<IActionResult> GetAllTimepieceNotEvaluate()
+        public async Task<IActionResult> GetAllTimepieceNotEvaluate([FromQuery] string? keyword)
         {
-            var result = await _timepieceService.GetAllTimepieceNotEvaluate();
+            var result = await _timepieceService.GetAllTimepieceNotEvaluate(keyword);
             return Ok(result);
         }
 

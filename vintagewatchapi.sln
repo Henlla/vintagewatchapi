@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VintageTimepieceApi", "VintageTimepieceApi\VintageTimepieceApi.csproj", "{EA7FF693-B805-47C0-AEB6-9ADD45F831BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VintageTimepieceApi", "VintageTimepieceApi\VintageTimepieceApi.csproj", "{EA7FF693-B805-47C0-AEB6-9ADD45F831BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VintageTimepieceModel", "VintageTimepieceModel\VintageTimepieceModel.csproj", "{FC2A23EC-BD7D-405D-B6B6-52D3C24F4E2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VintageTimepieceModel", "VintageTimepieceModel\VintageTimepieceModel.csproj", "{FC2A23EC-BD7D-405D-B6B6-52D3C24F4E2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VintageTimepieceService", "VintageTimepieceService\VintageTimepieceService.csproj", "{8B6ED154-9051-48F4-BA55-694FD368A4DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VintageTimepieceService", "VintageTimepieceService\VintageTimepieceService.csproj", "{8B6ED154-9051-48F4-BA55-694FD368A4DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VintageTimePieceRepository", "VintageTimePieceRepository\VintageTimePieceRepository.csproj", "{256A1AE4-F7AD-45AD-8054-EDE412927CAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VintageTimePieceRepository", "VintageTimePieceRepository\VintageTimePieceRepository.csproj", "{256A1AE4-F7AD-45AD-8054-EDE412927CAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

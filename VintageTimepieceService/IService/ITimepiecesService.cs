@@ -15,7 +15,7 @@ namespace VintageTimepieceService.IService
         public Task<APIResponse<PageList<TimepieceViewModel>>> GetAllTimepieceWithPageList(PagingModel pagingModel, User user);
         public Task<APIResponse<PageList<TimepieceViewModel>>> GetAllTimepieceByCategoryNameWithPaging(string categoryName, User user, PagingModel pagingModel);
         public Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepieceByName(string name, User user);
-        public Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepieceNotEvaluate();
+        public Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepieceNotEvaluate(string keyword);
         public Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepieceExceptUser(User user);
         public Task<APIResponse<TimepieceViewModel>> GetOneTimepiece(int id);
         //public Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByName(string name);

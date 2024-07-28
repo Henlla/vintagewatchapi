@@ -16,7 +16,7 @@ namespace VintageTimePieceRepository.Repository
         {
         }
         // R
-        public async Task<List<OrderViewModel>> GetAllTheOrder()
+        public async Task<List<OrderViewModel>> GetAllOrder()
         {
             var data = await (from order in _context.Orders
                               join ordDetail in _context.OrdersDetails on order.OrderId equals ordDetail.OrderId into listOrderDetail
@@ -28,11 +28,12 @@ namespace VintageTimePieceRepository.Repository
                               }).ToListAsync();
             return data;
         }
-        public async Task<List<OrderViewModel>> GetAllTheOrderOfUser(int userId)
+        public async Task<List<OrderViewModel>> GetAllOrderOfUser(User user)
         {
             var data = await (from order in _context.Orders
                               join orderDetail in _context.OrdersDetails on order.OrderId equals orderDetail.OrderId into listOrder
                               where order.IsDel == false
+                              && order.User == user
                               select new OrderViewModel
                               {
                                   order = order,
