@@ -36,7 +36,7 @@ namespace VintageTimepieceService.Service
         }
         public async Task<APIResponse<List<OrderViewModel>>> GetAllOrder()
         {
-            var result = await _orderRepository.GetAllTheOrder();
+            var result = await _orderRepository.GetAllOrder();
             bool isSuccess = true;
             if (!result.Any())
             {
@@ -69,9 +69,9 @@ namespace VintageTimepieceService.Service
             };
         }
 
-        public async Task<APIResponse<List<OrderViewModel>>> GetOrderOfUser(int userId)
+        public async Task<APIResponse<List<OrderViewModel>>> GetOrderOfUser(User user)
         {
-            var result = await _orderRepository.GetAllTheOrderOfUser(userId);
+            var result = await _orderRepository.GetAllOrderOfUser(user);
             bool isSuccess = true;
             if (!result.Any())
             {

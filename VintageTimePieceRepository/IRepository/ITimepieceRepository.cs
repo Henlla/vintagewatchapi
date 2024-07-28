@@ -11,7 +11,7 @@ namespace VintageTimePieceRepository.IRepository
         public Task<PageList<TimepieceViewModel>> GetAllTimepieceByCategoryNameWithPaging(string categoryName, User user, PagingModel pagingModel);
         public Task<List<TimepieceViewModel>> GetAllTimepieceByName(string name, User user);
         public Task<List<TimepieceViewModel>> GetProductByNameAndCategory(string name, int categoryId, User user);
-        public Task<List<TimepieceViewModel>> GetAllTimepieceNotEvaluate();
+        public Task<List<TimepieceViewModel>> GetAllTimepieceNotEvaluate(string keyword);
         public Task<List<TimepieceViewModel>> GetAllTimepieceExceptUser(User user);
         public Task<TimepieceViewModel?> GetTimepieceById(int id);
         public Task<Timepiece?> GetOneTimepiece(int id);

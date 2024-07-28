@@ -47,6 +47,7 @@ namespace VintageTimepieceApi.Controllers
             }
             return NotFound(result);
         }
+
         [HttpPost, Route("RequestPayment")]
         public async Task<IActionResult> Payment([FromBody] PaymentInformation paymentInformation)
         {
@@ -120,16 +121,70 @@ namespace VintageTimepieceApi.Controllers
         {
             var response = _vnpayService.PaymentExcute(queryParams);
             var result = new APIResponse<Transaction>();
+            var message = "";
+            var orderStatus = "";
 
             if (response == null || response.ResponseCode != "00")
             {
+                switch (response.ResponseCode)
+                {
+                    case "05":
+                        orderStatus = "fail";
+                        message = "Payment fail! Your balance not enough to pay this";
+                        break;
+                    case "06":
+                        orderStatus = "fail";
+                        message = "Payment fail! You enter the wrong OTP";
+                        break;
+                    case "09":
+                        orderStatus = "fail";
+                        message = "Payment fail! Your account not register in the system";
+                        break;
+                    case "10":
+                        orderStatus = "fail";
+                        message = "Payment fail! You have wrong information more 3 times";
+                        break;
+                    case "11":
+                        orderStatus = "fail";
+                        message = "Payment fail! Payment is timeout";
+                        break;
+                    case "12":
+                        orderStatus = "fail";
+                        message = "Payment fail! Your card is lock";
+                        break;
+                    case "24":
+                        orderStatus = "cancled";
+                        message = "Payment fail! You have canceled this payment";
+                        break;
+                    case "79":
+                        orderStatus = "fail";
+                        message = "Payment fail! You enter password wrong too much times";
+                        break;
+                    case "65":
+                        orderStatus = "fail";
+                        message = "Payment fail! Your account is exceed daily transaction limit";
+                        break;
+                    case "75":
+                        orderStatus = "fail";
+                        message = "Payment fail! Bank is on maintence";
+                        break;
+                    default:
+                        orderStatus = "fail";
+                        message = "Payment fail! Something wrong with payment contact the system admin";
+                        break;
+                }
                 result.isSuccess = false;
-                result.Message = "Payment fail";
+                result.Message = message;
                 if (!string.IsNullOrEmpty(response?.OrderId))
                 {
-                    await _orderService.UpdateOrderStatus(int.Parse(response.OrderId), "fail");
+                    await _orderService.UpdateOrderStatus(int.Parse(response.OrderId), orderStatus);
                 }
                 return BadRequest(result);
+            }
+            else
+            {
+                orderStatus = "success";
+                message = "Payment successful! Thank you for buying and choosing us system";
             }
 
             var transData = new Transaction
@@ -139,7 +194,7 @@ namespace VintageTimepieceApi.Controllers
                 PaymentMethod = response.PaymentMethod,
                 TransactionDate = response.PayDate,
                 Amount = response.Amount / 100,
-                TransactionStatus = response.TransactionStatus == "00" ? "Success" : "Fail",
+                TransactionStatus = orderStatus,
                 Description = response.OrderDescription,
             };
 
@@ -150,7 +205,7 @@ namespace VintageTimepieceApi.Controllers
                 result.Message = "Payment success";
                 result.Data = resultTransaction.Data;
 
-                await _orderService.UpdateOrderStatus(int.Parse(response.OrderId), "success");
+                await _orderService.UpdateOrderStatus(int.Parse(response.OrderId), orderStatus);
                 var orderDetails = await _orderDetailService.GetAllOrderDetailOfOrder(int.Parse(response.OrderId));
                 await _timepiecesService.UpdateTimepieceOrder(orderDetails.Data, true);
                 return Ok(result);

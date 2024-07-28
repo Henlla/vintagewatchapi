@@ -162,6 +162,11 @@ builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 
 
+// Send Mail
+
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
