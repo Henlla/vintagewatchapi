@@ -1,5 +1,4 @@
 ﻿using Firebase.Storage;
-using HtmlRendererCore.PdfSharp;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using PdfSharpCore;

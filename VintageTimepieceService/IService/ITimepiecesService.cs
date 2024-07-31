@@ -27,9 +27,10 @@ namespace VintageTimepieceService.IService
         // CUD
         public Task<APIResponse<Timepiece>> DeleteTimepiece(int id);
         public Task<APIResponse<Timepiece>> UploadNewTimepiece(Timepiece timepiece);
-        public Task<APIResponse<TimepieceViewModel>> UpdateTimepiece(int id, TimepieceViewModel timepiece);
+        //public Task<APIResponse<TimepieceViewModel>> UpdateTimepiece(int id, Timepiece timepiece);
         public Task<APIResponse<Timepiece>> UpdateTimepiecePrice(int timpieceId, int price);
         public Task<APIResponse<string>> UpdateTimepieceOrder(List<OrdersDetail> ordersDetails, bool isOrder);
+        public Task<APIResponse<Timepiece>> UpdateTimepieceBuy(int timepieceId, bool status);
 
     }
 }

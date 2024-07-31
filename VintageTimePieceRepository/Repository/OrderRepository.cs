@@ -19,26 +19,37 @@ namespace VintageTimePieceRepository.Repository
         public async Task<List<OrderViewModel>> GetAllOrder()
         {
             var data = await (from order in _context.Orders
+                              join trans in _context.Transactions on order.OrderId equals trans.OrderId
                               join ordDetail in _context.OrdersDetails on order.OrderId equals ordDetail.OrderId into listOrderDetail
                               where order.IsDel == false
                               select new OrderViewModel
                               {
-                                  order = order,
-                                  orderDetail = listOrderDetail.ToList()
+                                  Order = order,
+                                  OrderDetail = listOrderDetail.ToList(),
+                                  Transaction = trans
                               }).ToListAsync();
             return data;
         }
-        public async Task<List<OrderViewModel>> GetAllOrderOfUser(User user)
+        public async Task<List<OrderViewModel>> GetAllOrderOfUser(string status,User user)
         {
             var data = await (from order in _context.Orders
+                              join trans in _context.Transactions on order.OrderId equals trans.OrderId into transGroup
+                              from trans in transGroup.DefaultIfEmpty()
+                              join transRefund in _context.RefundTransactions on trans.RefundId equals transRefund.RefundId into refundGroup
+                              from transRefund in refundGroup.DefaultIfEmpty()
                               join orderDetail in _context.OrdersDetails on order.OrderId equals orderDetail.OrderId into listOrder
-                              where order.IsDel == false
-                              && order.User == user
+                              where order.IsDel == false && order.User == user
+                              && (order.Status.Equals(status.ToLower()) || status == "all")
+                              orderby order.OrderId descending
                               select new OrderViewModel
                               {
-                                  order = order,
-                                  orderDetail = listOrder.ToList()
+                                  Order = order,
+                                  Transaction = trans,
+                                  RefundTransaction = transRefund,
+                                  TimeRemining =  DateTime.Parse(order.OrderDate.Value.ToString()) > DateTime.Now.AddHours(-1),
+                                  OrderDetail = listOrder.ToList(),
                               }).ToListAsync();
+
             return data;
         }
         public async Task<Order?> GetOrderById(int orderId)

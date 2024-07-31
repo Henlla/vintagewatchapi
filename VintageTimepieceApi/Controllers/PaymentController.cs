@@ -21,12 +21,15 @@ namespace VintageTimepieceApi.Controllers
         private VintagedbContext _dbContext;
         private IVNPayService _vnpayService;
         private IHelper _helper;
+        private IJwtConfigService _jwtConfigService;
+        private IRefundTransactionService _refundTransactionService;
 
         public PaymentController(ITransactionService transactionService,
             ITimepiecesService timepiecesService, VintagedbContext dbContext,
             IOrderService orderService, IOrderDetailService orderDetailService,
             IConfiguration configuration, IHelper helper,
-            IVNPayService vnpayService)
+            IVNPayService vnpayService, IJwtConfigService jwtConfigService,
+            IRefundTransactionService refundTransactionService)
         {
             _transactionService = transactionService;
             _timepiecesService = timepiecesService;
@@ -36,6 +39,8 @@ namespace VintageTimepieceApi.Controllers
             _dbContext = dbContext;
             _helper = helper;
             _vnpayService = vnpayService;
+            _jwtConfigService = jwtConfigService;
+            _refundTransactionService = refundTransactionService;
         }
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -120,7 +125,7 @@ namespace VintageTimepieceApi.Controllers
         public async Task<IActionResult> CallbackPayment([FromBody] Dictionary<string, string> queryParams)
         {
             var response = _vnpayService.PaymentExcute(queryParams);
-            var result = new APIResponse<Transaction>();
+            var result = new APIResponse<Transactions>();
             var message = "";
             var orderStatus = "";
 
@@ -187,7 +192,7 @@ namespace VintageTimepieceApi.Controllers
                 message = "Payment successful! Thank you for buying and choosing us system";
             }
 
-            var transData = new Transaction
+            var transData = new Transactions
             {
                 OrderId = int.Parse(response.OrderId),
                 BankCode = response.BankCode,
@@ -202,7 +207,7 @@ namespace VintageTimepieceApi.Controllers
             if (resultTransaction.isSuccess)
             {
                 result.isSuccess = true;
-                result.Message = "Payment success";
+                result.Message = message;
                 result.Data = resultTransaction.Data;
 
                 await _orderService.UpdateOrderStatus(int.Parse(response.OrderId), orderStatus);
@@ -211,6 +216,106 @@ namespace VintageTimepieceApi.Controllers
                 return Ok(result);
             }
             return BadRequest(result);
+        }
+
+        [HttpGet, Route("RequestRefundPayment")]
+        public async Task<IActionResult> RefundPayment([FromQuery] int orderId)
+        {
+            HttpContext.Request.Cookies.TryGetValue("access_token", out var token);
+            if (token == null)
+            {
+                return Unauthorized();
+            }
+            var user = _jwtConfigService.GetUserFromAccessToken(token);
+            var transaction = await _transactionService.GetTransactionOfOrder(orderId);
+            if (transaction == null)
+            {
+                return BadRequest(transaction);
+            }
+
+            var refundRequestModel = new VNPayRefundRequestModel
+            {
+                OrderId = transaction.Data.OrderId,
+                Amount = transaction.Data.Amount,
+                OrderInfo = transaction.Data.Description,
+                TransactionDate = transaction.Data.TransactionDate,
+                CreateBy = user.Data.Email
+            };
+
+            var result = _vnpayService.CreatePaymentRefund(HttpContext, refundRequestModel);
+            string statusMessage = "";
+            bool isSuccess = true;
+            if (result == null || result.vnP_ResponseCode != "00")
+            {
+                switch (result.vnP_ResponseCode)
+                {
+                    case "02":
+                        statusMessage = "Merchant is invalid";
+                        break;
+                    case "03":
+                        statusMessage = "Send data invalid format";
+                        break;
+                    case "08":
+                        statusMessage = "The system on matainence";
+                        break;
+                    case "16":
+                        statusMessage = "Cannot do this refund in this time";
+                        break;
+                    case "91":
+                        statusMessage = "Cannot find the order to refund";
+                        break;
+                    case "93":
+                        statusMessage = "The amount to refund not valid";
+                        break;
+                    case "94":
+                        statusMessage = "This order had refund before";
+                        break;
+                    case "95":
+                        statusMessage = "The refund not success at VNPay company, VNPay reject the request";
+                        break;
+                    case "97":
+                        statusMessage = "Signature data is invalid";
+                        break;
+                    default:
+                        statusMessage = "Refund fail";
+                        break;
+                }
+                isSuccess = false;
+            }
+            else
+            {
+                // Refund success add data into database
+                statusMessage = "Your order have refund success";
+                var refundTransaction = new RefundTransaction
+                {
+                    RefundAmount = transaction.Data.Amount,
+                    RefundBankCode = transaction.Data.BankCode,
+                    RefundDate = DateTime.Now,
+                    RefundInfo = statusMessage,
+                    RefundType = "Refund all",
+                };
+                var refundResult = await _refundTransactionService.CreateRefundTransaction(refundTransaction);
+                if (refundResult.isSuccess)
+                {
+                    // Update order status
+                    var orderStatus = await _orderService.UpdateOrderStatus(transaction.Data.OrderId.Value, "canceled");
+                    // Update transaction refundId
+                    var transactionStatus = await _transactionService.UpdateTransactionRefund(transaction.Data.OrderId.Value, refundResult.Data.RefundId);
+                    // Update Product isBuy
+                    var orderDetailData = await _orderDetailService.GetAllOrderDetailOfOrder(transaction.Data.OrderId.Value);
+
+                    foreach (var orderDetail in orderDetailData.Data)
+                    {
+                        await _timepiecesService.UpdateTimepieceBuy(orderDetail.TimepieceId.Value, false);
+                    }
+                }
+                return Ok(refundResult);
+            }
+            return BadRequest(new APIResponse<string>
+            {
+                Message = statusMessage,
+                isSuccess = isSuccess,
+            });
         }
     }
 }

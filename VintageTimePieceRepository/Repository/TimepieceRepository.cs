@@ -25,9 +25,8 @@ namespace VintageTimePieceRepository.Repository
             var listProduct = await (from tp in _context.Timepieces
                                      join eva in _context.TimepieceEvaluations on tp.TimepieceId equals eva.TimepieceId
                                      join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-                                     where tp.IsDel == false
+                                     where tp.IsDel == false && tp.IsBuy == false
                                      && tp.Price != null
-                                     && tp.IsBuy == false
                                      select new TimepieceViewModel
                                      {
                                          timepiece = tp,
@@ -42,9 +41,8 @@ namespace VintageTimePieceRepository.Repository
             var listProduct = (from tp in _context.Timepieces
                                join eva in _context.TimepieceEvaluations on tp.TimepieceId equals eva.TimepieceId
                                join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-                               where tp.IsDel == false
+                               where tp.IsDel == false && tp.IsBuy == false
                                && tp.Price != null
-                               && tp.IsBuy == false
                                && tp.User != user
                                select new TimepieceViewModel
                                {
@@ -57,14 +55,12 @@ namespace VintageTimePieceRepository.Repository
         }
         public Task<PageList<TimepieceViewModel>> GetAllTimepieceByCategoryNameWithPaging(string categoryName, User user, PagingModel pagingModel)
         {
-
             var result = (from tp in _context.Timepieces
                           join eva in _context.TimepieceEvaluations on tp.TimepieceId equals eva.TimepieceId
                           join catTi in _context.TimepieceCategories on tp.TimepieceId equals catTi.TimepieceId
                           join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-                          where tp.IsDel == false
+                          where tp.IsDel == false && tp.IsBuy == false
                           && tp.Price != null
-                          && tp.IsBuy == false
                           && tp.User != user
                           && catTi.Category.CategoryName == categoryName
                           select new TimepieceViewModel
@@ -81,9 +77,8 @@ namespace VintageTimePieceRepository.Repository
             var result = (from tp in _context.Timepieces
                           join eva in _context.TimepieceEvaluations on tp.TimepieceId equals eva.TimepieceId
                           join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-                          where tp.IsDel == false
+                          where tp.IsDel == false && tp.IsBuy == false
                           && tp.Price != null
-                          && tp.IsBuy == false
                           && tp.User != user
                           && tp.TimepieceName.Contains(name)
                           select new TimepieceViewModel
@@ -285,5 +280,11 @@ namespace VintageTimePieceRepository.Repository
             }
         }
 
+        public async Task<Timepiece> UpdateTimepieceBuy(int timepieceId, bool status)
+        {
+            var product = _context.Timepieces.Where(t => t.TimepieceId == timepieceId && t.IsDel == false).SingleOrDefault();
+            product.IsBuy = status;
+            return await Update(product);
+        }
     }
 }

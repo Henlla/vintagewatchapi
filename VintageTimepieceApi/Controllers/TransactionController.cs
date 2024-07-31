@@ -39,7 +39,7 @@ namespace VintageTimepieceApi.Controllers
         public async Task<IActionResult> GetTransactionOfOrder([FromQuery] int orderId)
         {
             var order = await _orderService.GetOrderById(orderId);
-            var result = await _transactionService.GetTransactionOfOrder(order.Data);
+            var result = await _transactionService.GetTransactionOfOrder(orderId);
             return Ok(result);
         }
     }

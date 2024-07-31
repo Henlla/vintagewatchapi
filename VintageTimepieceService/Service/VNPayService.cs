@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using PdfSharpCore.Pdf;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using VintageTimepieceModel.Models;
@@ -20,6 +23,8 @@ namespace VintageTimepieceService.Service
         {
             _configuration = configuration;
         }
+
+
         public string CreatePaymentUrl(HttpContext context, VNPayRequestModel requestModel)
         {
             // Config vnpay info
@@ -52,7 +57,6 @@ namespace VintageTimepieceService.Service
             string paymentUrl = vnpay.CreateRequestUrl(vnp_Url, vnp_HashSecret);
             return paymentUrl;
         }
-
         public VNPayResponseModel PaymentExcute(Dictionary<string, string> collection)
         {
             var vnpay = new VnPayLibrary();
@@ -100,6 +104,67 @@ namespace VintageTimepieceService.Service
                 Token = vnp_SecureHash.ToString(),
                 Success = true,
             };
+        }
+        public VNPayRefundResponseModel CreatePaymentRefund(HttpContext context, VNPayRefundRequestModel requestModal)
+        {
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+            var vnp_Api = _configuration["VNPAY:vnp_Api"];
+            var vnp_HashSecret = _configuration["VNPAY:vnp_HashSecret"];
+            var vnp_TmnCode = _configuration["VNPAY:vnp_TmnCode"];
+
+            var vnp_RequestId = DateTime.Now.Ticks.ToString();
+            var vnp_Version = _configuration["VNPAY:vnp_Version"];
+            var vnp_Command = "refund";
+            var vnp_TransactionType = "02";
+            var vnp_Amount = Convert.ToInt64(requestModal.Amount) * 100;
+            var vnp_TxnRef = requestModal.OrderId;
+            var vnp_OrderInfo = requestModal.OrderInfo;
+            var vnp_TransactionNo = "";
+            var vnp_TransactionDate = requestModal.TransactionDate?.ToString("yyyyMMddHHmmss");
+            var vnp_CreateDate = DateTime.Now.ToString("yyyyMMddHHmmss");
+            var vnp_CreateBy = requestModal.CreateBy;
+            var vnp_IpAddr = Utils.GetIpAddress(context);
+
+            var signData = vnp_RequestId + "|" + vnp_Version + "|" + vnp_Command + "|" + vnp_TmnCode + "|" + vnp_TransactionType + "|" + vnp_TxnRef + "|" + vnp_Amount + "|" + vnp_TransactionNo + "|" + vnp_TransactionDate + "|" + vnp_CreateBy + "|" + vnp_CreateDate + "|" + vnp_IpAddr + "|" + vnp_OrderInfo;
+            var vnp_SecureHash = Utils.HmacSHA512(vnp_HashSecret, signData);
+
+            var rfData = new
+            {
+                vnp_RequestId = vnp_RequestId,
+                vnp_Version = vnp_Version,
+                vnp_Command = vnp_Command,
+                vnp_TmnCode = vnp_TmnCode,
+                vnp_TransactionType = vnp_TransactionType,
+                vnp_TxnRef = vnp_TxnRef,
+                vnp_Amount = vnp_Amount,
+                vnp_OrderInfo = vnp_OrderInfo,
+                vnp_TransactionNo = vnp_TransactionNo,
+                vnp_TransactionDate = vnp_TransactionDate,
+                vnp_CreateBy = vnp_CreateBy,
+                vnp_CreateDate = vnp_CreateDate,
+                vnp_IpAddr = vnp_IpAddr,
+                vnp_SecureHash = vnp_SecureHash
+            };
+
+            var jsonData = JsonConvert.SerializeObject(rfData);
+
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(vnp_Api);
+            httpWebRequest.ContentType = "application/json";
+            httpWebRequest.Method = "POST";
+            //httpWebRequest.Timeout = 1000000;
+
+            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+            {
+                streamWriter.Write(jsonData);
+            }
+            var httpResponse = httpWebRequest.GetResponse();
+            var strData = "";
+            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                strData = streamReader.ReadToEnd();
+            }
+            var refundResponse = JsonConvert.DeserializeObject<VNPayRefundResponseModel>(strData);
+            return refundResponse;
         }
     }
 }

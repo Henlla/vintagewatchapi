@@ -23,5 +23,6 @@ namespace VintageTimePieceRepository.IRepository
         public Task<Timepiece> UploadNewTimepiece(Timepiece timepiece);
         public Task<Timepiece> UpdateTimepiecePrice(int timepieceId, int price);
         public Task UpdateTimepieceIsOrder(List<OrdersDetail> ordersDetails, bool isOrder);
+        public Task<Timepiece> UpdateTimepieceBuy(int timepieceId, bool status);
     }
 }

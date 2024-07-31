@@ -272,38 +272,38 @@ namespace VintageTimepieceService.Service
                 isSuccess = isSuccess
             };
         }
-        public async Task<APIResponse<TimepieceViewModel>> UpdateTimepiece(int id, TimepieceViewModel timePiece)
-        {
-            var timepiece = await _timepieceRepository.GetTimepieceById(id);
-            if (timepiece == null)
-            {
-                return new APIResponse<TimepieceViewModel>
-                {
-                    Message = "Timepiece not exists",
-                    isSuccess = false,
-                    Data = timepiece
-                };
-            }
-            timepiece.timepiece = timePiece.timepiece;
-            var result = _timepieceRepository.Update(timepiece.timepiece);
-            bool isSuccess = false;
-            if (result != null)
-            {
-                isSuccess = true;
-            }
-            else
-            {
-                isSuccess = false;
-            }
-            var message = isSuccess ? "Update timepiece success" : "Update timepiece fail";
+        //public async Task<APIResponse<TimepieceViewModel>> UpdateTimepiece(int id, Timepiece timePiece)
+        //{
+        //    var timepiece = await _timepieceRepository.GetTimepieceById(id);
+        //    if (timepiece == null)
+        //    {
+        //        return new APIResponse<TimepieceViewModel>
+        //        {
+        //            Message = "Timepiece not exists",
+        //            isSuccess = false,
+        //            Data = timepiece
+        //        };
+        //    }
+        //    timepiece.timepiece = timePiece.timepiece;
+        //    var result = _timepieceRepository.Update(timepiece.timepiece);
+        //    bool isSuccess = false;
+        //    if (result != null)
+        //    {
+        //        isSuccess = true;
+        //    }
+        //    else
+        //    {
+        //        isSuccess = false;
+        //    }
+        //    var message = isSuccess ? "Update timepiece success" : "Update timepiece fail";
 
-            return new APIResponse<TimepieceViewModel>
-            {
-                Message = message,
-                isSuccess = isSuccess,
-                Data = timepiece
-            };
-        }
+        //    return new APIResponse<TimepieceViewModel>
+        //    {
+        //        Message = message,
+        //        isSuccess = isSuccess,
+        //        Data = timepiece
+        //    };
+        //}
         public async Task<APIResponse<Timepiece>> UploadNewTimepiece(Timepiece timepiece)
         {
             var result = await _timepieceRepository.UploadNewTimepiece(timepiece);
@@ -356,5 +356,21 @@ namespace VintageTimepieceService.Service
             });
         }
 
+        public async Task<APIResponse<Timepiece>> UpdateTimepieceBuy(int timepieceId, bool status)
+        {
+            var result = await _timepieceRepository.UpdateTimepieceBuy(timepieceId, status);
+            bool isSuccess = true;
+            if (result == null)
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Update success" : "Update fail";
+            return new APIResponse<Timepiece>
+            {
+                Message = message,
+                isSuccess = isSuccess,
+                Data = result
+            };
+        }
     }
 }

@@ -161,8 +161,13 @@ builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 
+// RefundTransaction
+builder.Services.AddScoped<IRefundTransactionRepository, RefundTransactionRepository>();
+builder.Services.AddScoped<IRefundTransactionService, RefundTransactionService>();
 
-// Send Mail
+// Report
+builder.Services.AddScoped<IGenerateReportRepository, GenerateReportRepository>();
+builder.Services.AddScoped<IGenerateReportsService, GenerateReportsService>();
 
 
 

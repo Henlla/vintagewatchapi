@@ -18,12 +18,12 @@ namespace VintageTimepieceApi.Controllers
             _jwtConfigService = jwtConfigService;
             _timepieceService = timepieceService;
         }
-        [HttpGet,Route("GetAllOrderOfUser")]
-        public async Task<IActionResult> GetAllOrderOfUser()
+        [HttpGet, Route("GetAllOrderOfUser")]
+        public async Task<IActionResult> GetAllOrderOfUser([FromQuery] string status = "")
         {
             HttpContext.Request.Cookies.TryGetValue("access_token", out var token);
             var user = _jwtConfigService.GetUserFromAccessToken(token);
-            var result = await _orderService.GetOrderOfUser(user.Data);
+            var result = await _orderService.GetOrderOfUser(status, user.Data);
             return Ok(result);
         }
         [HttpGet, Route("GetAllOrder")]

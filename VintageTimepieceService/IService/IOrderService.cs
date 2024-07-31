@@ -11,7 +11,7 @@ namespace VintageTimepieceService.IService
     public interface IOrderService
     {
         // R
-        public Task<APIResponse<List<OrderViewModel>>> GetOrderOfUser(User user);
+        public Task<APIResponse<List<OrderViewModel>>> GetOrderOfUser(string status, User user);
         public Task<APIResponse<List<OrderViewModel>>> GetAllOrder();
         public Task<APIResponse<Order>> GetOrderById(int orderId);
         // CUD
