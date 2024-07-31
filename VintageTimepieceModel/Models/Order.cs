@@ -22,5 +22,5 @@ public partial class Order
 
     public virtual User? User { get; set; }
     [JsonIgnore]
-    public virtual Transaction? Transaction { get; set; }
+    public virtual Transactions? Transaction { get; set; }
 }

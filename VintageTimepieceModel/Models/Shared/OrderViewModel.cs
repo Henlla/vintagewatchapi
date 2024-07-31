@@ -8,7 +8,10 @@ namespace VintageTimepieceModel.Models.Shared
 {
     public class OrderViewModel
     {
-        public Order? order {  get; set; }
-        public List<OrdersDetail>? orderDetail { get; set; }
+        public Order? Order {  get; set; }
+        public Transactions? Transaction { get; set; }
+        public bool TimeRemining { get; set; }
+        public RefundTransaction? RefundTransaction { get; set; }
+        public List<OrdersDetail>? OrderDetail { get; set; }
     }
 }

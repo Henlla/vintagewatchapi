@@ -7,10 +7,11 @@ using System.Transactions;
 
 namespace VintageTimepieceModel.Models
 {
-    public partial class Transaction
+    public partial class Transactions
     {
         public int TransactionId { get; set; }
-        public int OrderId { get; set; }
+        public int? OrderId { get; set; }
+        public int? RefundId { get; set; }
         public string? BankCode { get; set; }
         public string? PaymentMethod { get; set; }
         public DateTime TransactionDate { get; set; }
@@ -19,5 +20,6 @@ namespace VintageTimepieceModel.Models
         public string? Description { get; set; }
         public bool IsDel { get; set; }
         public virtual Order? Order { get; set; }
+        public virtual RefundTransaction? RefundTransaction { get; set; }
     }
 }

@@ -14,35 +14,21 @@ public partial class VintagedbContext : DbContext
         : base(options)
     {
     }
-
     public virtual DbSet<Brand> Brands { get; set; }
-
     public virtual DbSet<Category> Categories { get; set; }
-
     public virtual DbSet<Evaluation> Evaluations { get; set; }
-
     public virtual DbSet<FeedbacksUser> FeedbacksUsers { get; set; }
-
     public virtual DbSet<Order> Orders { get; set; }
-
     public virtual DbSet<OrdersDetail> OrdersDetails { get; set; }
-
     public virtual DbSet<RatingsTimepiece> RatingsTimepieces { get; set; }
-
     public virtual DbSet<Role> Roles { get; set; }
-
     public virtual DbSet<SupportTicket> SupportTickets { get; set; }
-
     public virtual DbSet<Timepiece> Timepieces { get; set; }
-
     public virtual DbSet<TimepieceCategory> TimepieceCategories { get; set; }
-
     public virtual DbSet<TimepieceEvaluation> TimepieceEvaluations { get; set; }
-
     public virtual DbSet<TimepieceImage> TimepieceImages { get; set; }
-
-    public virtual DbSet<Transaction> Transactions { get; set; }
-
+    public virtual DbSet<Transactions> Transactions { get; set; }
+    public virtual DbSet<RefundTransaction> RefundTransactions { get; set; }
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -485,9 +471,9 @@ public partial class VintagedbContext : DbContext
                 .HasConstraintName("FK_User_Role");
         });
 
-        modelBuilder.Entity<Transaction>(entity =>
+        modelBuilder.Entity<Transactions>(entity =>
         {
-            entity.HasKey(e => e.TransactionId).HasName("FK_Order_Transaction");
+            entity.HasKey(e => e.TransactionId).HasName("PK__transact__9B57CF72DD5ACA9C");
 
             entity.Property(e => e.TransactionId).HasColumnName("transactionId");
             entity.Property(e => e.OrderId).HasColumnName("orderId");
@@ -523,8 +509,25 @@ public partial class VintagedbContext : DbContext
 
             entity.HasOne(e => e.Order)
             .WithOne(p => p.Transaction)
-            .HasForeignKey<Transaction>(e => e.OrderId);
+            .HasForeignKey<Transactions>(e => e.OrderId);
 
+            entity.HasOne(e => e.RefundTransaction)
+            .WithOne(p => p.Transaction)
+            .HasForeignKey<Transactions>(e => e.RefundId);
+
+        });
+
+        modelBuilder.Entity<RefundTransaction>(entity =>
+        {
+            entity.ToTable("refund_transaction");
+
+            entity.HasKey(e => e.RefundId).HasName("PK__refund_t__B219848FCBD1B3AE");
+            entity.Property(e => e.RefundId).HasColumnName("refundId");
+            entity.Property(e => e.RefundBankCode).HasMaxLength(100).HasColumnName("refundBankCode");
+            entity.Property(e => e.RefundAmount).HasColumnType("decimal(18,2)").HasColumnName("refundAmount");
+            entity.Property(e => e.RefundType).HasMaxLength(200).HasColumnName("refundType");
+            entity.Property(e => e.RefundInfo).HasMaxLength(100).HasColumnName("refundInfo");
+            entity.Property(e => e.RefundDate).HasColumnType("datetime").HasColumnName("refundDate");
         });
 
         OnModelCreatingPartial(modelBuilder);

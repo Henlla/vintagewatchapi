@@ -7,15 +7,16 @@ using VintageTimepieceModel.Models;
 
 namespace VintageTimePieceRepository.IRepository
 {
-    public interface ITransactionRepository : IBaseRepository<Transaction>
+    public interface ITransactionRepository : IBaseRepository<Transactions>
     {
         // R
-        public Task<List<Transaction>> GetAllTransactions();
-        public Task<List<Transaction>> GetAllTransactionsOfUsers(User user);
-        public Task<Transaction?> GetTransactionOfOrder(Order order);
+        public Task<List<Transactions>> GetAllTransactions();
+        public Task<List<Transactions>> GetAllTransactionsOfUsers(User user);
+        public Task<Transactions?> GetTransactionOfOrder(int orderId);
 
         // CUD
-        public Task<Transaction> CreateTransaction(Transaction transaction);
-        public Task<Transaction> UpdateTransaction(Transaction transaction);
+        public Task<Transactions> CreateTransaction(Transactions transaction);
+        public Task<Transactions> UpdateTransaction(Transactions transaction);
+        public Task<Transactions> UpdateTransactionRefund(int orderId,int refundId);
     }
 }

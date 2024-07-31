@@ -9,8 +9,8 @@
   <ItemGroup>
     <PackageReference Include="FirebaseAdmin" Version="3.0.0" />
     <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
-    <PackageReference Include="HtmlRendererCore.PdfSharp" Version="1.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Polybioz.HtmlRenderer.PdfSharp.Core" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>

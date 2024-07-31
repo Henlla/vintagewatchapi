@@ -148,15 +148,15 @@ namespace VintageTimepieceApi.Controllers
             return Ok(resultTimepiece);
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
-        [HttpPut, Route("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] TimepieceViewModel timepiece)
-        {
-            var result = await _timepieceService.UpdateTimepiece(id, timepiece);
-            if (!result.isSuccess)
-                return BadRequest(result);
-            return Ok(result);
-        }
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
+        //[HttpPut, Route("{id}")]
+        //public async Task<IActionResult> Put(int id, [FromBody] TimepieceViewModel timepiece)
+        //{
+        //    var result = await _timepieceService.UpdateTimepiece(id, timepiece);
+        //    if (!result.isSuccess)
+        //        return BadRequest(result);
+        //    return Ok(result);
+        //}
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "USERS")]
         [HttpDelete, Route("{id}")]

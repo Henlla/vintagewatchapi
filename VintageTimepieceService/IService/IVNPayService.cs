@@ -12,5 +12,6 @@ namespace VintageTimepieceService.IService
     {
         public string CreatePaymentUrl(HttpContext context, VNPayRequestModel requestModel);
         VNPayResponseModel PaymentExcute(Dictionary<string, string> collection);
+        public VNPayRefundResponseModel CreatePaymentRefund(HttpContext context, VNPayRefundRequestModel requestModel);
     }
 }

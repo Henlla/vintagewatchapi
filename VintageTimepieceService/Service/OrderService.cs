@@ -69,9 +69,9 @@ namespace VintageTimepieceService.Service
             };
         }
 
-        public async Task<APIResponse<List<OrderViewModel>>> GetOrderOfUser(User user)
+        public async Task<APIResponse<List<OrderViewModel>>> GetOrderOfUser(string status, User user)
         {
-            var result = await _orderRepository.GetAllOrderOfUser(user);
+            var result = await _orderRepository.GetAllOrderOfUser(status, user);
             bool isSuccess = true;
             if (!result.Any())
             {
