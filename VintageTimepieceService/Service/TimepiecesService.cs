@@ -141,48 +141,6 @@ namespace VintageTimepieceService.Service
                 Data = result
             };
         }
-        //public async Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByName(string name)
-        //{
-        //    var result = await _timepieceRepository.GetTimepieceByName(name);
-        //    bool isSuccess = false;
-        //    if (result.Count > 0)
-        //    {
-        //        isSuccess = true;
-        //    }
-        //    else
-        //    {
-        //        isSuccess = false;
-        //    }
-        //    var message = isSuccess ? "Get product success" : "Don't have any product";
-
-        //    return new APIResponse<List<TimepieceViewModel>>
-        //    {
-        //        Message = message,
-        //        isSuccess = isSuccess,
-        //        Data = result
-        //    };
-        //}
-        //public async Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByNameExceptUser(string name, User user)
-        //{
-        //    var result = await _timepieceRepository.GetTimepieceByNameExceptUser(name, user);
-        //    bool isSuccess = false;
-        //    if (result.Count > 0)
-        //    {
-        //        isSuccess = true;
-        //    }
-        //    else
-        //    {
-        //        isSuccess = false;
-        //    }
-        //    var message = isSuccess ? "Get timepiece success" : "Don't find the timepiece";
-
-        //    return new APIResponse<List<TimepieceViewModel>>
-        //    {
-        //        Message = message,
-        //        isSuccess = isSuccess,
-        //        Data = result
-        //    };
-        //}
         public async Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceHasEvaluate(User user)
         {
             var result = await _timepieceRepository.GetAllTimepieceHasEvaluate(user);
@@ -204,27 +162,6 @@ namespace VintageTimepieceService.Service
                 Data = result
             };
         }
-        //public async Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByCategory(int categoryId)
-        //{
-        //    var result = await _timepieceRepository.GetTimepieceByCategory(categoryId);
-        //    bool isSuccess = false;
-        //    if (result.Count > 0)
-        //    {
-        //        isSuccess = true;
-        //    }
-        //    else
-        //    {
-        //        isSuccess = false;
-        //    }
-        //    var message = isSuccess ? "Get timepiece success" : "Don't have timepiece";
-
-        //    return new APIResponse<List<TimepieceViewModel>>
-        //    {
-        //        Message = message,
-        //        isSuccess = isSuccess,
-        //        Data = result
-        //    };
-        //}
         public async Task<APIResponse<List<TimepieceViewModel>>> GetProductByNameAndCategory(string name, int categoryId, User user)
         {
             var result = await _timepieceRepository.GetProductByNameAndCategory(name, categoryId, user);
@@ -235,6 +172,22 @@ namespace VintageTimepieceService.Service
             }
             var message = isSuccess ? "Get all timepiece success" : "Don't have any timepiece";
             return new APIResponse<List<TimepieceViewModel>>
+            {
+                Message = message,
+                isSuccess = isSuccess,
+                Data = result
+            };
+        }
+        public async Task<APIResponse<Timepiece>> GetTimepieceById(int id)
+        {
+            var result = await _timepieceRepository.GetOneTimepiece(id);
+            bool isSuccess = true;
+            if (result == null)
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Get timepiece success" : "Get timepiece fail";
+            return new APIResponse<Timepiece>
             {
                 Message = message,
                 isSuccess = isSuccess,
@@ -372,5 +325,23 @@ namespace VintageTimepieceService.Service
                 Data = result
             };
         }
+
+        public async Task<APIResponse<Timepiece>> UpdateTimepieceReceive(int timepieceId, bool status)
+        {
+            var result = await _timepieceRepository.UpdateTimepieceIsReceive(timepieceId, status);
+            bool isSuccess = true;
+            if (result == null)
+            {
+                isSuccess = false;
+            }
+            var message = isSuccess ? "Update is receive success" : "Update is receive fail";
+            return new APIResponse<Timepiece>
+            {
+                Message = message,
+                isSuccess = isSuccess,
+                Data = result
+            };
+        }
+
     }
 }

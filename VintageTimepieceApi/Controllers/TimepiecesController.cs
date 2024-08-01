@@ -120,7 +120,7 @@ namespace VintageTimepieceApi.Controllers
             HttpContext.Request.Cookies.TryGetValue("access_token", out var access_token);
             var user = _jwtConfigService.GetUserFromAccessToken(access_token);
             var data = JsonConvert.DeserializeObject<Timepiece>(timepiece);
-            data.DatePost = DateTime.Now;
+            data.DatePost = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             data.UserId = user.Data.UserId;
             var resultTimepiece = await _timepieceService.UploadNewTimepiece(data);
             if (!resultTimepiece.isSuccess)

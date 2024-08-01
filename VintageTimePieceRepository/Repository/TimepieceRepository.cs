@@ -90,22 +90,6 @@ namespace VintageTimePieceRepository.Repository
                           }).ToListAsync();
             return result;
         }
-        //public async Task<List<TimepieceViewModel>> GetTimepieceByCategory(int categoryId)
-        //{
-        //    var listTimePiece = await (from tc in _context.TimepieceCategories
-        //                               join tp in _context.Timepieces on tc.TimepieceId equals tp.TimepieceId
-        //                               join ca in _context.Categories on tc.CategoryId equals ca.CategoryId
-        //                               join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-        //                               where ca.CategoryId == categoryId
-        //                               && tp.IsBuy == false
-        //                               select new TimepieceViewModel
-        //                               {
-        //                                   timepiece = tp,
-        //                                   mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).First(),
-        //                                   images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
-        //                               }).ToListAsync();
-        //    return listTimePiece;
-        //}
         public async Task<List<TimepieceViewModel>> GetAllTimepieceNotEvaluate(string keyword)
         {
             var listProduct = await (from tp in _context.Timepieces
@@ -140,7 +124,7 @@ namespace VintageTimePieceRepository.Repository
                                      && (tp.TimepieceId == eva.TimepieceId || tp.TimepieceId != eva.TimepieceId)
                                      && (tp.Price == null || tp.Price != null)
                                      && tp.User == user
-                                     && tp.IsBuy == false
+                                     //&& tp.IsBuy == false
                                      select new TimepieceViewModel
                                      {
                                          timepiece = tp,
@@ -183,51 +167,6 @@ namespace VintageTimePieceRepository.Repository
                                    }).SingleOrDefaultAsync();
             return timePiece;
         }
-        //public async Task<List<TimepieceViewModel>> GetTimepieceByName(string name)
-        //{
-        //    var listProduct = await (from tp in _context.Timepieces
-        //                             join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-        //                             where tp.IsDel == false && tp.TimepieceName.Contains(name)
-        //                             && tp.IsBuy == false
-        //                             select new TimepieceViewModel
-        //                             {
-        //                                 timepiece = tp,
-        //                                 mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-        //                                 images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
-        //                             }).ToListAsync();
-        //    return listProduct;
-        //}
-        //public async Task<List<TimepieceViewModel>> GetTimepieceByNameExceptUser(string name, User user)
-        //{
-        //    List<TimepieceViewModel> listProduct = new List<TimepieceViewModel>();
-        //    if (user == null)
-        //    {
-        //        listProduct = await (from tp in _context.Timepieces
-        //                             join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-        //                             where tp.IsDel == false && tp.TimepieceName.Contains(name)
-        //                             && tp.IsBuy == false
-        //                             select new TimepieceViewModel
-        //                             {
-        //                                 timepiece = tp,
-        //                                 mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-        //                                 images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
-        //                             }).ToListAsync();
-        //    }
-        //    else
-        //    {
-        //        listProduct = await (from tp in _context.Timepieces
-        //                             where tp.IsDel == false && tp.TimepieceName.Contains(name) && tp.UserId != user.UserId
-        //                             join ti in _context.TimepieceImages on tp.TimepieceId equals ti.TimepieceId into images
-        //                             select new TimepieceViewModel
-        //                             {
-        //                                 timepiece = tp,
-        //                                 mainImage = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).FirstOrDefault(),
-        //                                 images = images.Where(img => img.IsDel == false).OrderBy(img => img.TimepieceImageId).ToList()
-        //                             }).ToListAsync();
-        //    }
-
-        //    return listProduct;
-        //}
         public async Task<Timepiece?> GetOneTimepiece(int id)
         {
             var result = await _context.Timepieces.Where(tim => tim.TimepieceId == id && tim.IsDel == false).SingleOrDefaultAsync();
@@ -279,12 +218,24 @@ namespace VintageTimePieceRepository.Repository
                 await Update(timepiece);
             }
         }
-
         public async Task<Timepiece> UpdateTimepieceBuy(int timepieceId, bool status)
         {
             var product = _context.Timepieces.Where(t => t.TimepieceId == timepieceId && t.IsDel == false).SingleOrDefault();
             product.IsBuy = status;
             return await Update(product);
+        }
+
+        public async Task<Timepiece> UpdateTimepieceIsReceive(int timepieceId, bool status)
+        {
+            var timpiece = _context.Timepieces
+                .Where(t => t.TimepieceId == timepieceId
+                && t.IsDel == false
+                && t.IsBuy == false
+                && t.isReceive == false
+                )
+                .SingleOrDefault();
+            timpiece.isReceive = true;
+            return await Update(timpiece);
         }
     }
 }

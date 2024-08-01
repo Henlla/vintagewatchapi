@@ -30,7 +30,7 @@ namespace VintageTimePieceRepository.Repository
                               }).ToListAsync();
             return data;
         }
-        public async Task<List<OrderViewModel>> GetAllOrderOfUser(string status,User user)
+        public async Task<List<OrderViewModel>> GetAllOrderOfUser(string status, User user)
         {
             var data = await (from order in _context.Orders
                               join trans in _context.Transactions on order.OrderId equals trans.OrderId into transGroup
@@ -46,7 +46,7 @@ namespace VintageTimePieceRepository.Repository
                                   Order = order,
                                   Transaction = trans,
                                   RefundTransaction = transRefund,
-                                  TimeRemining =  DateTime.Parse(order.OrderDate.Value.ToString()) > DateTime.Now.AddHours(-1),
+                                  TimeRemining = DateTime.Parse(order.OrderDate.Value.ToString("yyyy-MM-dd HH:mm:ss")) > DateTime.Parse(DateTime.Now.AddHours(-1).ToString("yyyy-MM-dd HH:mm:ss")),
                                   OrderDetail = listOrder.ToList(),
                               }).ToListAsync();
 

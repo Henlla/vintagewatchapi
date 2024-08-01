@@ -18,6 +18,14 @@ namespace VintageTimePieceRepository.Repository
 
         public async Task<Category> DeleteCategory(Category category)
         {
+            var categoryData = _context.Categories.Where(cate => cate.CategoryId == category.CategoryId).SingleOrDefault();
+            if (categoryData.TimepieceCategories.Any())
+            {
+                if (categoryData.TimepieceCategories.All(tc => !tc.Timepiece.IsDel.Value))
+                {
+                    return null;
+                }
+            }
             return await Update(category);
         }
 

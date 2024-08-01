@@ -47,17 +47,13 @@ namespace VintageTimepieceService.Service
                 };
             }
             category.IsDel = true;
-            var result = await _categoryRepository.Update(category);
-            bool isSuccess = false;
-            if (result != null)
-            {
-                isSuccess = true;
-            }
-            else
+            var result = await _categoryRepository.DeleteCategory(category);
+            bool isSuccess = true;
+            if (result == null)
             {
                 isSuccess = false;
             }
-            var message = isSuccess ? "Delete category success" : "Delete category fail";
+            var message = isSuccess ? "Delete category success" : "Delete category fail, This category is assign in some product";
 
             return new APIResponse<Category>
             {

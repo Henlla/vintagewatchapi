@@ -322,6 +322,9 @@ public partial class VintagedbContext : DbContext
             entity.Property(e => e.IsBuy)
                 .HasDefaultValue(false)
                 .HasColumnName("isBuy");
+            entity.Property(e => e.isReceive)
+                .HasDefaultValue(false)
+                .HasColumnName("isReceive");
             entity.Property(e => e.Movement)
                 .HasMaxLength(200)
                 .IsUnicode(false)

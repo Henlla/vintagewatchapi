@@ -18,12 +18,9 @@ namespace VintageTimepieceService.IService
         public Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepieceNotEvaluate(string keyword);
         public Task<APIResponse<List<TimepieceViewModel>>> GetAllTimepieceExceptUser(User user);
         public Task<APIResponse<TimepieceViewModel>> GetOneTimepiece(int id);
-        //public Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByName(string name);
-        //public Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByNameExceptUser(string name, User user);
-        //public Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceByCategory(int categoryId);
         public Task<APIResponse<List<TimepieceViewModel>>> GetTimepieceHasEvaluate(User user);
         public Task<APIResponse<List<TimepieceViewModel>>> GetProductByNameAndCategory(string name, int categoryId, User user);
-
+        public Task<APIResponse<Timepiece>> GetTimepieceById(int id);
         // CUD
         public Task<APIResponse<Timepiece>> DeleteTimepiece(int id);
         public Task<APIResponse<Timepiece>> UploadNewTimepiece(Timepiece timepiece);
@@ -31,6 +28,7 @@ namespace VintageTimepieceService.IService
         public Task<APIResponse<Timepiece>> UpdateTimepiecePrice(int timpieceId, int price);
         public Task<APIResponse<string>> UpdateTimepieceOrder(List<OrdersDetail> ordersDetails, bool isOrder);
         public Task<APIResponse<Timepiece>> UpdateTimepieceBuy(int timepieceId, bool status);
+        public Task<APIResponse<Timepiece>> UpdateTimepieceReceive(int timepieceId, bool status);
 
     }
 }
