@@ -33,5 +33,15 @@ namespace VintageTimepieceService.Service
                 Data = result
             });
         }
+
+        public async Task<APIResponse<string>> SendReportToMail(byte[] fileContent, string fileName, string recipientEmail)
+        {
+            await _generateReportRepository.SendMail(fileContent, fileName, recipientEmail);
+            return new APIResponse<string>
+            {
+                Message = "Send mail success",
+                isSuccess = true
+            };
+        }
     }
 }

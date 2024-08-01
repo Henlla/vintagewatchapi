@@ -10,5 +10,6 @@ namespace VintageTimePieceRepository.IRepository
     public interface IGenerateReportRepository
     {
         public ReportModel GenerateReport(int invoiceId, string htmlContent);
+        public Task SendMail(byte[] fileContent, string fileName, string recipientEmail);
     }
 }

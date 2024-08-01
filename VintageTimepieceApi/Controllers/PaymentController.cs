@@ -68,7 +68,7 @@ namespace VintageTimepieceApi.Controllers
 
                     var order = new Order
                     {
-                        OrderDate = DateTime.UtcNow,
+                        OrderDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")),
                         TotalPrice = resultTimepiece?.Data?.timepiece?.Price,
                         Status = "pending",
                         UserId = paymentInformation.UserId,
